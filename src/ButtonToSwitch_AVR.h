@@ -41,7 +41,7 @@
 #define _MinSrvcTime 100
 #define _InvalidPinNum 0xFF	// Value to give as "yet to be defined", the "Valid pin number" range and characteristics are development platform and environment related
 
-/*---------------- xTaskNotify() mechanism related constants, argument structs, information packing and unpacking BEGIN -------*/
+/*---------------- DbncdMPBttn complete status related constants, argument structs, information packing and unpacking BEGIN -------*/
 const uint8_t IsOnBitPos {0};
 const uint8_t IsEnabledBitPos{1};
 const uint8_t PilotOnBitPos{2};
@@ -68,7 +68,7 @@ const uint8_t OtptCurValBitPos{16};
 		uint16_t otptCurVal;
 	};
 #endif
-/*---------------- xTaskNotify() mechanism related constants, argument structs, information packing and unpacking END -------*/
+/*---------------- DbncdMPBttn complete status related constants, argument structs, information packing and unpacking END -------*/
 
 // Definition workaround to let a function/method return value to be a function pointer
 typedef void (*fncPtrType)();
@@ -77,9 +77,6 @@ typedef  fncPtrType (*ptrToTrnFnc)();
 //===========================>> BEGIN General use function prototypes
 MpbOtpts_t otptsSttsUnpkg(uint32_t pkgOtpts);
 //===========================>> END General use function prototypes
-
-//===========================>> BEGIN General use Global variables
-//===========================>> END General use Global variables
 
 //==========================================================>> Classes declarations BEGIN
 
@@ -93,6 +90,13 @@ MpbOtpts_t otptsSttsUnpkg(uint32_t pkgOtpts);
  * @class DbncdMPBttn
  */
 class DbncdMPBttn{
+	static uint8_t _mpbsCount;
+	static DbncdMPBttn** _mpbsInstncsLstPtr;
+	static unsigned long int _isrTmrPrd;
+	static void _ISRMpbsRfrsh();
+	static void _popMpb(DbncdMPBttn* mpbToPop);
+	static void _puschMpb(DbncdMPBttn* mpbToPush);
+
 protected:
 	enum fdaDmpbStts {
 		stOffNotVPP,
@@ -119,14 +123,14 @@ protected:
 	bool _isOnDisabled{false};
 	volatile bool _isPressed{false};
 	fdaDmpbStts _mpbFdaState {stOffNotVPP};
-	TimerHandle_t _mpbPollTmrHndl {NULL};   //FreeRTOS returns NULL if creation fails (not nullptr)
+	// TimerHandle_t _mpbPollTmrHndl {NULL};   //FreeRTOS returns NULL if creation fails (not nullptr)
 	String _mpbPollTmrName {""};
 	volatile bool _outputsChange {false};
 	bool _prssRlsCcl{false};
 	unsigned long int _strtDelay {0};
 	bool _sttChng {true};
-	TaskHandle_t _taskToNotifyHndl {NULL};
-	TaskHandle_t _taskWhileOnHndl{NULL};
+	// TaskHandle_t _taskToNotifyHndl {NULL};
+	// TaskHandle_t _taskWhileOnHndl{NULL};
 	volatile bool _validDisablePend{false};
 	volatile bool _validEnablePend{false};
 	volatile bool _validPressPend{false};
@@ -134,7 +138,7 @@ protected:
 
    void clrSttChng();
 	const bool getIsPressed() const;
-	static void mpbPollCallback(TimerHandle_t mpbTmrCbArg);
+	// static void mpbPollCallback(TimerHandle_t mpbTmrCbArg);
 	virtual uint32_t _otptsSttsPkg(uint32_t prevVal = 0);
 	void _setIsEnabled(const bool &newEnabledValue);
 	void setSttChng();
@@ -306,7 +310,7 @@ public:
     * @attention The strtDelay attribute is forced to a 0 ms value at instantiation of DbncdMPBttn class objects, and no setter mechanism is provided in this class. The inherited DbncdDlydMPBttn class objects (and all it's subclasses) constructor includes a parameter to initialize the strtDelay value, and a method to set that attribute to a new value. This implementation is needed to keep backwards compatibility to olde versions of the library.
     */
 	unsigned long int getStrtDelay();
-   /**
+   /*>e
 	 * @brief Returns the task to be notified by the object when its output flags changes.
 	 *
 	 * The task handle of the task to be notified by the object when its **outputsChange** attribute flag is set (see getOutputsChange()) holds a **NULL** when the object is created. A valid task's TaskHandle_t value might be set by using the setTaskToNotify() method, and even set back to **NULL** to disable the task notification mechanism.
@@ -316,8 +320,8 @@ public:
     *
     * @note The notification is done through a **direct to task notification** using the **xTaskNotify()** RTOS macro, the notification includes passing the notified task a 32-bit notification value.
     */
-	const TaskHandle_t getTaskToNotify() const;
-	/**
+	// const TaskHandle_t getTaskToNotify() const;
+	/*>e
 	 * @brief Returns the task to be run (resumed) while the object is in the **On state**.
 	 *
 	 * Returns the task handle of the task to be **resumed** every time the object enters the **On state**, and will be **paused** when the  object enters the **Off state**. This task execution mechanism dependent of the **On state** extends the concept of the **Switch object** far away of the simple turning On/Off a single hardware signal, attaching to it all the task execution capabilities of the MCU.
@@ -327,7 +331,7 @@ public:
     *
     * @warning ESP-IDF FreeRTOS has no mechanism implemented to notify a task that it is about to be set in **paused** state, so there is no way to that task to ensure it will be set to be paused in an orderly fashion. The task to be designated to be used by this mechanism has to be task that can withstand being interrupted at any point of it's execution, and be restarted from that same point next time the **isOn** flag is set. For tasks that might need attaching resources or other issues every time it is resumed and releasing resources of any kind before being **paused**, using the function attached by using **setFnWhnTrnOnPtr()** to gain control of the resources before resuming a task, and the function attached by using **setFnWhnTrnOffPtr()** to release the resources and pause the task in an orderly fashion, or use those functions to manage a binary semaphore for managing the execution of a task.
 	 */
-	const TaskHandle_t getTaskWhileOn();
+	// const TaskHandle_t getTaskWhileOn();
 	/**
 	 * @brief Initializes an object instantiated by the default constructor
 	 *
@@ -413,7 +417,7 @@ public:
     * @param newOutputChange The new value to set the **outputsChange** flag to.
     */
 	void setOutputsChange(bool newOutputsChange);
-    /**
+    /*>e
 	 * @brief Sets the handle to the task to be notified by the object when its output attribute flags changes.
 	 *
 	 * When the object is created, this value is set to **NULL**, and a valid TaskHandle_t value might be set by using this method. The task notifying mechanism will not be used while the task handle keeps the **NULL** value, in which case the solution implementation will have to use any of the other provided mechanisms to test the object status, and act accordingly. After the TaskHandle value is set it might be changed to point to other task. If at the point this method is invoked the attribute holding the pointer was not NULL, the method will suspend the pointed task before proceeding to change the attribute value. The method does not provide any verification mechanism to ensure the passed parameter is a valid task handle nor the state of the task the passed pointer might be.
@@ -422,8 +426,8 @@ public:
     *
     * @note As simple as this mechanism is, it's an un-expensive effective solution in terms of resources involved. The ESP-IDF FreeRTOS xTaskNotify() mechanism is used and the status of the object is passed as an encoded 32-bits value -the Notification Value- to the notified task. The **MpbOtpts_t otptsSttsUnpkg(uint32_t pkgOtpts)** function is provided to decode the 32-bit value into boolean values for each of the pertaining attribute flags state of the object.
     */
-	void setTaskToNotify(const TaskHandle_t &newTaskHandle);    
-	/**
+	// void setTaskToNotify(const TaskHandle_t &newTaskHandle);    
+	/*>e
 	 * @brief Sets the task to be run while the object is in the **On state**.
 	 *
 	 * Sets the task handle of the task to be **resumed** when the object enters the **On state**, and will be **paused** when the  object enters the **Off state**. This task execution mechanism dependent of the **On state** extends the concept of the **Switch object** far away of the simple turning On/Off a single hardware signal, attaching to it all the task execution capabilities of the MCU.
@@ -438,7 +442,7 @@ public:
     *
     * @warning Take special consideration about the implications of the execution **priority** of the task to be executed while the MPB is in **On state** and its relation to the priority of the calling task, as it might affect the normal execution of the application.
 	 */    
-	virtual void setTaskWhileOn(const TaskHandle_t &newTaskHandle);
+	// virtual void setTaskWhileOn(const TaskHandle_t &newTaskHandle);
 };
 
 //==========================================================>>
