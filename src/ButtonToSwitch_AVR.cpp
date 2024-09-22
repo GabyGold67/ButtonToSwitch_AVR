@@ -34,11 +34,9 @@
 #include <ButtonToSwitch_AVR.h>
 #include <TimerOne.h>
 //===========================>> BEGIN General use Global variables
-	uint8_t DbncdMPBttn::_mpbsCount = 0;
 	DbncdMPBttn** _mpbsInstncsLstPtr = nullptr;
-	unsigned long int _isrTmrPrd = 0;
+	unsigned long int _updTmrsPrd = 0;
 //===========================>> END General use Global variables
-
 
 DbncdMPBttn::DbncdMPBttn()
 : _mpbttnPin{_InvalidPinNum}, _pulledUp{true}, _typeNO{true}, _dbncTimeOrigSett{0}
@@ -50,10 +48,6 @@ DbncdMPBttn::DbncdMPBttn(const uint8_t &mpbttnPin, const bool &pulledUp, const b
 {
 
 	if(mpbttnPin != _InvalidPinNum){
-		String mpbPinNumStr {"00" + String(_mpbttnPin)};
-		mpbPinNumStr = mpbPinNumStr.substring(mpbPinNumStr.length() - 2, 2);
-		_mpbPollTmrName = "PollMpbPin" + mpbPinNumStr + "_tmr";
-
 		if(_dbncTimeOrigSett < _stdMinDbncTime) //Best practice would impose failing the constructor (throwing an exception or building a "zombie" object)
 			_dbncTimeOrigSett = _stdMinDbncTime;    //this tolerant approach taken for developers benefit, but object will be no faithful to the instantiation parameters
 		_dbncTimeTempSett = _dbncTimeOrigSett;
@@ -72,50 +66,65 @@ DbncdMPBttn::~DbncdMPBttn(){
 }
 
 bool DbncdMPBttn::begin(const unsigned long int &pollDelayMs) {
-    bool result {false};
-    BaseType_t tmrModResult {pdFAIL};
+	bool result {false};
+	int ptrAdvnc{0};
 
-    if (pollDelayMs > 0){
-        if (!_mpbPollTmrHndl){        
-            _mpbPollTmrHndl = xTimerCreate(
-                _mpbPollTmrName.c_str(),  //Timer name
-                pdMS_TO_TICKS(pollDelayMs),  //Timer period in ticks
-                pdTRUE,     //Auto-reload true
-                this,       //TimerID: data passed to the callback function to work
-                mpbPollCallback  //DbncdMPBttn::mpbPollCallback  //Callback function
-            );
-        if (_mpbPollTmrHndl != NULL){
-            tmrModResult = xTimerStart(_mpbPollTmrHndl, portMAX_DELAY);
-            if (tmrModResult == pdPASS)
-                result = true;
-        }
+	if (pollDelayMs > 0){
+		if(_mpbsInstncsLstPtr == nullptr){	// There are no MPBs to be updated in the list
+			_mpbsInstncsLstPtr = new DbncdMPBttn* [1];
+			*_mpbsInstncsLstPtr = nullptr;
+		}
+		_pushMpb(_mpbsInstncsLstPtr, this);
 
-        }
-    }
+		/*
+		 If Timer1 is not running, start it!!
+		if (!_intRfrshSrvcStrtd){   //Verify if the timer interrupt service was started 
+			//Initialize the Interrupt timer
+			Timer1.attachInterrupt(intRefresh);
+			Timer1.initialize(2000);
+		}
+
+		*/
+
+
+		result = true;
+	}
 
     return result;
 }
 
+void DbncdMPBttn::_pushMpb(DbncdMPBttn** &DMpbTmrUpdLst, DbncdMPBttn* mpbToPush){
+	// Traverse the pointers vector DMpbTmrUpdLst up to the end (nullptr)
+		// Count the qty of elements
+		// Rise flag if mpbToPush is found
+	// If found: Finish!!
+	// If not found:
+			// Create a new array of lenght count + 2 to a DbncdMPBttn** tempPtr
+			// Copy one by one the existent pointers to the new array
+			// Copy the pointer to the mpbToPush to the last-1 element
+			// Copy a nullptr to the last element
+			// Delete the space pointed by DMpbTmrUpdLst
+			// DMpbTmrUpdLst = tempPtr
+
+	return;
+}
+
 void DbncdMPBttn::clrStatus(bool clrIsOn){
-    //>e portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
-    /*To Resume operations after a pause() without risking generating false "Valid presses" and "On" situations,
-    several attributes must be resetted to "Start" values.
-    The only important value not reseted is the _mpbFdaState, to do it call resetFda() INSTEAD of this method*/
-    
-    //>e taskENTER_CRITICAL(&mux);   //ESP-IDF FreeRTOS modifies the taskENTER_CRITICAL of vanilla FreeRTOS to require a mutex as argument to avoid core to core interruptions
+	/*To Resume operations after a pause() without risking generating false "Valid presses" and "On" situations,
+	several attributes must be resetted to "Start" values.
+	The only important value not reseted is the _mpbFdaState, to do it call resetFda() INSTEAD of this method*/
+	
 	_isPressed = false;
 	_validPressPend = false;
 	_validReleasePend = false;
 	_dbncTimerStrt = 0;
 	_dbncRlsTimerStrt = 0;
 	if(clrIsOn){
-		if(_isOn){
+		if(_isOn)
 			_turnOff();
-		}
 	}
-    //>e taskEXIT_CRITICAL(&mux);
     
-    return;
+	return;
 }
 
 void DbncdMPBttn::clrSttChng(){
@@ -126,30 +135,23 @@ void DbncdMPBttn::clrSttChng(){
 
 void DbncdMPBttn::disable(){
 
-    return _setIsEnabled(false);
+	return _setIsEnabled(false);
 }
 
 void DbncdMPBttn::enable(){
 
-    return _setIsEnabled(true);
+	return _setIsEnabled(true);
 }
 
 bool DbncdMPBttn::end(){
    bool result {false};
-   BaseType_t tmrModResult {pdFAIL};
 
-   if (_mpbPollTmrHndl){
-   	result = pause();
-      if (result){
-      	tmrModResult = xTimerDelete(_mpbPollTmrHndl, portMAX_DELAY);
-			if (tmrModResult == pdPASS){
-				_mpbPollTmrHndl = NULL;
-			}
-			else{
-				result = false;
-			}
-      }
-   }
+	result = pause();
+	if (result){
+	}
+	else{
+		result = false;
+	}
 
    return result;
 }
@@ -171,7 +173,7 @@ fncPtrType DbncdMPBttn::getFnWhnTrnOn(){
 
 const bool DbncdMPBttn::getIsEnabled() const{
 
-    return _isEnabled;
+	return _isEnabled;
 }
 
 const bool DbncdMPBttn::getIsOn() const {
@@ -181,12 +183,12 @@ const bool DbncdMPBttn::getIsOn() const {
 
 const bool DbncdMPBttn::getIsOnDisabled() const{
 
-    return _isOnDisabled;
+	return _isOnDisabled;
 }
 
 const bool DbncdMPBttn::getIsPressed() const {
 
-    return _isPressed;
+	return _isPressed;
 }
 
 const uint32_t DbncdMPBttn::getOtptsSttsPkgd(){
@@ -196,7 +198,7 @@ const uint32_t DbncdMPBttn::getOtptsSttsPkgd(){
 
 const bool DbncdMPBttn::getOutputsChange() const{
 
-    return _outputsChange;
+	return _outputsChange;
 }
 
 unsigned long int DbncdMPBttn::getStrtDelay(){
@@ -204,76 +206,40 @@ unsigned long int DbncdMPBttn::getStrtDelay(){
 	return _strtDelay;
 }
 
-/*>e const TaskHandle_t DbncdMPBttn::getTaskToNotify() const{
-    
-    return _taskToNotifyHndl;
-}*/
-
-/*>e const TaskHandle_t DbncdMPBttn::getTaskWhileOn(){
-
-	return _taskWhileOnHndl;
-}*/
-
 bool DbncdMPBttn::init(const uint8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett){
     bool result {false};
 
-    if((_mpbttnPin == _InvalidPinNum) && (mpbttnPin != _InvalidPinNum)){
-        if (_mpbPollTmrName == ""){
-            _mpbttnPin = mpbttnPin;
-            _pulledUp = pulledUp;
-            _typeNO = typeNO;
-            _dbncTimeOrigSett = dbncTimeOrigSett;
+	if(_mpbttnPin == _InvalidPinNum){
+		_mpbttnPin = mpbttnPin;
+		_pulledUp = pulledUp;
+		_typeNO = typeNO;
+		_dbncTimeOrigSett = dbncTimeOrigSett;
 
-            String mpbPinNumStr {"00" + String(_mpbttnPin)};
-            mpbPinNumStr = mpbPinNumStr.substring(mpbPinNumStr.length() - 2, 2);
-            _mpbPollTmrName = "PollMpbPin" + mpbPinNumStr + "_tmr";
-
-            if(_dbncTimeOrigSett < _stdMinDbncTime) //Best practice would impose failing the constructor (throwing an exception or building a "zombie" object)
-                _dbncTimeOrigSett = _stdMinDbncTime;    //this tolerant approach taken for developers benefit, but object will be no faithful to the instantiation parameters
-            _dbncTimeTempSett = _dbncTimeOrigSett;
-            //>e pinMode(mpbttnPin, (pulledUp == true)?INPUT_PULLUP:INPUT_PULLDOWN);
-            pinMode(mpbttnPin, (pulledUp == true)?INPUT_PULLUP:INPUT);
-            result = true;
-        }
-        else{
-            _pulledUp = true;
-            _typeNO = true;
-            _dbncTimeOrigSett = 0;
-        }
-    }
-    
-    return result;
+		if(_dbncTimeOrigSett < _stdMinDbncTime) //Best practice would impose failing the constructor (throwing an exception or building a "zombie" object)
+			_dbncTimeOrigSett = _stdMinDbncTime;    //this tolerant approach taken for developers benefit, but object will be no faithful to the instantiation parameters
+		_dbncTimeTempSett = _dbncTimeOrigSett;
+		pinMode(mpbttnPin, (pulledUp == true)?INPUT_PULLUP:INPUT);
+		result = true;
+	}
+	else{
+		_pulledUp = true;
+		_typeNO = true;
+		_dbncTimeOrigSett = 0;
+	}
+	
+	return result;
 }
 
-void DbncdMPBttn::mpbPollCallback(TimerHandle_t mpbTmrCbArg){
-	DbncdMPBttn* mpbObj = (DbncdMPBttn*)pvTimerGetTimerID(mpbTmrCbArg);
-	BaseType_t xReturned;
-  //>e  portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
-    
-  //>e  taskENTER_CRITICAL(&mux);   //ESP-IDF FreeRTOS modifies the taskENTER_CRITICAL of vanilla FreeRTOS to require a mutex as argument to avoid core to core interruptions
-	if(mpbObj->getIsEnabled()){
+void DbncdMPBttn::mpbPollCallback(){
+
+	if(/*mpbObj->*/getIsEnabled()){
 		// Input/Output signals update
-		mpbObj->updIsPressed();
+		/*mpbObj->*/updIsPressed();
 		// Flags/Triggers calculation & update
-		mpbObj->updValidPressesStatus();
+		/*mpbObj->*/updValidPressesStatus();
 	}
 	// State machine status update
-	mpbObj->updFdaState();
-	//>e taskEXIT_CRITICAL(&mux);
-
-	/*>e if (mpbObj->getOutputsChange()){	//Output changes might happen as part of the updFdaState() execution
-		if(mpbObj->getTaskToNotify() != NULL){
-			xReturned = xTaskNotify(
-					mpbObj->getTaskToNotify(),	//TaskHandle_t of the task receiving notification
-					static_cast<unsigned long>(mpbObj->getOtptsSttsPkgd()),
-					eSetValueWithOverwrite	//In this specific case using eSetBits is also a valid option
-					);
-			 if (xReturned != pdPASS){
-				 errorFlag = pdTRUE;
-			 }
-			 mpbObj->setOutputsChange(false);	//If the outputsChange triggers a task to treat it, here's  the flag reset, in other cases the mechanism reading the chganges must take care of the flag status
-		}
-	}*/
+	/*mpbObj->*/updFdaState();
 
 	return;
 }
@@ -297,18 +263,18 @@ uint32_t DbncdMPBttn::_otptsSttsPkg(uint32_t prevVal){
 
 bool DbncdMPBttn::pause(){
    bool result {false};
-   BaseType_t tmrModResult {pdFAIL};
 
-   if (_mpbPollTmrHndl){
-      if (xTimerIsTimerActive(_mpbPollTmrHndl)){
-         tmrModResult = xTimerStop(_mpbPollTmrHndl, portMAX_DELAY);
-         if (tmrModResult == pdPASS)
-            result = true;
-      }
-   }
-   else{
-      result = true;
-   }
+   // Check if the MPB is in the  _mpbsInstncsLstPtr
+	//If it's in the list verify the Timer1 status 
+		// If it's not paused, Pause it
+		// POP the MPB from the _mpbsInstncsLstPtr list
+		// Verify there are MPBs remaining in the list
+			// If there are MPBs 
+				//Recalculate the _updTmrsPrd
+				//set the new _updTmrsPrd to Timer1
+				// Resume Timer1
+			// If there are not MPBs END the Timer1
+	
 
    return result;
 }
@@ -320,79 +286,53 @@ void DbncdMPBttn::resetDbncTime(){
 }
 
 void DbncdMPBttn::resetFda(){
-  //>e portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
-
-	//>e taskENTER_CRITICAL(&mux);
 	clrStatus();
 	setSttChng();
 	_mpbFdaState = stOffNotVPP;
-	//>e taskEXIT_CRITICAL(&mux);
 
 	return;
 }
 
 bool DbncdMPBttn::resume(){
    bool result {false};
-   BaseType_t tmrModResult {pdFAIL};
 
-   resetFda();	//To restart in a safe situation the FDA is resetted to have all flags and timers cleaned up
-	if (_mpbPollTmrHndl){
-		if (xTimerIsTimerActive(_mpbPollTmrHndl) == pdFAIL){	// This enforces the timer to be stopped to let the timer be resumed, makes the method useless just to reset the timer counter
-			tmrModResult = xTimerReset( _mpbPollTmrHndl, portMAX_DELAY);
-			if (tmrModResult == pdPASS)
-				result = true;
-		}
-	}
 
-    return result;
+	return result;
 }
 
 bool DbncdMPBttn::setDbncTime(const unsigned long int &newDbncTime){
-    bool result {true};
-    //>e portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
+	bool result {true};
 
-    //>e taskENTER_CRITICAL(&mux);
-    if(_dbncTimeTempSett != newDbncTime){
-		 if (newDbncTime >= _stdMinDbncTime){
-			  _dbncTimeTempSett = newDbncTime;
-		 }
-		 else{
-			  result = false;
-		 }
-    }
-    //>e taskEXIT_CRITICAL(&mux);
+	if(_dbncTimeTempSett != newDbncTime){
+		if (newDbncTime >= _stdMinDbncTime){
+			_dbncTimeTempSett = newDbncTime;
+		}
+		else{
+			result = false;
+		}
+	}
 
-    return result;
+	return result;
 }
 
 void DbncdMPBttn::setFnWhnTrnOffPtr(void (*newFnWhnTrnOff)()){
-  //>e portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
 
-	//>e taskENTER_CRITICAL(&mux);
 	if (_fnWhnTrnOff != newFnWhnTrnOff){
 		_fnWhnTrnOff = newFnWhnTrnOff;
 	}
-	//>e taskEXIT_CRITICAL(&mux);
 
 	return;
 }
 
 void DbncdMPBttn::setFnWhnTrnOnPtr(void (*newFnWhnTrnOn)()){
-  //>e portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
-
-	//>e taskENTER_CRITICAL(&mux);
 	if (_fnWhnTrnOn != newFnWhnTrnOn){
 		_fnWhnTrnOn = newFnWhnTrnOn;
 	}
-	//>e taskEXIT_CRITICAL(&mux);
 
 	return;
 }
 
 void DbncdMPBttn::_setIsEnabled(const bool &newEnabledValue){
-   //>e portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
-
-	//>e taskENTER_CRITICAL(&mux);
 	if(_isEnabled != newEnabledValue){
 		if (newEnabledValue){  //Change to Enabled = true
 			_validEnablePend = true;
@@ -405,40 +345,29 @@ void DbncdMPBttn::_setIsEnabled(const bool &newEnabledValue){
 				_validEnablePend = false;
 		}
 	}
-	//>e taskEXIT_CRITICAL(&mux);
 
 	return;
 }
 
 void DbncdMPBttn::setIsOnDisabled(const bool &newIsOnDisabled){
-   //>e portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
-
-	//>e taskENTER_CRITICAL(&mux);
 	if(_isOnDisabled != newIsOnDisabled){
 		_isOnDisabled = newIsOnDisabled;
 		if(!_isEnabled){
 			if(_isOn != _isOnDisabled){
-				if(_isOnDisabled){
+				if(_isOnDisabled)
 					_turnOn();
-				}
-				else{
+				else
 					_turnOff();
-				}
 			}
 		}
 	}
-	//>e taskEXIT_CRITICAL(&mux);
 
 	return;
 }
 
 void DbncdMPBttn::setOutputsChange(bool newOutputsChange){
-   //>e portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
-
-	//>e taskENTER_CRITICAL(&mux);
 	if(_outputsChange != newOutputsChange)
    	_outputsChange = newOutputsChange;
-	//>e taskEXIT_CRITICAL(&mux);
 
    return;
 }
@@ -449,118 +378,41 @@ void DbncdMPBttn::setSttChng(){
 	return;
 }
 
-/*>e void DbncdMPBttn::setTaskToNotify(const TaskHandle_t &newTaskHandle){
-	eTaskState taskWhileOnStts{};
-   portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
-
-   taskENTER_CRITICAL(&mux);
-   if(_taskToNotifyHndl != newTaskHandle){
-      if(_taskToNotifyHndl != NULL){
-         taskWhileOnStts = eTaskGetState(_taskToNotifyHndl);
-         if (taskWhileOnStts != eSuspended){
-            if(taskWhileOnStts != eDeleted){
-               vTaskSuspend(_taskToNotifyHndl);
-               _taskToNotifyHndl = NULL;
-            }
-         }
-      }
-      if (newTaskHandle != NULL){
-         _taskToNotifyHndl = newTaskHandle;
-      }
-   }
-   taskEXIT_CRITICAL(&mux);
-
-    return;
-}*/
-
-/*>e void DbncdMPBttn::setTaskWhileOn(const TaskHandle_t &newTaskHandle){
-	eTaskState taskWhileOnStts{};
-   portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
-
-	taskENTER_CRITICAL(&mux);
-	if(_taskWhileOnHndl != newTaskHandle){
-		if(_taskWhileOnHndl != NULL){
-			taskWhileOnStts = eTaskGetState(_taskWhileOnHndl);
-			if (taskWhileOnStts != eSuspended){
-				if(taskWhileOnStts != eDeleted){
-					vTaskSuspend(_taskWhileOnHndl);
-					_taskWhileOnHndl = NULL;
-				}
-			}
-		}
-		if (newTaskHandle != NULL){
-			_taskWhileOnHndl = newTaskHandle;
-		}
-	}
-	taskEXIT_CRITICAL(&mux);
-
-	return;
-}*/
-
 void DbncdMPBttn::_turnOff(){
-   //>e portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
 	if(_isOn){
-		//---------------->> Tasks related actions
-		/*>e if(_taskWhileOnHndl != NULL){
-			eTaskState taskWhileOnStts{eTaskGetState(_taskWhileOnHndl)};
-			if (taskWhileOnStts != eSuspended){
-				if(taskWhileOnStts != eDeleted){
-					vTaskSuspend(_taskWhileOnHndl);
-				}
-			}
-		}*/
 		//---------------->> Functions related actions
 		if(_fnWhnTrnOff != nullptr){
 			_fnWhnTrnOff();
 		}
-	}
-
-	//>e taskENTER_CRITICAL(&mux);
-	if(_isOn){
+	// }
+	// if(_isOn){
 		//---------------->> Flags related actions
 		_isOn = false;
 		_outputsChange = true;
 	}
-	//>e taskEXIT_CRITICAL(&mux);
 
 	return;
 }
 
 void DbncdMPBttn::_turnOn(){
-   //>e portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
 	if(!_isOn){
-		//---------------->> Tasks related actions
-		/*>e if(_taskWhileOnHndl != NULL){
-			eTaskState taskWhileOnStts{eTaskGetState(_taskWhileOnHndl)};
-			if(taskWhileOnStts != eDeleted){
-				if (taskWhileOnStts == eSuspended){
-					vTaskResume(_taskWhileOnHndl);
-				}
-			}
-		}*/
 		//---------------->> Functions related actions
 		if(_fnWhnTrnOn != nullptr){
 			_fnWhnTrnOn();
 		}
-	}
-
-	//>e taskENTER_CRITICAL(&mux);
-	if(!_isOn){
+	// }
+	// if(!_isOn){
 		//---------------->> Flags related actions
 		_isOn = true;
 		_outputsChange = true;
 	}
-	//>e taskEXIT_CRITICAL(&mux);
 
 	return;
 }
 
 void DbncdMPBttn::updFdaState(){
-   //>e portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
-
-	//>e taskENTER_CRITICAL(&mux);
 	switch(_mpbFdaState){
 		case stOffNotVPP:
 			//In: >>---------------------------------->>
@@ -629,12 +481,10 @@ void DbncdMPBttn::updFdaState(){
 			//In: >>---------------------------------->>
 			if(_sttChng){
 				if(_isOn != _isOnDisabled){
-					if(_isOn){
+					if(_isOn)
 						_turnOff();
-					}
-					else{
+					else
 						_turnOn();
-					}
 				}
 				clrStatus(false);	//Clears all flags and timers, _isOn value will not be affected
 				_isEnabled = false;
@@ -645,9 +495,8 @@ void DbncdMPBttn::updFdaState(){
 			}	// Execute this code only ONCE, when entering this state
 			//Do: >>---------------------------------->>
 			if(_validEnablePend){
-				if(_isOn){
+				if(_isOn)
 					_turnOff();
-				}
 				_isEnabled = true;
 				_validEnablePend = false;
 				if(!_outputsChange)
@@ -666,48 +515,47 @@ void DbncdMPBttn::updFdaState(){
 	default:
 		break;
 	}
-	//>e taskEXIT_CRITICAL(&mux);
 
 	return;
 }
 
 bool DbncdMPBttn::updIsPressed(){
-    /*To be 'pressed' the conditions are:
-    1) For NO == true
-        a)  _pulledUp == false ==> digitalRead == HIGH
-        b)  _pulledUp == true ==> digitalRead == LOW
-    2) For NO == false
-        a)  _pulledUp == false ==> digitalRead == LOW
-        b)  _pulledUp == true ==> digitalRead == HIGH
-    */
-    bool result {false};
-    bool tmpPinLvl {digitalRead(_mpbttnPin)};
+	/*To be 'pressed' the conditions are:
+	1) For NO == true
+		a)  _pulledUp == false ==> digitalRead == HIGH
+		b)  _pulledUp == true ==> digitalRead == LOW
+	2) For NO == false
+		a)  _pulledUp == false ==> digitalRead == LOW
+		b)  _pulledUp == true ==> digitalRead == HIGH
+	*/
+	bool result {false};
+	bool tmpPinLvl {digitalRead(_mpbttnPin)};
     
-    if (_typeNO == true){
-        //For NO MPBs
-        if (_pulledUp == false){
-            if (tmpPinLvl == HIGH)
-                result = true;
-        }
-        else{
-            if (tmpPinLvl == LOW)
-                result = true;
-        }
-    }
-    else{
-        //For NC MPBs
-        if (_pulledUp == false){
-            if (tmpPinLvl == LOW)
-                result = true;
-        }
-        else{
-            if (tmpPinLvl == HIGH)
-                result = true;
-        }
-    }    
-    _isPressed = result;
+	if (_typeNO == true){
+		//For NO MPBs
+		if (_pulledUp == false){
+			if (tmpPinLvl == HIGH)
+				result = true;
+		}
+		else{
+			if (tmpPinLvl == LOW)
+				result = true;
+		}
+	}
+	else{
+		//For NC MPBs
+		if (_pulledUp == false){
+			if (tmpPinLvl == LOW)
+				result = true;
+		}
+		else{
+			if (tmpPinLvl == HIGH)
+				result = true;
+		}
+	}    
+	_isPressed = result;
 
-    return _isPressed;
+	return _isPressed;
 }
 
 bool DbncdMPBttn::updValidPressesStatus(){
@@ -716,11 +564,9 @@ bool DbncdMPBttn::updValidPressesStatus(){
 			_dbncRlsTimerStrt = 0;
 		if(!_prssRlsCcl){
 			if(_dbncTimerStrt == 0){    //This is the first detection of the press event
-				//>e _dbncTimerStrt = xTaskGetTickCount() / portTICK_RATE_MS;	//Started to be pressed
 				_dbncTimerStrt = millis();	//Started to be pressed
 			}
 			else{
-				//>e if (((xTaskGetTickCount() / portTICK_RATE_MS) - _dbncTimerStrt) >= (_dbncTimeTempSett + _strtDelay)){
 				if (((millis()) - _dbncTimerStrt) >= (_dbncTimeTempSett + _strtDelay)){
 					_validPressPend = true;
 					_validReleasePend = false;
@@ -750,31 +596,53 @@ bool DbncdMPBttn::updValidPressesStatus(){
 
 //=========================================================================> Class methods delimiter
 
-unsigned long SevenSegDisplays::blinkTmrGCD(unsigned long blnkOnTm, unsigned long blnkOffTm){
+unsigned long int DbncdMPBttn::_updTmrsMCDCalc(DbncdMPBttn** mpbsLstPtr){
    /*returning values:
       0: One of the input values was 0
       1: No GDC greater than 1
-      Other: This value would make the blink timer save resources by checking the blink time as less frequent as possible*/
-   unsigned long result{ 0 };
+      Other: This value would make the MPBs update timer save resources */
+   unsigned long int result{ 0 };
 
-   if ((blnkOnTm != 0) && (blnkOffTm != 0)) {
-      if (blnkOnTm == blnkOffTm) {
-         result = blnkOnTm;
-      }
-      else if ((blnkOnTm % blnkOffTm == 0) || (blnkOffTm % blnkOnTm == 0)) {
-         result = (blnkOffTm < blnkOnTm)? blnkOffTm : blnkOnTm;
-      }
+	if(mpbsLstPtr != nullptr){
+		// The list of MPBs to be updated is not empty, there's at least one MPB
 
-      if (result == 0) {
-         for (unsigned long int i{ (blnkOnTm < blnkOffTm) ? blnkOnTm : blnkOffTm }; i > 0; i--) {
-               if ((blnkOnTm % i == 0) && (blnkOffTm % i == 0)) {
-                  result = i;
-                  break;
-               }
-         }
-      }
-   }
+
+/*	int calculateMCD(int values[], int numValues) {
+    int mcd = values[0]; // Initialize MCD with the first value
+
+    for (int i = 1; i < numValues; i++) {
+        mcd = findMCD(mcd, values[i]); // Calculate MCD iteratively
+    }
+
+    return mcd;
+}
+
+*/
+
+	}
+
 
    return result;
 }
+
+/*
+Develop as a template to findMCD with int, long, unsigned int, unsigned long, uint8_t/16_t/32_t, int8_t/16_t/18_t
+int findMCD(int a, int b) {
+    // Handle edge cases
+    if (a == 0 || b == 0) {
+        return a + b; // Return the non-zero value or 0 if both are 0
+    }
+
+    // Use Euclidean algorithm for efficiency
+    while (a != b) {
+        if (a > b) {
+            a -= b;
+        } else {
+            b -= a;
+        }
+    }
+
+    return a; // At this point, a and b are equal and represent the MCD
+}
+*/
 
