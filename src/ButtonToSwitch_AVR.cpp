@@ -41,6 +41,7 @@
 DbncdMPBttn::DbncdMPBttn()
 : _mpbttnPin{_InvalidPinNum}, _pulledUp{true}, _typeNO{true}, _dbncTimeOrigSett{0}
 {
+	_mpbInstnc = this;
 }
 
 DbncdMPBttn::DbncdMPBttn(const uint8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett)
@@ -52,6 +53,8 @@ DbncdMPBttn::DbncdMPBttn(const uint8_t &mpbttnPin, const bool &pulledUp, const b
 			_dbncTimeOrigSett = _stdMinDbncTime;    //this tolerant approach taken for developers benefit, but object will be no faithful to the instantiation parameters
 		_dbncTimeTempSett = _dbncTimeOrigSett;
 		pinMode(mpbttnPin, (pulledUp == true)?INPUT_PULLUP:INPUT);
+		_mpbInstnc = this;
+
 	}
 	else{
 		_pulledUp = true;
@@ -67,14 +70,14 @@ DbncdMPBttn::~DbncdMPBttn(){
 
 bool DbncdMPBttn::begin(const unsigned long int &pollDelayMs) {
 	bool result {false};
-	int ptrAdvnc{0};
+	int arrPtrIndx{0};
 
 	if (pollDelayMs > 0){
 		if(_mpbsInstncsLstPtr == nullptr){	// There are no MPBs to be updated in the list
 			_mpbsInstncsLstPtr = new DbncdMPBttn* [1];
 			*_mpbsInstncsLstPtr = nullptr;
 		}
-		_pushMpb(_mpbsInstncsLstPtr, this);
+		_pushMpb(_mpbsInstncsLstPtr, _mpbInstnc);
 
 		/*
 		 If Timer1 is not running, start it!!
@@ -94,17 +97,89 @@ bool DbncdMPBttn::begin(const unsigned long int &pollDelayMs) {
 }
 
 void DbncdMPBttn::_pushMpb(DbncdMPBttn** &DMpbTmrUpdLst, DbncdMPBttn* mpbToPush){
+	/*
+	This method works based on the following premisses:
+	- Is private, so the invocation by users is not possible, so requirements are not needed to be checked
+	- The requirements to correct execution are:
+		- _mpbsInstncsLstPtr != nullptr
+		- The array of pointers exists and is at least one element long.
+		- The last array element content is a nullptr. If the list is only one element long, that element must then contain nullptr
+	*/
+
 	// Traverse the pointers vector DMpbTmrUpdLst up to the end (nullptr)
 		// Count the qty of elements
 		// Rise flag if mpbToPush is found
 	// If found: Finish!!
 	// If not found:
-			// Create a new array of lenght count + 2 to a DbncdMPBttn** tempPtr
+			// Create a new array of lenght Count + 2 pointed by DbncdMPBttn** tempPtr
 			// Copy one by one the existent pointers to the new array
 			// Copy the pointer to the mpbToPush to the last-1 element
 			// Copy a nullptr to the last element
 			// Delete the space pointed by DMpbTmrUpdLst
 			// DMpbTmrUpdLst = tempPtr
+	int arrSize{0};
+	bool mpbFnd{false};
+	DbncdMPBttn** tmpArrPtr{nullptr};
+
+	while(*(DMpbTmrUpdLst + arrSize) != nullptr){
+		if(*(DMpbTmrUpdLst + arrSize) == mpbToPush){
+			mpbFnd = true;
+			break;
+		}
+		else{
+			++arrSize;
+		}
+	}
+	if(!mpbFnd){
+		tmpArrPtr = new DbncdMPBttn* [arrSize + 2];
+		for (int i{0}; i < arrSize; ++i){
+			*(tmpArrPtr + i) = *(DMpbTmrUpdLst + i);
+		}
+		*(tmpArrPtr + (arrSize + 1)) = mpbToPush;
+		*(tmpArrPtr + (arrSize + 2)) = nullptr;
+		delete [] DMpbTmrUpdLst;
+		DMpbTmrUpdLst = tmpArrPtr;
+	}
+
+	return;
+}
+
+void DbncdMPBttn::_popMpb(DbncdMPBttn** &DMpbTmrUpdLst, DbncdMPBttn* mpbToPop){
+	int arrSize{0};
+	int auxPtr{0};
+	bool mpbFnd{false};
+	DbncdMPBttn** tmpArrPtr{nullptr};
+
+	while(*(DMpbTmrUpdLst + arrSize) != nullptr){
+		if(*(DMpbTmrUpdLst + arrSize) == mpbToPop){
+			mpbFnd = true;
+		}
+		++arrSize;
+	}
+	if(mpbFnd){
+		if(arrSize > 1){
+			tmpArrPtr = new DbncdMPBttn* [arrSize];
+			arrSize = 0;
+			while(*(DMpbTmrUpdLst + arrSize) != nullptr){
+				if(*(DMpbTmrUpdLst + arrSize) == mpbToPop){
+					++arrSize;
+					if(*(DMpbTmrUpdLst + arrSize) == nullptr)
+						break;
+				}
+				*(tmpArrPtr + auxPtr) = *(DMpbTmrUpdLst + arrSize);
+				++arrSize;
+				++auxPtr;
+			}
+			*(tmpArrPtr + (auxPtr + 1)) = nullptr;
+			delete [] DMpbTmrUpdLst;
+			DMpbTmrUpdLst = tmpArrPtr;
+		}
+		else{
+			Timer1.stop();
+			delete [] DMpbTmrUpdLst;
+			DMpbTmrUpdLst = nullptr;
+		}
+	}
 
 	return;
 }
@@ -437,15 +512,14 @@ void DbncdMPBttn::updFdaState(){
 			//In: >>---------------------------------->>
 			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
 			//Do: >>---------------------------------->>
-			if(!_isOn){
+			if(!_isOn)
 				_turnOn();
-			}
 			_validPressPend = false;
 			_mpbFdaState = stOn;
 			setSttChng();
 			//Out: >>---------------------------------->>
 			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
-			break;
+//			break;
 
 		case stOn:
 			//In: >>---------------------------------->>
@@ -467,9 +541,8 @@ void DbncdMPBttn::updFdaState(){
 			//In: >>---------------------------------->>
 			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
 			//Do: >>---------------------------------->>
-			if(_isOn){
+			if(_isOn)
 				_turnOff();
-			}
 			_validReleasePend = false;
 			_mpbFdaState = stOffNotVPP;
 			setSttChng();
@@ -507,9 +580,9 @@ void DbncdMPBttn::updFdaState(){
 				setSttChng();
 			}
 			//Out: >>---------------------------------->>
-			if(_sttChng){
-				clrStatus(true);
-			}	// Execute this code only ONCE, when exiting this state
+			if(_sttChng){	// Execute this code only ONCE, when exiting this state
+//				clrStatus(true);	//Uneeded as is the first function executed in the next state (stOffNotVPP)
+			}
 			break;
 
 	default:

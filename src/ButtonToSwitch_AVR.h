@@ -94,8 +94,8 @@ class DbncdMPBttn{
 	static DbncdMPBttn** _mpbsInstncsLstPtr;
 	static void _ISRMpbsRfrshCallback();
 	unsigned long int _updTmrsMCDCalc(DbncdMPBttn** mpbsLstPtr);
-	static void _popMpb(DbncdMPBttn** DMpbTmrUpdLst, DbncdMPBttn* mpbToPop);
-	static void _pushMpb(DbncdMPBttn** &DMpbTmrUpdLst, DbncdMPBttn* mpbToPush);
+	/*static*/ void _popMpb(DbncdMPBttn** &DMpbTmrUpdLst, DbncdMPBttn* mpbToPop);
+	/*static*/ void _pushMpb(DbncdMPBttn** &DMpbTmrUpdLst, DbncdMPBttn* mpbToPush);
 
 protected:
 	enum fdaDmpbStts {
@@ -123,6 +123,7 @@ protected:
 	bool _isOnDisabled{false};
 	volatile bool _isPressed{false};
 	fdaDmpbStts _mpbFdaState {stOffNotVPP};
+	DbncdMPBttn* _mpbInstnc{nullptr};
 	volatile bool _outputsChange {false};
 	unsigned long int _pollDelayMs{0};
 	bool _prssRlsCcl{false};
