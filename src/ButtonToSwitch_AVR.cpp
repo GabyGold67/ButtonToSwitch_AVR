@@ -14,7 +14,7 @@
   * @author	: Gabriel D. Goldman
   * @version v4.0.0
   * @date	: Created on: 10/09/2024
-  * 		: Last modification: 10/09/2024
+  * 		: Last modification: 26/09/2024
   * @copyright GPL-3.0 license
   *
   ******************************************************************************
@@ -34,10 +34,40 @@
 #include <ButtonToSwitch_AVR.h>
 #include <TimerOne.h>
 //===========================>> BEGIN General use Global variables
-	DbncdMPBttn** _mpbsInstncsLstPtr = nullptr;
-	unsigned long int _updTmrsPrd = 0;
+DbncdMPBttn** _mpbsInstncsLstPtr = nullptr;	// Pointer to the array of pointers of DbncdMPBttn objects whose state must be kept updated by the Timer
+unsigned long int _updTimerPeriod = 0;	// Time period for the update Timer to be executed. As is only ONE timer for all the DbncdMPBttn objects, the time period must be shared, so a MCD calculation will determine the value to be used for resources use optimization.
 //===========================>> END General use Global variables
+/*
+ *  The callback function duties:
+ * - Verify for a valid **_mpbsInstncsLstPtr**, if it's nullptr something failed, correct it by disabling the timer
+ * - Save the **current time** for reference and traverse the list till the end (nullptr).
+ * - For each MPB in the list verify the _updTmrAttchd == true
+ * - If _updTmrAttchd == true -> verify the ("current time" - _lstPollTime) >= _pollPeriodMs. If the condition is true:
+ * 	- Execute the objects mpbPollCallback()
+ * 	- Set _lstPollTime = "current time"
+*/
+void DbncdMPBttn::_ISRMpbsRfrshCallback(){
+	int auxPtr{0};
+	unsigned long int curTime{millis()};
 
+	if(_mpbsInstncsLstPtr != nullptr){
+		while (*(_mpbsInstncsLstPtr + auxPtr) != nullptr){
+			if ((*(_mpbsInstncsLstPtr) + auxPtr)->getUpdTmrAttchd()){
+				// The MPB is attached to the update service, must be checked for update need
+				if((curTime - ((*(_mpbsInstncsLstPtr) + auxPtr)->getLstPollTime())) >= ((*(_mpbsInstncsLstPtr) + auxPtr)->getPollPeriodMs())){
+					// The time for updating exceeded, proceed to update MPB state
+				}
+				(*(_mpbsInstncsLstPtr) + auxPtr)->mpbPollCallback();
+
+			}
+		}
+	}
+	else{
+		//! There are no MPBs to update, disable Timer1!!
+	}
+
+	return;
+}
 DbncdMPBttn::DbncdMPBttn()
 : _mpbttnPin{_InvalidPinNum}, _pulledUp{true}, _typeNO{true}, _dbncTimeOrigSett{0}
 {
@@ -88,7 +118,7 @@ bool DbncdMPBttn::begin(const unsigned long int &pollDelayMs) {
 		}
 
 		*/
-
+		_pollPeriodMs = pollDelayMs;
 
 		result = true;
 	}
@@ -96,92 +126,9 @@ bool DbncdMPBttn::begin(const unsigned long int &pollDelayMs) {
     return result;
 }
 
-void DbncdMPBttn::_pushMpb(DbncdMPBttn** &DMpbTmrUpdLst, DbncdMPBttn* mpbToPush){
-	/*
-	This method works based on the following premisses:
-	- Is private, so the invocation by users is not possible, so requirements are not needed to be checked
-	- The requirements to correct execution are:
-		- _mpbsInstncsLstPtr != nullptr
-		- The array of pointers exists and is at least one element long.
-		- The last array element content is a nullptr. If the list is only one element long, that element must then contain nullptr
-	*/
+bool DbncdMPBttn::getUpdTmrAttchd(){
 
-	// Traverse the pointers vector DMpbTmrUpdLst up to the end (nullptr)
-		// Count the qty of elements
-		// Rise flag if mpbToPush is found
-	// If found: Finish!!
-	// If not found:
-			// Create a new array of lenght Count + 2 pointed by DbncdMPBttn** tempPtr
-			// Copy one by one the existent pointers to the new array
-			// Copy the pointer to the mpbToPush to the last-1 element
-			// Copy a nullptr to the last element
-			// Delete the space pointed by DMpbTmrUpdLst
-			// DMpbTmrUpdLst = tempPtr
-	int arrSize{0};
-	bool mpbFnd{false};
-	DbncdMPBttn** tmpArrPtr{nullptr};
-
-	while(*(DMpbTmrUpdLst + arrSize) != nullptr){
-		if(*(DMpbTmrUpdLst + arrSize) == mpbToPush){
-			mpbFnd = true;
-			break;
-		}
-		else{
-			++arrSize;
-		}
-	}
-	if(!mpbFnd){
-		tmpArrPtr = new DbncdMPBttn* [arrSize + 2];
-		for (int i{0}; i < arrSize; ++i){
-			*(tmpArrPtr + i) = *(DMpbTmrUpdLst + i);
-		}
-		*(tmpArrPtr + (arrSize + 1)) = mpbToPush;
-		*(tmpArrPtr + (arrSize + 2)) = nullptr;
-		delete [] DMpbTmrUpdLst;
-		DMpbTmrUpdLst = tmpArrPtr;
-	}
-
-	return;
-}
-
-void DbncdMPBttn::_popMpb(DbncdMPBttn** &DMpbTmrUpdLst, DbncdMPBttn* mpbToPop){
-	int arrSize{0};
-	int auxPtr{0};
-	bool mpbFnd{false};
-	DbncdMPBttn** tmpArrPtr{nullptr};
-
-	while(*(DMpbTmrUpdLst + arrSize) != nullptr){
-		if(*(DMpbTmrUpdLst + arrSize) == mpbToPop){
-			mpbFnd = true;
-		}
-		++arrSize;
-	}
-	if(mpbFnd){
-		if(arrSize > 1){
-			tmpArrPtr = new DbncdMPBttn* [arrSize];
-			arrSize = 0;
-			while(*(DMpbTmrUpdLst + arrSize) != nullptr){
-				if(*(DMpbTmrUpdLst + arrSize) == mpbToPop){
-					++arrSize;
-					if(*(DMpbTmrUpdLst + arrSize) == nullptr)
-						break;
-				}
-				*(tmpArrPtr + auxPtr) = *(DMpbTmrUpdLst + arrSize);
-				++arrSize;
-				++auxPtr;
-			}
-			*(tmpArrPtr + (auxPtr + 1)) = nullptr;
-			delete [] DMpbTmrUpdLst;
-			DMpbTmrUpdLst = tmpArrPtr;
-		}
-		else{
-			Timer1.stop();
-			delete [] DMpbTmrUpdLst;
-			DMpbTmrUpdLst = nullptr;
-		}
-	}
-
-	return;
+	return _updTmrAttchd;
 }
 
 void DbncdMPBttn::clrStatus(bool clrIsOn){
@@ -276,6 +223,11 @@ const bool DbncdMPBttn::getOutputsChange() const{
 	return _outputsChange;
 }
 
+const unsigned long int DbncdMPBttn::getPollPeriodMs(){
+
+	return _pollPeriodMs;
+}
+
 unsigned long int DbncdMPBttn::getStrtDelay(){
 
 	return _strtDelay;
@@ -319,6 +271,74 @@ void DbncdMPBttn::mpbPollCallback(){
 	return;
 }
 
+void DbncdMPBttn::_popMpb(DbncdMPBttn** &DMpbTmrUpdLst, DbncdMPBttn* mpbToPop){
+	int arrSize{0};
+	int auxPtr{0};
+	bool mpbFnd{false};
+	DbncdMPBttn** tmpArrPtr{nullptr};
+
+	while(*(DMpbTmrUpdLst + arrSize) != nullptr){
+		if(*(DMpbTmrUpdLst + arrSize) == mpbToPop){
+			mpbFnd = true;
+		}
+		++arrSize;
+	}
+	if(mpbFnd){
+		if(arrSize > 1){
+			tmpArrPtr = new DbncdMPBttn* [arrSize];
+			arrSize = 0;
+			while(*(DMpbTmrUpdLst + arrSize) != nullptr){
+				if(*(DMpbTmrUpdLst + arrSize) == mpbToPop){
+					++arrSize;
+					if(*(DMpbTmrUpdLst + arrSize) == nullptr)
+						break;
+				}
+				*(tmpArrPtr + auxPtr) = *(DMpbTmrUpdLst + arrSize);
+				++arrSize;
+				++auxPtr;
+			}
+			*(tmpArrPtr + (auxPtr + 1)) = nullptr;
+			delete [] DMpbTmrUpdLst;
+			DMpbTmrUpdLst = tmpArrPtr;
+		}
+		else{
+			Timer1.stop();
+			delete [] DMpbTmrUpdLst;
+			DMpbTmrUpdLst = nullptr;
+		}
+	}
+
+	return;
+}
+
+void DbncdMPBttn::_pushMpb(DbncdMPBttn** &DMpbTmrUpdLst, DbncdMPBttn* mpbToPush){
+	int arrSize{0};
+	bool mpbFnd{false};
+	DbncdMPBttn** tmpArrPtr{nullptr};
+
+	while(*(DMpbTmrUpdLst + arrSize) != nullptr){
+		if(*(DMpbTmrUpdLst + arrSize) == mpbToPush){
+			mpbFnd = true;
+			break;
+		}
+		else{
+			++arrSize;
+		}
+	}
+	if(!mpbFnd){
+		tmpArrPtr = new DbncdMPBttn* [arrSize + 2];
+		for (int i{0}; i < arrSize; ++i){
+			*(tmpArrPtr + i) = *(DMpbTmrUpdLst + i);
+		}
+		*(tmpArrPtr + (arrSize + 1)) = mpbToPush;
+		*(tmpArrPtr + (arrSize + 2)) = nullptr;
+		delete [] DMpbTmrUpdLst;
+		DMpbTmrUpdLst = tmpArrPtr;
+	}
+
+	return;
+}
+
 uint32_t DbncdMPBttn::_otptsSttsPkg(uint32_t prevVal){
 	if(_isOn){
 		prevVal |= ((uint32_t)1) << IsOnBitPos;
@@ -345,8 +365,8 @@ bool DbncdMPBttn::pause(){
 		// POP the MPB from the _mpbsInstncsLstPtr list
 		// Verify there are MPBs remaining in the list
 			// If there are MPBs 
-				//Recalculate the _updTmrsPrd
-				//set the new _updTmrsPrd to Timer1
+				//Recalculate the _updTimerPeriod
+				//set the new _updTimerPeriod to Timer1
 				// Resume Timer1
 			// If there are not MPBs END the Timer1
 	

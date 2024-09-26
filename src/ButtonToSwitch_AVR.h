@@ -78,6 +78,33 @@ typedef  fncPtrType (*ptrToTrnFnc)();
 MpbOtpts_t otptsSttsUnpkg(uint32_t pkgOtpts);
 //===========================>> END General use function prototypes
 
+/**
+ * @note This ButtonToSwitch_AVR implementation relies on the TimerOne library by paulstoffregen to manage the time generated INT.  
+ * 
+ * Being the facilities provided by the TimerOne limited to the execution of only ONE timer interrupt, the setup selected for this development is the following:
+ * - A static array of pointers to all the DbncdMPBttn class and subclasses objects -pointed by **_mpbsInstncsLstPtr**- to be kept updated is created automatically when the first element is added with the **begin()** method. This **"list of MPBs to keep updated"** will grow as more elements are added. The object elements will be taken out of the list by using the **end()** method. When the list is left with no elements it'll be deleted automatically.
+ * - Each object will hold the attribute for it's time period between updates: **_pollPeriodMs**
+ * - Each object will hold the attribute for the last time it was updated: **_lstPollTime**
+ * - Each object will hold the attribute flag to be included or ignored for the periodic update -to be used by the pause() and resume() methods- **_updTmrAttchd**. Depending on that attribute flag value the object will or will be not updated albeit being present in the **"list of MPBs to keep updated"**. This is included for temporary states, avoiding the time and resources needed to take out and replace back an object from the update list by using **begin()** or **end()**
+ * The begin() and end() will work the inclusion and exclusion of the object in the **"list of MPBs to keep updated"** -pointed to by **_mpbsInstncsLstPtr**- just verifying the object's **_updTmrAttchd** is set to true when the begin is executed.
+ * - The timer interrupt period is a common attribute (static) to all the DbncdMPBttn class and subclasses objects **_updTimerPeriod**, it will be set as the MCD of each and every **timer attached** object in the **"list of MPBs to keep updated"**. The use of a MCD calculated time period is resource optimization oriented, to reduce interrupts to the minimum strictly needed and avoiding a fixed time setting. The best use of the resources by using the longer periods still suitable to do the updating job and selecting different MPBs update time that have a higher MCD is left to the developer best knowledge.
+ * That implies that the **_updTimerPeriod** should be updated:
+ * - With every begin() invocation.
+ * - With every resume() invocation.
+ * - With every end() invocation, taking care of the special case if the **"list of MPBs to keep updated"** is emptied (**_updTimerPeriod** = 0 and Timer1 stopped)
+ * - With every pause() invocation, taking care of the special case if the **"list of MPBs to keep updated"** is emptied (**_updTimerPeriod** = 0 and Timer1 paused)
+ * 
+ *  The callback function duties:
+ * - Verify for a valid **_mpbsInstncsLstPtr**, if it's nullptr something failed, correct it by disabling the timer
+ * - Save the **current time** for reference and traverse the list till the end (nullptr).
+ * - For each MPB in the list verify the _updTmrAttchd == true
+ * - If _updTmrAttchd == true -> verify the ("current time" - _lstPollTime) >= _pollPeriodMs. If the condition is true:
+ * 	- Execute the objects mpbPollCallback()
+ * 	- Set _lstPollTime = "current time"
+ * 
+ */
+
+
 //==========================================================>> Classes declarations BEGIN
 
 /**
@@ -90,8 +117,19 @@ MpbOtpts_t otptsSttsUnpkg(uint32_t pkgOtpts);
  * @class DbncdMPBttn
  */
 class DbncdMPBttn{
-	static unsigned long int _updTmrsPrd;
+	static unsigned long int _updTimerPeriod;
 	static DbncdMPBttn** _mpbsInstncsLstPtr;
+/**
+ **This is the callback function to be executed by the TimerOne managed timer INT.
+ * 
+ ** The callback function duties:
+ ** - Verify for a valid **_mpbsInstncsLstPtr**, if it's nullptr something failed, correct it by disabling the timer
+ ** - Save the **current time** for reference and traverse the list till the end (nullptr).
+ ** - For each MPB in the list verify the _updTmrAttchd == true
+ ** - If _updTmrAttchd == true -> verify the ("current time" - _lstPollTime) >= _pollPeriodMs. If the condition is true:
+ ** 	- Execute the objects mpbPollCallback()
+ ** 	- Set _lstPollTime = "current time" * 
+ */
 	static void _ISRMpbsRfrshCallback();
 	unsigned long int _updTmrsMCDCalc(DbncdMPBttn** mpbsLstPtr);
 	/*static*/ void _popMpb(DbncdMPBttn** &DMpbTmrUpdLst, DbncdMPBttn* mpbToPop);
@@ -122,13 +160,15 @@ protected:
 	volatile bool _isOn{false};
 	bool _isOnDisabled{false};
 	volatile bool _isPressed{false};
+	unsigned long int _lstPollTime{0};	//! Timer1 use related attribute
 	fdaDmpbStts _mpbFdaState {stOffNotVPP};
 	DbncdMPBttn* _mpbInstnc{nullptr};
 	volatile bool _outputsChange {false};
-	unsigned long int _pollDelayMs{0};
+	unsigned long int _pollPeriodMs{0};	//! Timer1 use related attribute
 	bool _prssRlsCcl{false};
 	unsigned long int _strtDelay {0};
 	bool _sttChng {true};
+	bool _updTmrAttchd{false};//! Timer1 use related attribute
 	volatile bool _validDisablePend{false};
 	volatile bool _validEnablePend{false};
 	volatile bool _validPressPend{false};
@@ -136,7 +176,7 @@ protected:
 
    void clrSttChng();
 	const bool getIsPressed() const;
-	void mpbPollCallback();
+	virtual void mpbPollCallback();
 	virtual uint32_t _otptsSttsPkg(uint32_t prevVal = 0);
 	void _setIsEnabled(const bool &newEnabledValue);
 	void setSttChng();
@@ -279,6 +319,7 @@ public:
     * @retval false: the object is configured to be set to the **Off state** while it is in **Disabled state**.
     */
 	const bool getIsOnDisabled() const;
+	const unsigned long int getLstPollTime();
    /**
     * @brief Returns the relevant attribute flags values for the object state encoded as a 32 bits value, required to pass current state of the object to another thread/task managing the outputs
     *
@@ -298,7 +339,7 @@ public:
     * @retval false: no object's behavior flags have changed value since last time **outputsChange** flag was reseted.
 	 */
 	const bool getOutputsChange() const;
-	const unsigned long int getPollDelayMs();
+	const unsigned long int getPollPeriodMs();
    /**
     * @brief Returns the current value of strtDelay attribute.
     *
@@ -308,7 +349,8 @@ public:
     *
     * @attention The strtDelay attribute is forced to a 0 ms value at instantiation of DbncdMPBttn class objects, and no setter mechanism is provided in this class. The inherited DbncdDlydMPBttn class objects (and all it's subclasses) constructor includes a parameter to initialize the strtDelay value, and a method to set that attribute to a new value. This implementation is needed to keep backwards compatibility to olde versions of the library.
     */
-	unsigned long int getStrtDelay();
+	unsigned long int getStrtDelay();	//! Is this right or is the Period?
+	bool getUpdTmrAttchd();
 	/**
 	 * @brief Initializes an object instantiated by the default constructor
 	 *
@@ -386,6 +428,7 @@ public:
     * @warning If the method is invoked while the object is disabled, and the **isOnDisabled** attribute flag is changed, then the **isOn** attribute flag will have to change accordingly. Changing the **isOn** flag value implies that **all** the implemented mechanisms related to the change of the **isOn** attribute flag value will be invoked.
     */
 	void setIsOnDisabled(const bool &newIsOnDisabled);
+	void setLstPollTime(const unsigned long int &newLstPollTIme);
    /**
 	 * @brief Sets the value of the attribute flag indicating if a change took place in any of the output attribute flags (IsOn included).
 	 *
