@@ -34,9 +34,15 @@
 #include <ButtonToSwitch_AVR.h>
 #include <TimerOne.h>
 //===========================>> BEGIN General use Global variables
+//===========================>> END General use Global variables
+
+//===========================>> BEGIN Base Class Static variables initialization
 DbncdMPBttn** _mpbsInstncsLstPtr = nullptr;	// Pointer to the array of pointers of DbncdMPBttn objects whose state must be kept updated by the Timer
 unsigned long int _updTimerPeriod = 0;	// Time period for the update Timer to be executed. As is only ONE timer for all the DbncdMPBttn objects, the time period must be shared, so a MCD calculation will determine the value to be used for resources use optimization.
-//===========================>> END General use Global variables
+//===========================>> END Base Class Static variables initialization
+
+//===========================>> BEGIN Base Class Static methods implementation
+void DbncdMPBttn::_ISRMpbsRfrshCallback(){
 /*
  *  The callback function duties:
  * - Verify for a valid **_mpbsInstncsLstPtr**, if it's nullptr something failed, correct it by disabling the timer
@@ -46,7 +52,6 @@ unsigned long int _updTimerPeriod = 0;	// Time period for the update Timer to be
  * 	- Execute the objects mpbPollCallback()
  * 	- Set _lstPollTime = "current time"
 */
-void DbncdMPBttn::_ISRMpbsRfrshCallback(){
 	int auxPtr{0};
 	unsigned long int curTime{millis()};
 
@@ -56,18 +61,22 @@ void DbncdMPBttn::_ISRMpbsRfrshCallback(){
 				// The MPB is attached to the update service, must be checked for update need
 				if((curTime - ((*(_mpbsInstncsLstPtr) + auxPtr)->getLstPollTime())) >= ((*(_mpbsInstncsLstPtr) + auxPtr)->getPollPeriodMs())){
 					// The time for updating exceeded, proceed to update MPB state
+					(*(_mpbsInstncsLstPtr) + auxPtr)->mpbPollCallback();	// Update the MPBttn state
+					(*(_mpbsInstncsLstPtr) + auxPtr)->_setLstPollTime(curTime);	//Save the timestamp of this last update}
 				}
-				(*(_mpbsInstncsLstPtr) + auxPtr)->mpbPollCallback();
-
 			}
 		}
 	}
 	else{
 		//! There are no MPBs to update, disable Timer1!!
+		Timer1.stop();
+		Timer1.detachInterrupt();
 	}
 
 	return;
 }
+//===========================>> END Base Class Static methods implementation
+
 DbncdMPBttn::DbncdMPBttn()
 : _mpbttnPin{_InvalidPinNum}, _pulledUp{true}, _typeNO{true}, _dbncTimeOrigSett{0}
 {
@@ -100,25 +109,31 @@ DbncdMPBttn::~DbncdMPBttn(){
 
 bool DbncdMPBttn::begin(const unsigned long int &pollDelayMs) {
 	bool result {false};
-	int arrPtrIndx{0};
+	bool lstWasNull{false};
 
 	if (pollDelayMs > 0){
-		if(_mpbsInstncsLstPtr == nullptr){	// There are no MPBs to be updated in the list
+		if(_mpbsInstncsLstPtr == nullptr){	// There is no "MPBs to be updated list", so create it
 			_mpbsInstncsLstPtr = new DbncdMPBttn* [1];
 			*_mpbsInstncsLstPtr = nullptr;
+			lstWasNull = true;
 		}
 		_pushMpb(_mpbsInstncsLstPtr, _mpbInstnc);
-
-		/*
-		 If Timer1 is not running, start it!!
-		if (!_intRfrshSrvcStrtd){   //Verify if the timer interrupt service was started 
-			//Initialize the Interrupt timer
-			Timer1.attachInterrupt(intRefresh);
-			Timer1.initialize(2000);
-		}
-
-		*/
 		_pollPeriodMs = pollDelayMs;
+
+		// If Timer1 is not running, start it!!
+		if (lstWasNull){   // This is the first MPBttn of the list, start timer
+			//Initialize the Interrupt timer
+			Timer1.attachInterrupt(_ISRMpbsRfrshCallback);
+			Timer1.initialize(_pollPeriodMs*1000);
+		}
+		else{	// The "MPBs to be updated was not empty, pollTime must be recalculated and if changes set Timer1.setPeriod() invoked
+			if(_pollPeriodMs != _updTimerPeriod){
+				//recalculate _updTimerPeriod
+				//! _updTimerPeriod = calculus of MCD
+				Timer1.setPeriod(_updTimerPeriod);
+			}
+
+		}
 
 		result = true;
 	}
@@ -213,6 +228,11 @@ const bool DbncdMPBttn::getIsPressed() const {
 	return _isPressed;
 }
 
+const unsigned long int DbncdMPBttn::getLstPollTime(){
+   
+	return _lstPollTime;
+}
+
 const uint32_t DbncdMPBttn::getOtptsSttsPkgd(){
 
 	return _otptsSttsPkg();
@@ -223,9 +243,10 @@ const bool DbncdMPBttn::getOutputsChange() const{
 	return _outputsChange;
 }
 
-const unsigned long int DbncdMPBttn::getPollPeriodMs(){
+const unsigned long int DbncdMPBttn::getPollPeriodMs()
+{
 
-	return _pollPeriodMs;
+   return _pollPeriodMs;
 }
 
 unsigned long int DbncdMPBttn::getStrtDelay(){
@@ -456,6 +477,13 @@ void DbncdMPBttn::setIsOnDisabled(const bool &newIsOnDisabled){
 			}
 		}
 	}
+
+	return;
+}
+
+void DbncdMPBttn::_setLstPollTime(const unsigned long int &newLstPollTIme){
+	if (_lstPollTime != newLstPollTIme)
+		_lstPollTime = newLstPollTIme;
 
 	return;
 }
@@ -691,13 +719,33 @@ bool DbncdMPBttn::updValidPressesStatus(){
 
 unsigned long int DbncdMPBttn::_updTmrsMCDCalc(DbncdMPBttn** mpbsLstPtr){
    /*returning values:
-      0: One of the input values was 0
+      0: One of the input values was 0, or the MPBs list is empty: invalid result
       1: No GDC greater than 1
       Other: This value would make the MPBs update timer save resources */
-   unsigned long int result{ 0 };
+   unsigned long int result{0};
+	int MPBttnsQty {0};
+	int MPBttnsActv{0};
+	int auxPtr{0};
 
 	if(mpbsLstPtr != nullptr){
 		// The list of MPBs to be updated is not empty, there's at least one MPB
+		while (*(_mpbsInstncsLstPtr + auxPtr) != nullptr){
+			++MPBttnsQty;
+			if ((*(_mpbsInstncsLstPtr) + auxPtr)->getUpdTmrAttchd()){
+				++MPBttnsActv;
+			}
+			++auxPtr;
+		}
+		if(MPBttnsActv > 0){
+			auxPtr = 0;
+			while (auxPtr < MPBttnsQty){
+				if ((*(_mpbsInstncsLstPtr) + auxPtr)->getUpdTmrAttchd()){
+
+				}
+			}
+		}
+	}
+
 
 
 /*	int calculateMCD(int values[], int numValues) {
@@ -712,7 +760,6 @@ unsigned long int DbncdMPBttn::_updTmrsMCDCalc(DbncdMPBttn** mpbsLstPtr){
 
 */
 
-	}
 
 
    return result;

@@ -117,23 +117,21 @@ MpbOtpts_t otptsSttsUnpkg(uint32_t pkgOtpts);
  * @class DbncdMPBttn
  */
 class DbncdMPBttn{
-	static unsigned long int _updTimerPeriod;
 	static DbncdMPBttn** _mpbsInstncsLstPtr;
-/**
- **This is the callback function to be executed by the TimerOne managed timer INT.
+	static unsigned long int _updTimerPeriod;
+
+/*
+ * This is the callback function to be executed by the TimerOne managed timer INT.
  * 
- ** The callback function duties:
- ** - Verify for a valid **_mpbsInstncsLstPtr**, if it's nullptr something failed, correct it by disabling the timer
- ** - Save the **current time** for reference and traverse the list till the end (nullptr).
- ** - For each MPB in the list verify the _updTmrAttchd == true
- ** - If _updTmrAttchd == true -> verify the ("current time" - _lstPollTime) >= _pollPeriodMs. If the condition is true:
- ** 	- Execute the objects mpbPollCallback()
- ** 	- Set _lstPollTime = "current time" * 
+ * The callback function duties:
+ * - Verify for a valid **_mpbsInstncsLstPtr**, if it's nullptr something failed, correct it by disabling the timer
+ * - Save the **current time** for reference and traverse the list till the end (nullptr).
+ * - For each MPB in the list verify the _updTmrAttchd == true
+ * - If _updTmrAttchd == true -> verify the ("current time" - _lstPollTime) >= _pollPeriodMs. If the condition is true:
+ * 	- Execute the objects mpbPollCallback()
+ * 	- Set _lstPollTime = "current time" * 
  */
 	static void _ISRMpbsRfrshCallback();
-	unsigned long int _updTmrsMCDCalc(DbncdMPBttn** mpbsLstPtr);
-	/*static*/ void _popMpb(DbncdMPBttn** &DMpbTmrUpdLst, DbncdMPBttn* mpbToPop);
-	/*static*/ void _pushMpb(DbncdMPBttn** &DMpbTmrUpdLst, DbncdMPBttn* mpbToPush);
 
 protected:
 	enum fdaDmpbStts {
@@ -162,8 +160,9 @@ protected:
 	volatile bool _isPressed{false};
 	unsigned long int _lstPollTime{0};	//! Timer1 use related attribute
 	fdaDmpbStts _mpbFdaState {stOffNotVPP};
-	DbncdMPBttn* _mpbInstnc{nullptr};
+	DbncdMPBttn* _mpbInstnc{nullptr};	//! Timer1 use related attribute
 	volatile bool _outputsChange {false};
+	uint32_t _outputsChangeCnt{0};
 	unsigned long int _pollPeriodMs{0};	//! Timer1 use related attribute
 	bool _prssRlsCcl{false};
 	unsigned long int _strtDelay {0};
@@ -178,17 +177,21 @@ protected:
 	const bool getIsPressed() const;
 	virtual void mpbPollCallback();
 	virtual uint32_t _otptsSttsPkg(uint32_t prevVal = 0);
+	void _popMpb(DbncdMPBttn** &DMpbTmrUpdLst, DbncdMPBttn* mpbToPop);
+	void _pushMpb(DbncdMPBttn** &DMpbTmrUpdLst, DbncdMPBttn* mpbToPush);
 	void _setIsEnabled(const bool &newEnabledValue);
+	void _setLstPollTime(const unsigned long int &newLstPollTIme);	//! Implemented only to avoid direct manipulation of the _lstPollTime attribute
 	void setSttChng();
 	void _turnOff();
 	void _turnOn();
 	virtual void updFdaState();
 	bool updIsPressed();
+	unsigned long int _updTmrsMCDCalc(DbncdMPBttn** mpbsLstPtr);
 	virtual bool updValidPressesStatus();
 public:    
 	/**
 	 * @brief Default class constructor
-         *
+	 *
 	 */
 	DbncdMPBttn();
 	/**
@@ -319,13 +322,18 @@ public:
     * @retval false: the object is configured to be set to the **Off state** while it is in **Disabled state**.
     */
 	const bool getIsOnDisabled() const;
+	/**
+	 * @brief Returns the time stamp of the last state update for the object.
+	 * 
+	 * The use of a unique timer to keep updated the state of all MPB objects forces each object to keep track of the time passed since it's last update. This is due to the fact that each MPB can be configured to have it's status updated at it's own rate. Keeping a register of the last update gives each MPB the possibility to compute at each Timer interruption signaling if it's the time to get the state update done.
+	 * 
+	 * @return An unsigned long int representing the time stamp in milliseconds for the last time the state update was executed for the current object.
+	 */
 	const unsigned long int getLstPollTime();
    /**
-    * @brief Returns the relevant attribute flags values for the object state encoded as a 32 bits value, required to pass current state of the object to another thread/task managing the outputs
+    * @brief Returns the relevant attribute flags values for the object state encoded as a 32 bits value, useful to pass current state of the object to a function managing the outputs as a parameter.
     *
-    * The inter-tasks communication mechanisms implemented on the class includes a xTaskNotify() that works as a light-weigh mailbox, unblocking the receiving tasks and sending to it a 32_bit value notification. This function returns the relevant attribute flags values encoded in a 32 bit value, according the provided encoding documented.
-    *
-    * @return A 32-bit unsigned value representing the attribute flags current values.
+    * @return A 32-bit unsigned value representing the object's attribute flags current values.
     */
 	const uint32_t getOtptsSttsPkgd();
    /**
@@ -339,6 +347,15 @@ public:
     * @retval false: no object's behavior flags have changed value since last time **outputsChange** flag was reseted.
 	 */
 	const bool getOutputsChange() const;
+	/**
+	 * @brief Returns the poll period time setting attribute's value
+	 * 
+	 * The poll period time in milliseconds (pollPeriodMs) attribute sets the time period between state updates for the current object. The time period, in milliseconds, is set when the object begin(&pollParam) method is called, and will be conserved through the use of the pause() and resume() methods. The only way to change it is by calling the end() method and then restarting the timer polling with a new begin() with a different value as parameter.
+	 * 
+	 * @attention The value passed in the begin() method is very important for the object and the system behavior. Setting a very small value will be resources consuming, as the timer will be interrupting the normal execution to keep the object state updated, surely more frequently than really needed. Setting a very large value will result in a very slow updated object, making the execution less responsive than needed. See virtual bool begin(const unsigned long int) for more details. If not provided in the begin() method a standard value of 10 milliseconds is used.
+	 * 
+	 * @return The time setting for the poll period time in milliseconds.
+	 */
 	const unsigned long int getPollPeriodMs();
    /**
     * @brief Returns the current value of strtDelay attribute.
@@ -347,9 +364,18 @@ public:
     *
     * @return The current strtDelay time in milliseconds.
     *
-    * @attention The strtDelay attribute is forced to a 0 ms value at instantiation of DbncdMPBttn class objects, and no setter mechanism is provided in this class. The inherited DbncdDlydMPBttn class objects (and all it's subclasses) constructor includes a parameter to initialize the strtDelay value, and a method to set that attribute to a new value. This implementation is needed to keep backwards compatibility to olde versions of the library.
+    * @attention The strtDelay attribute is forced to a 0 ms value at instantiation of DbncdMPBttn class objects, and no setter mechanism is provided in this class. The inherited DbncdDlydMPBttn class objects (and all it's subclasses) constructor includes a parameter to initialize the strtDelay value, and a method to set that attribute to a new value. This implementation is needed to keep backwards compatibility to old versions of the library.
     */
-	unsigned long int getStrtDelay();	//! Is this right or is the Period?
+	unsigned long int getStrtDelay();
+	/**
+	 * @brief Returns the value of the Attached to the update timer attribute
+	 * 
+	 * Even when the instantiated object might be included in  the **"list of MPBs to keep updated"**, the final element that defines if an object is intended to have it's status updated is the attribute "Attached to the updating timer" **updTmrAttchd**. This flag is used to include or exclude the object from the updating process, without having to eliminate it or include it in the mentioned array list, specially useful for situations like the pause() and resume() methods.
+	 * 
+	 * @return The value of the updTmrAttchd attribute value
+	 * @retval true: The object is set up to be updated by the timer events
+	 * @retval false: The object is set up NOT to be updated by the timer events
+	 */
 	bool getUpdTmrAttchd();
 	/**
 	 * @brief Initializes an object instantiated by the default constructor
@@ -358,7 +384,7 @@ public:
 	 */
 	bool init(const uint8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0);
 	/**
-	 * @brief Pauses the software timer updating the computation of the object's internal flags value.
+	 * @brief Pauses the software timer updating the computation of the object's internal flags value (object's state).
 	 *
 	 * The immediate stop of the timer that keeps the object's state updated implies that the object's state will be kept, whatever that state is it. The same consideration as the end() method applies referring to options to modify the state in which the object will be while in the **Pause state**.
 	 *
@@ -428,7 +454,6 @@ public:
     * @warning If the method is invoked while the object is disabled, and the **isOnDisabled** attribute flag is changed, then the **isOn** attribute flag will have to change accordingly. Changing the **isOn** flag value implies that **all** the implemented mechanisms related to the change of the **isOn** attribute flag value will be invoked.
     */
 	void setIsOnDisabled(const bool &newIsOnDisabled);
-	void setLstPollTime(const unsigned long int &newLstPollTIme);
    /**
 	 * @brief Sets the value of the attribute flag indicating if a change took place in any of the output attribute flags (IsOn included).
 	 *
