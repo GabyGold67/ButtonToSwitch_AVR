@@ -14,7 +14,7 @@
   * @author	: Gabriel D. Goldman
   * @version v1.0.0
   * @date	: Created on: 10/09/2024
-  * 		: Last modification: 10/09/2024
+  * 		: Last modification: 30/09/2024
   * @copyright GPL-3.0 license
   *
   ******************************************************************************
@@ -36,12 +36,13 @@
 #include <Arduino.h>
 #include <stdint.h>
 
+//===========================>> BEGIN General use constant definitions
 #define _HwMinDbncTime 20   //Documented minimum wait time for a MPB signal to stabilize
 #define _StdPollDelay 10
 #define _MinSrvcTime 100
 #define _InvalidPinNum 0xFF	// Value to give as "yet to be defined", the "Valid pin number" range and characteristics are development platform and environment related
 
-/*---------------- DbncdMPBttn complete status related constants, argument structs, information packing and unpacking BEGIN -------*/
+/*---------- DbncdMPBttn complete status related constants, argument structs, information packing and unpacking BEGIN -------*/
 const uint8_t IsOnBitPos {0};
 const uint8_t IsEnabledBitPos{1};
 const uint8_t PilotOnBitPos{2};
@@ -49,6 +50,7 @@ const uint8_t WrnngOnBitPos{3};
 const uint8_t IsVoidedBitPos{4};
 const uint8_t IsOnScndryBitPos{5};
 const uint8_t OtptCurValBitPos{16};
+//===========================>> END General use constant definitions
 
 #ifndef MPBOTPTS_T
 	#define MPBOTPTS_T
@@ -76,6 +78,8 @@ typedef  fncPtrType (*ptrToTrnFnc)();
 
 //===========================>> BEGIN General use function prototypes
 MpbOtpts_t otptsSttsUnpkg(uint32_t pkgOtpts);
+int findMCD(int a, int b);
+
 //===========================>> END General use function prototypes
 
 /**
@@ -101,9 +105,7 @@ MpbOtpts_t otptsSttsUnpkg(uint32_t pkgOtpts);
  * - If _updTmrAttchd == true -> verify the ("current time" - _lstPollTime) >= _pollPeriodMs. If the condition is true:
  * 	- Execute the objects mpbPollCallback()
  * 	- Set _lstPollTime = "current time"
- * 
  */
-
 
 //==========================================================>> Classes declarations BEGIN
 
@@ -119,6 +121,9 @@ MpbOtpts_t otptsSttsUnpkg(uint32_t pkgOtpts);
 class DbncdMPBttn{
 	static DbncdMPBttn** _mpbsInstncsLstPtr;
 	static unsigned long int _updTimerPeriod;
+	//! BEGIN Test related variables 
+	static DbncdMPBttn* test_DmpbPtr;
+	//! END Test related variables 
 
 /*
  * This is the callback function to be executed by the TimerOne managed timer INT.
@@ -131,7 +136,7 @@ class DbncdMPBttn{
  * 	- Execute the objects mpbPollCallback()
  * 	- Set _lstPollTime = "current time" * 
  */
-	static void _ISRMpbsRfrshCallback();
+	static void _ISRMpbsRfrshCb();
 
 protected:
 	enum fdaDmpbStts {
@@ -188,6 +193,7 @@ protected:
 	bool updIsPressed();
 	unsigned long int _updTmrsMCDCalc(DbncdMPBttn** mpbsLstPtr);
 	virtual bool updValidPressesStatus();
+
 public:    
 	/**
 	 * @brief Default class constructor
