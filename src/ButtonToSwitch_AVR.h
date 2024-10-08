@@ -78,7 +78,7 @@ typedef  fncPtrType (*ptrToTrnFnc)();
 
 //===========================>> BEGIN General use function prototypes
 MpbOtpts_t otptsSttsUnpkg(uint32_t pkgOtpts);
-int findMCD(int a, int b);
+unsigned long int findMCD(unsigned long int a, unsigned long int b);
 
 //===========================>> END General use function prototypes
 
@@ -121,10 +121,6 @@ int findMCD(int a, int b);
 class DbncdMPBttn{
 	static DbncdMPBttn** _mpbsInstncsLstPtr;
 	static unsigned long int _updTimerPeriod;
-	//! BEGIN Test related variables 
-	static DbncdMPBttn* test_DmpbPtr;
-	//! END Test related variables 
-
 /*
  * This is the callback function to be executed by the TimerOne managed timer INT.
  * 
@@ -163,16 +159,16 @@ protected:
 	volatile bool _isOn{false};
 	bool _isOnDisabled{false};
 	volatile bool _isPressed{false};
-	unsigned long int _lstPollTime{0};	//! Timer1 use related attribute
+	unsigned long int _lstPollTime{0};
 	fdaDmpbStts _mpbFdaState {stOffNotVPP};
-	DbncdMPBttn* _mpbInstnc{nullptr};	//! Timer1 use related attribute
+	DbncdMPBttn* _mpbInstnc{nullptr};
 	volatile bool _outputsChange {false};
 	uint32_t _outputsChangeCnt{0};
-	unsigned long int _pollPeriodMs{0};	//! Timer1 use related attribute
+	unsigned long int _pollPeriodMs{0};
 	bool _prssRlsCcl{false};
 	unsigned long int _strtDelay {0};
 	bool _sttChng {true};
-	bool _updTmrAttchd{false};//! Timer1 use related attribute
+	bool _updTmrAttchd{false};
 	volatile bool _validDisablePend{false};
 	volatile bool _validEnablePend{false};
 	volatile bool _validPressPend{false};
@@ -185,13 +181,13 @@ protected:
 	void _popMpb(DbncdMPBttn** &DMpbTmrUpdLst, DbncdMPBttn* mpbToPop);
 	void _pushMpb(DbncdMPBttn** &DMpbTmrUpdLst, DbncdMPBttn* mpbToPush);
 	void _setIsEnabled(const bool &newEnabledValue);
-	void _setLstPollTime(const unsigned long int &newLstPollTIme);	//! Implemented only to avoid direct manipulation of the _lstPollTime attribute
+	void _setLstPollTime(const unsigned long int &newLstPollTIme);	//! Implemented to avoid direct manipulation of the _lstPollTime attribute
 	void setSttChng();
 	void _turnOff();
 	void _turnOn();
 	virtual void updFdaState();
 	bool updIsPressed();
-	unsigned long int _updTmrsMCDCalc(DbncdMPBttn** mpbsLstPtr);
+	unsigned long int _updTmrsMCDCalc();
 	virtual bool updValidPressesStatus();
 
 public:    
@@ -217,14 +213,20 @@ public:
 	virtual ~DbncdMPBttn();
 	/**
 	 * @brief Attaches the instantiated object to a timer that monitors the input pins and updates the object status.
-	 *
+	 * 
 	 * The frequency of the periodic monitoring is passed as a parameter in milliseconds, and is a value that must be small (frequent) enough to keep the object updated, but not so frequent that wastes resources from other tasks. A default value is provided based on empirical results obtained in various published tests.
+	 * 
+	 * @attention Due to the fact that the available resources limits the timers available to a single one, attaching the timer to keep different instantiated objects status updated involves several steps:
+	 * - The method adds the object to an array of MPBttns objects to keep updated (after checking the object was not already included in the array).
+	 * - As every object in the array has an independent time setting to be updated, a calculus must be made to set the timer to the best suited time to reduce the number of interrupts of the normal execution of the main code to check if any MPBttn object is set to be updated, while keeping those status updated in the intended time.
+	 * - If this is the first object to be added to the status update array (or all the objects in the array were in **Paused State**, so the timer interrupt was disabled), set the timer period and **start the timer**.
+	 * - If this is not the first active (not paused) object in the status update array **modify (if required) the timer set period** to the new calculated one
 	 *
 	 * @param pollDelayMs (Optional) unsigned long integer (ulong), the time between polls in milliseconds.
 	 *
 	 * @return Boolean indicating if the object could be attached to a timer.
-	 * @retval true: the object could be attached to a timer -or it was already attached to a timer when the method was invoked-.
-	 * @retval false: the object could not create the needed timer, or the object could not be attached to it.
+	 * @retval true: the object could be attached to the timer -or it was already attached to a timer when the method was invoked-.
+	 * @retval false: the object could not be attached to the timer, because the parameter passed for the timer was 0 (zero).
 	 */
 	virtual bool begin(const unsigned long int &pollDelayMs = _StdPollDelay);
 	/**
@@ -259,9 +261,13 @@ public:
     */
 	void enable();
 	/**
-	 * @brief Detaches the object from the timer that monitors the input pins, compute and updates the object's status. The timer daemon entry is deleted for the object.
+	 * @brief Detaches the object from the timer that monitors the input pins, compute and updates the object's status.
 	 *
-	 * The immediate detachment of the object from the timer that keeps it's state updated implies that the object's state will be kept, whatever that state is it. If a certain status is preferred some of the provided methods should be used for that including clrStatus(), resetFda(), disable(), setIsOnDisabled(), etc. Also consider that if a task is set to be executed while the object is in **On state**, the **end()** invocation wouldn't affect that task execution state.
+	 * @attention Due to the fact that the available resources limits the timers available to a single one (see bool begin(const unsigned long int) for details ), dettaching the object from the timer involves several steps:
+	 * - Pausing the object: that will take care of the recalculation of the the update time period, setting it and stop the timer if no active objects are left in the list.
+	 * - Removing the object from the list of objects to keep updated.
+	 * 
+	 * @note The immediate detachment of the object from the timer that keeps it's state updated implies that the object's state will be kept, whatever that state is it. If a certain status is preferred some of the provided methods should be used for that including clrStatus(), resetFda(), disable(), setIsOnDisabled(), etc.
 	 *
 	 * @return Boolean indicating the success of the operation
 	 * @retval true: the object detachment procedure and timer entry removal was successful.
@@ -471,5 +477,218 @@ public:
 };
 
 //==========================================================>>
+
+/**
+ * @brief Models a Debounced Delayed MPB (**DD-MPB**).
+ *
+ * The **Debounced Delayed Momentary Button**, keeps the ON state since the moment the signal is stable (debouncing process), plus a delay added, and until the moment the push button is released. The reasons to add the delay are design related and are usually used to avoid registering unintentional presses, or to give some equipment (load) that needs time between repeated activations the benefit of the pause. If the push button is released before the debounce and delay times configured are reached, no press is registered at all. The delay time in this class as in the other that implement it, might be zero (0), defined by the developer and/or modified in runtime.
+ *
+ * @note If the **delay** attribute is set to 0, the resulting object of this class is equivalent in functionality to a **DbncdMPBttn** class object. The main difference is that the "Start Delay" attribute (strtDelay) will be available for changing at runtime.
+ *
+ * @class DbncdDlydMPBttn
+ */
+class DbncdDlydMPBttn: public DbncdMPBttn{
+public:
+    /**
+     * @brief Default constructor
+     *
+     */
+	DbncdDlydMPBttn();
+    /**
+     * @brief Class constructor
+     *
+     * @param strtDelay Sets the initial value for the **strtDelay** attribute.
+     *
+     * @note For the rest of the parameters see DbncdMPBttn(const uint8_t, const bool, const bool, const unsigned long int)
+     *
+     * @note If the **delay** attribute is set to 0, the resulting object is equivalent in functionality to a **DbncdMPBttn** class object.
+     */
+	DbncdDlydMPBttn(const uint8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
+    /**
+     *
+     * @brief see DbncdMPBttn::init(const uint8_t, const bool, const bool, const unsigned long int)
+     * 
+     * @param strtDelay Sets the initial value for the **strtDelay** attribute.
+     *
+     * @note For the rest of the parameters see DbncdMPBttn::init(const uint8_t, const bool, const bool, const unsigned long int)
+     */
+	bool init(const uint8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
+    /**
+     * @brief Sets a new value to the "Start Delay" **strtDelay** attribute
+     *
+     * @param newStrtDelay New value for the "Start Delay" attribute in milliseconds.
+     *
+     * @note Setting the delay attribute to 0 makes the instantiated object act exactly as a Debounced MPB (D-MPB)
+     * 
+     * @warning: Using very high **strtDelay** values is valid but might make the system seem less responsive, be aware of how it will affect the user experience.
+     */
+	void setStrtDelay(const unsigned long int &newStrtDelay);
+};
+
+//==========================================================>>
+
+/**
+ * @brief Abstract class, base to model Latched Debounced Delayed MPBs (**LDD-MPB**).
+ *
+ * **Latched DD-MPBs** are MPBs whose distinctive characteristic is that implement switches that keep the ON state since the moment the input signal is stable (debouncing + Delay process), and keeps the ON state after the MPB is released and until an event un-latches them, setting them free to move to the **Off State**.
+ * The un-latching mechanisms include but are not limited to: same MPB presses, timers, other MPB presses, other GPIO external un-latch signals or the use of the public method unlatch().
+ * The different un-latching events defines the sub-classes of the LDD-MPB class.
+ *
+ * @attention The range of signals accepted by the instantiated objects to execute the unlatch process is diverse, and their nature and characteristics might affect the expected switch behavior. While some of the signals might be instantaneous, meaning that the **start of the unlatch signal** is coincidental with the **end of the unlatch signal**, some others might extend the time between both ends. To accommodate the logic required by each subclass, and the requirements of each design, the **_unlatch_** process is then split into two stages:
+ * 1. Validated Unlatch signal (or Validated Unlatch signal start).
+ * 2. Validated Unlatch Release signal (or Validated Unlatch signal end).
+ * The class provides methods to generate those validated signals independently of the designated signal source to modify the instantiated object behavior if needed by the design requirements, Validated Unlatch signal (see LtchMPBttn::setUnlatchPend(const bool), Validated Unlatch Release signal (see LtchMPBttn::setUnlatchRlsPend(const bool), or to **set** both flags to generate an unlatch (see LtchMPBttn::unlatch().
+ *
+ * @warning Generating the unlatch related flags independently of the unlatch signals provided by the LDD-MPB subclasses might result in unexpected behavior, which might generate the locking of the object with it's unexpected consequences.
+ *
+ * @class LtchMPBttn
+ */
+class LtchMPBttn: public DbncdDlydMPBttn{
+protected:
+    enum fdaLmpbStts {
+        stOffNotVPP,
+        stOffVPP,
+        stOnNVRP,
+        stOnVRP,
+        stLtchNVUP,
+        stLtchdVUP,
+        stOffVUP,
+        stOffNVURP,
+        stOffVURP,
+        stDisabled
+	};
+	bool _isLatched{false};
+	fdaLmpbStts _mpbFdaState {stOffNotVPP};
+	bool _trnOffASAP{true};
+	volatile bool _validUnlatchPend{false};
+	volatile bool _validUnlatchRlsPend{false};
+
+	virtual void mpbPollCallback();
+	virtual void stDisabled_In(){};
+	virtual void stDisabled_Out(){};
+	virtual void stLtchNVUP_Do(){};
+	virtual void stOffNotVPP_In(){};
+	virtual void stOffNotVPP_Out(){};
+	virtual void stOffNVURP_Do(){};
+	virtual void stOffVPP_Out(){};
+	virtual void stOffVURP_Out(){};
+	virtual void stOnNVRP_Do(){};
+	virtual void updFdaState();
+	virtual void updValidUnlatchStatus() = 0;
+public:
+    /**
+    * @brief Class constructor
+    *
+    * @note For the parameters see DbncdDlydMPBttn(const uint8_t, const bool, const bool, const unsigned long int, const unsigned long int)
+    */
+	LtchMPBttn(const uint8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
+   /**
+	 * @brief See DbncdMPBttn::begin(const unsigned long int)
+    */
+	virtual bool begin(const unsigned long int &pollDelayMs = _StdPollDelay);
+	/**
+	 * @brief See DbncdMPBttn::clrStatus(bool)
+	 */
+	void clrStatus(bool clrIsOn = true);
+   /**
+    * @brief Returns the value of the isLatched attribute flag, indicating the **Latched** or **Unlatched** condition of the object.
+    *
+    * The isLatched flag is automatically updated periodically by the timer that calculates the object state.
+	*
+    * @retval true: the object is in **Latched condition**.
+    * @retval false: The object is in **Unlatched condition**.
+    */
+	const bool getIsLatched() const;
+	/**
+	 * @brief Returns the value of the trnOffASAP attribute flag.
+	 *
+	 * As described in the class characteristics the unlatching process comprises two stages, Validated Unlatch Signal and Validates unlatch Release Signal, that might be generated simultaneously or separated in time. The **trnOffASAP** attribute flag sets the behavior of the MPB in the second case.
+	 * - If the **trnOffASAP** attribute flag is set (true) the **isOn** flag will be reset as soon as the **Validated Unlatch Signal** is detected
+	 * - If the **trnOffASAP** flag is reset (false) the **isOn** flag will be reset only when the **Validated Unlatch Release signal** is detected.
+	 *
+	 * @return The current value of the trnOffASAP attribute flag.
+	 */
+	bool getTrnOffASAP();
+	/**
+	 * @brief Returns the value of the "Valid Unlatch Pending" attribute
+	 *
+	 * The "Valid Unlatch Pending" holds the existence of a still to be processed confirmed unlatch signal. Getting it's current value makes possible taking actions before the unlatch process is started or even discard it completely by using the setUnlatchPend(const bool) method.
+	 *
+	 * @return The current value of the "Valid Unlatch Pending" attribute.
+	 */
+	const bool getUnlatchPend() const;
+	/**
+	 * @brief Returns the value of the "Valid Unlatch Release Pending" attribute
+	 *
+	 * The "Valid Unlatch Release Pending" holds the existence of a still to be processed confirmed unlatch released signal. Getting it's current value makes possible taking actions before the unlatch process ends or even discard it completely by using the setUnlatchRlsPend(const bool) method.
+	 *
+	 * @return The current value of the "Valid Unlatch Release Pending" attribute.
+	 */
+	const bool getUnlatchRlsPend() const;
+	/**
+	 * @brief Sets the value of the trnOffASAP attribute.
+	 *
+     * As explained in the class description, to accommodate to different sources of the unlatch signal, the unlatching process has been splitted in two steps:
+     * 1. Validated Unlatch signal (or Validated Unlatch signal start).
+     * 2. Validated Unlatch Release signal (or Validated Unlatch signal end).
+     * If trnOffASAP=true, the isOn attribute flag will be reset at the "Validated Unlatch Signal Start" stage.
+     * If trnOffASAP=false, the isOn attribute flag will be reset at the "Validated Unlatch Signal End" stage.
+     * 
+	 * @param newVal New value for the trnOffASAP attribute
+	 */
+	void setTrnOffASAP(const bool &newVal);
+	/**
+	 * @brief Sets the value of the "Valid Unlatch Pending" attribute
+	 *
+	 * By setting the value of the "Valid Unlatch Pending" it's possible to modify the current MPB status by generating an unlatch signal or by canceling an existent unlatch signal.
+	 *
+	 * @param newVal New value for the "Valid Unlatch Pending" attribute
+	 */
+	void setUnlatchPend(const bool &newVal);
+	/**
+	 * @brief Sets the value of the "Valid Unlatch Release Pending" attribute
+	 *
+	 * By setting the value of the "Valid Unlatch Pending" and "Valid Unlatch Release Pending" flags it's possible to modify the current MPB status by generating an unlatch signal or by canceling an existent unlatch signal.
+	 *
+	 * @param newVal New value for the "Valid Unlatch Release Pending" attribute
+	 */
+	void setUnlatchRlsPend(const bool &newVal);
+	/**
+	 * @brief Sets the values of the flags needed to unlatch a latched MPB
+	 *
+	 * By setting the values of the validUnlatchPending **and** validUnlatchReleasePending flags it's possible to modify the current MPB status by generating an unlatch signal.
+	 *
+	 * @retval true the object was latched and the unlatch flags were set.
+	 * @retval false the object was not latched, no unlatch flags were set.
+	 *
+	 * @note Setting the values of the validUnlatchPending and validUnlatchReleasePending flags does not implicate immediate unlatching the MPB but providing the unlatching signals. The unlatching signals will be processed by the MPB according to it's embedded behavioral pattern. For example, the signals will be processed if the MPB is in Enabled state and latched, but will be ignored if the MPB is disabled.
+	 */
+	bool unlatch();
+};
+
+//==========================================================>>
+
+/**
+ * @brief Models a Toggle Latch DD-MPB, a.k.a. a Toggle Switch (**ToLDD-MPB**).
+ *
+ * The **Toggle switch** keeps the ON state since the moment the signal is stable (debouncing + delay process), and keeps the ON state after the push button is released and until it is pressed once again. So this simulates a simple On-Off switch like the one used to turn on/off a room light or any electric appliance. The included methods lets the designer define the unlatch event as the instant the MPB is started to be pressed for the second time or when the MPB is released from that second press.
+ *
+ * @class TgglLtchMPBttn
+ */
+class TgglLtchMPBttn: public LtchMPBttn{
+protected:
+	virtual void stOffNVURP_Do();
+	virtual void updValidUnlatchStatus();
+public:
+/**
+ * @brief Class constructor
+ *
+ * For the parameters see DbncdMPBttn(const uint8_t, const bool, const bool, const unsigned long int)
+ */
+	TgglLtchMPBttn(const uint8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
+};
+
+//==========================================================>>
+
 
 #endif   /*_BUTTONTOSWITCH_AVR_H_*/

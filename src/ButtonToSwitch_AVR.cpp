@@ -38,14 +38,10 @@
 
 //===========================>> BEGIN Base Class Static variables initialization
 DbncdMPBttn** DbncdMPBttn::_mpbsInstncsLstPtr = nullptr;	// Pointer to the array of pointers of DbncdMPBttn objects whose state must be kept updated by the Timer
-unsigned long int DbncdMPBttn::_updTimerPeriod = 0;	// Time period for the update Timer to be executed. As is only ONE timer for all the DbncdMPBttn objects, the time period must be shared, so a MCD calculation will determine the value to be used for resources use optimization.
-	//! BEGIN Test related variables 
-	DbncdMPBttn* DbncdMPBttn::test_DmpbPtr = nullptr;
-	//! END Test related variables 
+unsigned long int DbncdMPBttn::_updTimerPeriod = 0;	// Time period for the update Timer to be executed. As is only ONE timer for all the DbncdMPBttn objects, the time period must be shared, so a MCD calculation will determine the value to be used for resources use optimization. The non-valid 0 value will be used as a flag to signal the service is not active, activation must be done after setting the new operations value.
 //===========================>> END Base Class Static variables initialization
 
 //===========================>> BEGIN Base Class Static methods implementation
-
 void DbncdMPBttn::_ISRMpbsRfrshCb(){
 /* The callback function duties:
  * - Verify for a valid **_mpbsInstncsLstPtr**, if it's nullptr something failed, correct it by disabling the timer
@@ -83,7 +79,6 @@ void DbncdMPBttn::_ISRMpbsRfrshCb(){
 
 	return;	
 }
-
 //===========================>> END Base Class Static methods implementation
 
 DbncdMPBttn::DbncdMPBttn()
@@ -116,44 +111,30 @@ DbncdMPBttn::~DbncdMPBttn(){
 	end();  // Stops the software timer associated to the object, deletes it's entry and nullyfies the handle to it before destructing the object
 }
 
-bool DbncdMPBttn::begin(const unsigned long int &pollDelayMs) {	//! Final coding pending!!!
+bool DbncdMPBttn::begin(const unsigned long int &pollDelayMs) {
 	bool result {false};
-	bool listWasEmpty{false};
 
 	if (pollDelayMs > 0){
-		if(_mpbsInstncsLstPtr == nullptr){	// There is no "MPBs to be updated list", so create it			
-			_mpbsInstncsLstPtr = new DbncdMPBttn* [1];
-			*_mpbsInstncsLstPtr = nullptr;
-			listWasEmpty = true;
-		}
+		_pollPeriodMs = pollDelayMs;	// Set this MPB's PollPeriodMs to the provided argument
+		_updTmrAttchd = true;	//Set the MPB object to be updated by the Timer. By manipulating the attribute (instead of ) the global _updTimerPeriod is not recalculated
 		_pushMpb(_mpbsInstncsLstPtr, _mpbInstnc);	// Add the MPB to the "MPBs to be updated list"
-		_pollPeriodMs = pollDelayMs;	// Set this MPB's PollPeriodMs to the begin() passed argument
-		_updTmrAttchd = true;	//Set the MPB object to be updated by the Timer
 
-		// If the Timer is not running, start it!!
-		if (listWasEmpty){   // This is the first MPBttn of the list, start timer
-			//Initialize the Interrupt timer
+		if (_updTimerPeriod == 0){   // The timer was not running (empty list or all listed objects not attached to the refresh)
+			_updTimerPeriod = _updTmrsMCDCalc();
 			Timer1.attachInterrupt(_ISRMpbsRfrshCb);
-			Timer1.initialize(_pollPeriodMs*1000);	// The MPBs manages times in milliseconds, the timer in microseconds
+			Timer1.initialize(_updTimerPeriod*1000);	// The MPBs manages times in milliseconds, the timer in microseconds
 			Timer1.start();			
 		}
 		else{	// The "MPBs to be updated was not empty, pollTime must be recalculated and if changes set Timer1.setPeriod() invoked
 			if(_pollPeriodMs != _updTimerPeriod){
-			/*
-				//! recalculate _updTimerPeriod
-				_updTimerPeriod = _pollPeriodMs; 	//! _updTimerPeriod = calculus of MCD
+				_updTimerPeriod = _updTmrsMCDCalc();
 				Timer1.setPeriod(_updTimerPeriod*1000);
-			*/
 			}
 		}
 		result = true;
 	}
+
    return result;
-}
-
-bool DbncdMPBttn::getUpdTmrAttchd(){
-
-	return _updTmrAttchd;
 }
 
 void DbncdMPBttn::clrStatus(bool clrIsOn){
@@ -190,15 +171,21 @@ void DbncdMPBttn::enable(){
 	return _setIsEnabled(true);
 }
 
-bool DbncdMPBttn::end(){
+bool DbncdMPBttn::end(){	//! Final coding pending!!!
    bool result {false};
 
-	result = pause();
+	result = pause();	//Will mark the object as non updatable, recalculate the update time and sets the timer period, or stops it if no updatable objects are left in the list.
 	if (result){
-		//! proceed destroying the list space and setting the _mpbsInstncsLstPtr = nullptr
-	}
-	else{
-		result = false;
+		/* 
+		Pop this MPB from the list to keep updated
+			if it wasn't there the pop wouldn't fail
+			If it was the last element of the list it will delete the list
+		If the list pointer _mpbsInstncsLstPtr = nullptr
+			Ensure the _updTimerPeriod = 0
+			Stop Timer1
+
+		*/
+		_popMpb(_mpbsInstncsLstPtr, _mpbInstnc);	// Removes the MPB from the "MPBs to be updated list". If the list is empty after the removal this method deletes the list.
 	}
 
    return result;
@@ -264,6 +251,11 @@ unsigned long int DbncdMPBttn::getStrtDelay(){
 	return _strtDelay;
 }
 
+bool DbncdMPBttn::getUpdTmrAttchd(){
+
+	return _updTmrAttchd;
+}
+
 bool DbncdMPBttn::init(const uint8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett){
     bool result {false};
 
@@ -301,6 +293,29 @@ void DbncdMPBttn::mpbPollCallback(){
 	return;
 }
 
+bool DbncdMPBttn::pause(){	//! Final coding pending!!!
+   bool result {false};
+
+	/* This is only to pause the checking timer for THIS MPB, that means 
+   Check if the MPB is in the _mpbsInstncsLstPtr
+		if it's in the list: check for the _updTmrAttchd attribute
+			If _updTmrAttchd == true
+				set to false
+				recalculate _updTimerPeriod
+				if _updTimerPeriod == 0
+					Means no active MPBs, stop the Timer1
+				else
+					if the new _updTimerPeriod differs from the old one
+						Set the new _updTimerPeriod
+						Timer1.setPeriod(_updTimerPeriod)
+		Else (was not in the list)
+			Return false
+
+	*/
+
+   return result;
+}
+
 void DbncdMPBttn::_popMpb(DbncdMPBttn** &DMpbTmrUpdLst, DbncdMPBttn* mpbToPop){
 	int arrSize{0};
 	int auxPtr{0};
@@ -332,7 +347,6 @@ void DbncdMPBttn::_popMpb(DbncdMPBttn** &DMpbTmrUpdLst, DbncdMPBttn* mpbToPop){
 			DMpbTmrUpdLst = tmpArrPtr;
 		}
 		else{
-			Timer1.stop();
 			delete [] DMpbTmrUpdLst;
 			DMpbTmrUpdLst = nullptr;
 		}
@@ -345,6 +359,11 @@ void DbncdMPBttn::_pushMpb(DbncdMPBttn** &DMpbTmrUpdLst, DbncdMPBttn* mpbToPush)
 	int arrSize{0};
 	bool mpbFnd{false};
 	DbncdMPBttn** tmpArrPtr{nullptr};
+
+	if(DMpbTmrUpdLst == nullptr){	// There is no "MPBs to be updated list", so create it			
+		DMpbTmrUpdLst = new DbncdMPBttn* [1];
+		*DMpbTmrUpdLst = nullptr;
+	}
 
 	while(*(DMpbTmrUpdLst + arrSize) != nullptr){
 		if(*(DMpbTmrUpdLst + arrSize) == mpbToPush){
@@ -386,24 +405,6 @@ uint32_t DbncdMPBttn::_otptsSttsPkg(uint32_t prevVal){
 	return prevVal;
 }
 
-bool DbncdMPBttn::pause(){
-   bool result {false};
-
-   // Check if the MPB is in the  _mpbsInstncsLstPtr
-	//If it's in the list verify the Timer1 status 
-		// If it's not paused, Pause it
-		// POP the MPB from the _mpbsInstncsLstPtr list
-		// Verify there are MPBs remaining in the list
-			// If there are MPBs 
-				//Recalculate the _updTimerPeriod
-				//set the new _updTimerPeriod to Timer1
-				// Resume Timer1
-			// If there are not MPBs END the Timer1
-	
-
-   return result;
-}
-
 void DbncdMPBttn::resetDbncTime(){
    setDbncTime(_dbncTimeOrigSett);
 
@@ -418,8 +419,23 @@ void DbncdMPBttn::resetFda(){
 	return;
 }
 
-bool DbncdMPBttn::resume(){
+bool DbncdMPBttn::resume(){		//! Final coding pending!!!
    bool result {false};
+
+	/* This is only to resume the checking timer for THIS MPB, that means 
+   Check if the MPB is in the _mpbsInstncsLstPtr
+		if it's in the list: check for the _updTmrAttchd attribute
+			If _updTmrAttchd == false
+				if current _updTimerPeriod == 0
+					TimerWasStopped
+				recalculate _updTimerPeriod
+				if the new _updTimerPeriod differs from the old one
+					Set the new _updTimerPeriod (Timer1.setPeriod(_updTimerPeriod))
+				If TimerWasStopped
+					Timer1.Start()
+				set _updTmrAttchd to true
+
+	*/
 
 
 	return result;
@@ -688,28 +704,26 @@ bool DbncdMPBttn::updIsPressed(){
 	return _isPressed;
 }
 
-unsigned long int DbncdMPBttn::_updTmrsMCDCalc(DbncdMPBttn** mpbsLstPtr){
+unsigned long int DbncdMPBttn::_updTmrsMCDCalc(){
    /*returning values:
       0: One of the input values was 0, or the MPBs list is empty: invalid result
       Other: This value would make the MPBs update timer save resources */
    unsigned long int MCD{0};
-	int MPBttnsQty {0};
-	int MPBttnsActv{0};
 	int auxPtr{0};
-
-	if(mpbsLstPtr != nullptr){
+	if(_mpbsInstncsLstPtr != nullptr){
 		// The list of MPBs to be updated is not empty, there's at least one MPB
 		while (*(_mpbsInstncsLstPtr + auxPtr) != nullptr){
-			if ((*_mpbsInstncsLstPtr + auxPtr)->getUpdTmrAttchd()){
+
+			if ((*(_mpbsInstncsLstPtr + auxPtr))->getUpdTmrAttchd() == true){
 				if(MCD == 0){
-					MCD = (*_mpbsInstncsLstPtr + auxPtr)->getPollPeriodMs();
+					MCD = (*(_mpbsInstncsLstPtr + auxPtr))->getPollPeriodMs();
 				}
 				else{
-					MCD = findMCD(MCD, (*_mpbsInstncsLstPtr + auxPtr)->getPollPeriodMs());
+					MCD = findMCD(MCD, (*(_mpbsInstncsLstPtr + auxPtr))->getPollPeriodMs());
 				}
 			}
-		}
 		++auxPtr;
+		}
 	}
 
    return MCD;
@@ -753,22 +767,364 @@ bool DbncdMPBttn::updValidPressesStatus(){
 
 //=========================================================================> Class methods delimiter
 
+DbncdDlydMPBttn::DbncdDlydMPBttn()
+:DbncdMPBttn()
+{
+}
+
+DbncdDlydMPBttn::DbncdDlydMPBttn(const uint8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
+:DbncdMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett)
+{
+	_strtDelay = strtDelay;
+}
+
+bool DbncdDlydMPBttn::init(const uint8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay){
+	bool result {false};
+
+	result = DbncdMPBttn::init(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett);
+	if (result)
+		setStrtDelay(strtDelay);
+
+	return result;
+}
+
+void DbncdDlydMPBttn::setStrtDelay(const unsigned long int &newStrtDelay){
+   if(_strtDelay != newStrtDelay)
+      _strtDelay = newStrtDelay;
+
+   return;
+}
+
+//=========================================================================> Class methods delimiter
+
+LtchMPBttn::LtchMPBttn(const uint8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
+:DbncdDlydMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay)
+{
+}
+
+bool LtchMPBttn::begin(const unsigned long int &pollDelayMs){	//! Refactoring pending
+   bool result {false};
+
+   if (pollDelayMs > 0){
+   }
+
+	return result;
+}
+
+void LtchMPBttn::clrStatus(bool clrIsOn){
+	_isLatched = false;
+	_validUnlatchPend = false;
+	_validUnlatchRlsPend = false;
+	DbncdMPBttn::clrStatus(clrIsOn);
+
+	return;
+}
+
+const bool LtchMPBttn::getIsLatched() const{
+
+	return _isLatched;
+}
+
+bool LtchMPBttn::getTrnOffASAP(){
+
+	return _trnOffASAP;
+}
+
+const bool LtchMPBttn::getUnlatchPend() const{
+
+	return _validUnlatchPend;
+}
+
+const bool LtchMPBttn::getUnlatchRlsPend() const{
+
+	return _validUnlatchRlsPend;
+}
+
+void LtchMPBttn::mpbPollCallback(){	//! Refactoring pending
+
+	if(getIsEnabled()){
+		// Input/Output signals update
+		updIsPressed();
+		// Flags/Triggers calculation & update
+		updValidPressesStatus();
+		updValidUnlatchStatus();
+ 	}
+	// State machine state update
+	updFdaState();
+
+	return;
+}
+
+void LtchMPBttn::setTrnOffASAP(const bool &newVal){
+	if(_trnOffASAP != newVal)
+		_trnOffASAP = newVal;
+
+	return;
+}
+
+void LtchMPBttn::setUnlatchPend(const bool &newVal){
+	if(_validUnlatchPend != newVal)
+		_validUnlatchPend = newVal;
+
+	return;
+}
+
+void LtchMPBttn::setUnlatchRlsPend(const bool &newVal){
+	if(_validUnlatchRlsPend != newVal)
+		_validUnlatchRlsPend = newVal;
+
+	return;
+}
+
+bool LtchMPBttn::unlatch(){
+	bool result{false};
+
+	if(_isLatched){
+		setUnlatchPend(true);
+		setUnlatchRlsPend(true);
+		result = true;
+	}
+
+	return result;
+}
+
+void LtchMPBttn::updFdaState(){
+	switch(_mpbFdaState){
+		case stOffNotVPP:
+			//In: >>---------------------------------->>
+			if(_sttChng){
+				clrStatus(true);
+				stOffNotVPP_In();
+				clrSttChng();
+			}	// Execute this code only ONCE, when entering this state
+			//Do: >>---------------------------------->>
+			if(_validPressPend){
+				_mpbFdaState = stOffVPP;
+				setSttChng();
+			}
+			if(_validDisablePend){
+				_mpbFdaState = stDisabled;	// For this stDisabled entry, the only flags that might be affected are _ validPressPend and (unlikely) _validReleasePend
+				setSttChng();	//Set flag to execute exiting OUT code
+			}
+			//Out: >>---------------------------------->>
+			if(_sttChng){
+				stOffNotVPP_Out();
+			}	// Execute this code only ONCE, when exiting this state
+			break;
+
+		case stOffVPP:
+			//In: >>---------------------------------->>
+			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+			//Do: >>---------------------------------->>
+			if(!_isOn)
+				_turnOn();
+			_validPressPend = false;
+			_mpbFdaState = stOnNVRP;
+			setSttChng();
+			//Out: >>---------------------------------->>
+			if(_sttChng){
+				stOffVPP_Out();	//This function starts the latch timer here... to be considered if the MPB release must be the starting point Gaby
+			}	// Execute this code only ONCE, when exiting this state
+//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
+
+		case stOnNVRP:
+			//In: >>---------------------------------->>
+			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+			//Do: >>---------------------------------->>
+			stOnNVRP_Do();
+			if(_validReleasePend){
+				_mpbFdaState = stOnVRP;
+				setSttChng();
+			}
+			if(_validDisablePend){
+				_mpbFdaState = stDisabled;
+				setSttChng();	//Set flag to execute exiting OUT code
+			}
+			//Out: >>---------------------------------->>
+			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+			break;
+
+		case stOnVRP:
+			//In: >>---------------------------------->>
+			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+			//Do: >>---------------------------------->>
+			_validReleasePend = false;
+			if(!_isLatched)
+				_isLatched = true;
+			_mpbFdaState = stLtchNVUP;
+			setSttChng();
+			//Out: >>---------------------------------->>
+			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
+
+		case stLtchNVUP:	//From this state on different unlatch sources might make sense
+			//In: >>---------------------------------->>
+			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+			//Do: >>---------------------------------->>
+			stLtchNVUP_Do();
+			if(_validUnlatchPend){
+				_mpbFdaState = stLtchdVUP;
+				setSttChng();
+			}
+			if(_validDisablePend){
+				_mpbFdaState = stDisabled;
+				setSttChng();	//Set flag to execute exiting OUT code
+			}
+			//Out: >>---------------------------------->>
+			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+			break;
+
+		case stLtchdVUP:
+			//In: >>---------------------------------->>
+			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+			//Do: >>---------------------------------->>
+			if(_trnOffASAP){
+				if(_isOn)
+					_turnOff();
+			}
+			_mpbFdaState = stOffVUP;
+			setSttChng();
+			//Out: >>---------------------------------->>
+			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
+
+		case stOffVUP:
+			//In: >>---------------------------------->>
+			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+			//Do: >>---------------------------------->>
+			_validUnlatchPend = false;	// This is a placeholder for updValidUnlatchStatus() implemented in each subclass
+			_mpbFdaState = stOffNVURP;
+			setSttChng();
+			//Out: >>---------------------------------->>
+			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
+
+		case stOffNVURP:
+			//In: >>---------------------------------->>
+			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+			//Do: >>---------------------------------->>
+			if(_validUnlatchRlsPend){
+				_mpbFdaState = stOffVURP;
+				setSttChng();
+			}
+			stOffNVURP_Do();
+			//Out: >>---------------------------------->>
+			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+			break;
+
+		case stOffVURP:
+			//In: >>---------------------------------->>
+			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+			//Do: >>---------------------------------->>
+			_validUnlatchRlsPend = false;
+			if(_isOn)
+				_turnOff();
+			if(_isLatched)
+				_isLatched = false;
+			if(_validPressPend)
+				_validPressPend = false;
+			if(_validReleasePend)
+				_validReleasePend = false;
+			_mpbFdaState = stOffNotVPP;
+			setSttChng();
+			//Out: >>---------------------------------->>
+			if(_sttChng){
+				stOffVURP_Out();
+			}	// Execute this code only ONCE, when exiting this state
+			break;
+
+		case stDisabled:
+			//In: >>---------------------------------->>
+			if(_sttChng){
+				if(_isOn != _isOnDisabled){
+					if(_isOn)
+						_turnOff();
+					else
+						_turnOn();
+				}
+				clrStatus(false);	//Clears all flags and timers, _isOn value will not be affected
+				stDisabled_In();
+				_validDisablePend = false;
+				_isEnabled = false;
+				setOutputsChange(true);
+				clrSttChng();
+			}	// Execute this code only ONCE, when entering this state
+			//Do: >>---------------------------------->>
+			if(_validEnablePend){
+				if(_isOn){
+					_turnOff();
+				}
+				_isEnabled = true;
+				_validEnablePend = false;
+				setOutputsChange(true);
+			}
+			if(_isEnabled && !updIsPressed()){	//The stDisabled status will be kept until the MPB is released for security reasons
+				_mpbFdaState = stOffNotVPP;
+				setSttChng();
+			}
+			//Out: >>---------------------------------->>
+			if(_sttChng){
+				clrStatus(true);
+				stDisabled_Out();
+			}	// Execute this code only ONCE, when exiting this state
+			break;
+
+	default:
+		break;
+	}
+
+	return;
+}
+
+//=========================================================================> Class methods delimiter
+
+TgglLtchMPBttn::TgglLtchMPBttn(const uint8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
+:LtchMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay)
+{
+}
+
+void TgglLtchMPBttn::stOffNVURP_Do(){
+	//This method is invoked exclusively from the updFdaState, no need to declare it critical section
+	if(_validDisablePend){
+		if(_validUnlatchRlsPend)
+			_validUnlatchRlsPend = false;
+		_mpbFdaState = stDisabled;
+		setSttChng();	//Set flag to execute exiting OUT code
+	}
+
+	return;
+}
+
+void TgglLtchMPBttn::updValidUnlatchStatus(){
+	if(_isLatched){
+		if(_validPressPend){
+			_validUnlatchPend = true;
+			_validPressPend = false;
+		}
+		if(_validReleasePend){
+			_validUnlatchRlsPend = true;
+			_validReleasePend = false;
+		}
+	}
+
+	return;
+}
+
+//=========================================================================> Class methods delimiter
+
 unsigned long int findMCD(unsigned long int a, unsigned long int b) {
-    unsigned long int result{ 0 };
+   unsigned long int result{ 0 };
 
-    // Handle edge cases
-    if (a != 0 && b != 0) {
-        // Use Euclidean algorithm for efficiency
-        while (a != b) {
-            if (a > b) {
-                a -= b;
-            }
-            else {
-                b -= a;
-            }
-        }
-        result = a;
-    }
+   if (a != 0 && b != 0) {
+		// Use Euclidean algorithm for efficiency
+		while (a != b) {
+			if (a > b)
+				a -= b;
+			else 
+				b -= a;
+		}
+		result = a;
+	}
 
-    return result; // At this point, a and b are equal and represent the MCD
+	return result; // At this point, a and b are equal and represent the MCD
 }
