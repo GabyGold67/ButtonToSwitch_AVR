@@ -690,5 +690,299 @@ public:
 
 //==========================================================>>
 
+/**
+ * @brief Models a Timer Latch DD-MPB, a.k.a. Timer Switch (**TiLDD-MPB**).
+ *
+ * The **Timer switch** keeps the **On state** since the moment the signal is stable (debouncing + delay process), and until the unlatch signal is provided by a preset timer **started immediately after** the MPB has passed the debounce & delay process.
+ * The time count down might be reset by pressing the MPB before the timer expires by optionally configuring the object to do so with the provided method.
+ * The total count-down time might be changed by using a provided method.
+ *
+ * class TmLtchMPBttn
+ */
+class TmLtchMPBttn: public LtchMPBttn{
+protected:
+    bool _tmRstbl {true};
+    unsigned long int _srvcTime {};
+    unsigned long int _srvcTimerStrt{0};
 
+    virtual void stOffNotVPP_Out();
+    virtual void stOffVPP_Out();
+    virtual void updValidUnlatchStatus();
+public:
+ 	/**
+ 	 * @brief Class constructor
+ 	 *
+ 	 * @param srvcTime The service time (time to keep the **isOn** attribute flag raised).
+ 	 *
+ 	 * @note For the other parameters see DbncdDlydMPBttn(const uint8_t, const bool, const bool, const unsigned long int, const unsigned long int)
+     */
+    TmLtchMPBttn(const uint8_t &mpbttnPin, const unsigned long int &svcTime, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
+    /**
+     * @brief see DbncdMPBttn::clrStatus(bool)
+     */
+    void clrStatus(bool clrIsOn = true);
+    /**
+     * @brief Returns the configured Service Time.
+     *
+     * @return The current Service Time setting in milliseconds
+     */
+    const unsigned long int getSrvcTime() const;
+    /**
+     * @brief Sets a new value to the Service Time attribute
+     *
+     * @param newSrvcTime New value for the Service Time attribute
+     *
+     * @note To ensure a safe and predictable behavior from the instantiated objects a minimum Service Time setting guard is provided, ensuring data and signals processing are completed before unlatching process is enforced by the timer. The guard is set by the defined _MinSrvcTime constant.
+     *
+     * @retval true if the newSrvcTime parameter is equal to or greater than the minimum setting guard, the new value is set.
+     * @retval false The newSrvcTime parameter is less than the minimum setting guard, the srvcTime attribute was not changed.
+     */
+    bool setSrvcTime(const unsigned long int &newSrvcTime);
+    /**
+     * @brief Configures the timer for the Service Time to be reseted before it reaches unlatching time.
+     *
+     * If the isResetable attribute flag is cleared the MPB will return to **Off state** when the Service Time is reached no matter if the MPB was pressed again during the service time period. If the attribute flag is set, pressing the MPB (debounce and delay times enforced) while on the **On state** resets the timer, starting back from 0. The reseting might be repeated as many times as desired.
+     *
+     * @param newIsRstbl The new setting for the isResetable flag.
+     */
+    void setTmerRstbl(const bool &newIsRstbl);
+};
+
+//==========================================================>>
+
+/**
+ * @brief Models a Hinted Timer Latch DD-MPB, a.k.a. Staircase Switch (**HTiLDD-MPB**).
+ *
+ * The **Staircase switch** keeps the ON state since the moment the signal is stable (debouncing + delay process), and until the unlatch signal is provided by a preset timer **started immediately after** the MPB has passed the debounce & delay process.
+ * A warning flag might be configured to raise when the time left to keep the ON signal is close to expiration, based on a configurable percentage of the total Service Time.
+ * The time count down might be reseted by pressing the MPB before the timer expires by optionally configuring the object to do so with the provided method.
+ * A **Pilot Signal** attribute flag is included to emulate completely the staircase switches, that might be activated while the MPB is in **Off state**,  by optionally configuring the object to do so with the provided method (This might be considered just a perk as it's not much more than the **isOn** flag negated output, but gives the advantage of freeing the designer of additional coding).
+ *
+ * class HntdTmLtchMPBttn
+ */
+class HntdTmLtchMPBttn: public TmLtchMPBttn{
+protected:
+	void (*_fnWhnTrnOffPilot)() {nullptr};
+	void (*_fnWhnTrnOffWrnng)() {nullptr};
+	void (*_fnWhnTrnOnPilot)() {nullptr};
+	void (*_fnWhnTrnOnWrnng)() {nullptr};
+	bool _keepPilot{false};
+	volatile bool _pilotOn{false};
+	unsigned long int _wrnngMs{0};
+	volatile bool _wrnngOn {false};
+	unsigned int _wrnngPrctg {0};
+
+	bool _validWrnngSetPend{false};
+	bool _validWrnngResetPend{false};
+	bool _validPilotSetPend{false};
+	bool _validPilotResetPend{false};
+
+	virtual void mpbPollCallback();
+	uint32_t _otptsSttsPkg(uint32_t prevVal = 0);
+	virtual void stDisabled_In();
+	virtual void stLtchNVUP_Do();
+	virtual void stOffNotVPP_In();
+	virtual void stOffVPP_Out();
+	virtual void stOnNVRP_Do();
+	void _turnOffPilot();
+	void _turnOffWrnng();
+	void _turnOnPilot();
+	void _turnOnWrnng();
+	bool updPilotOn();
+	bool updWrnngOn();
+public:
+	/**
+	 * @brief Class constructor
+	 *
+	 * @param wrnngPrctg Time **before expiration** of service time that the warning flag must be set. The time is expressed as a percentage of the total service time so it's a value in the 0 <= wrnngPrctg <= 100 range.
+	 *
+	 * For the rest of the parameters see TmLtchMPBttn(const uint8_t, const unsigned long int, const bool, const bool, const unsigned long int, const unsigned long int)
+	 */
+    HntdTmLtchMPBttn(const uint8_t &mpbttnPin, const unsigned long int &svcTime, const unsigned int &wrnngPrctg = 0, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
+	/**
+	 * @brief See DbncdMPBttn::begin(const unsigned long int)
+	 */
+    virtual bool begin(const unsigned long int &pollDelayMs = _StdPollDelay);
+   /**
+    * @brief see DbncdMPBttn::clrStatus(bool)
+    */
+	void clrStatus(bool clrIsOn = true);
+	/**
+	 * @brief Returns the function that is set to execute every time the object's **Pilot** attribute flag **enters** the **Off State**.
+	 *
+	 * The function to be executed is an attribute that might be modified by the **setFnWhnTrnOffPilotPtr()** method.
+	 *
+	 * @return A function pointer to the function set to execute every time the object's Pilot is set to the **Off State**.
+	 * @retval nullptr if there is no function set to execute when the object's Pilot enters the **Off State**.
+	 *
+	 * @warning The function code execution will become part of the list of procedures the object executes when it enters the **Pilot Off State**, including the modification of affected attribute flags. Making the function code too time-demanding must be handled with care, using alternative execution schemes, for example the function might resume a independent task that suspends itself at the end of its code, to let a new function calling event resume it once again.
+	 */
+	fncPtrType getFnWhnTrnOffPilot();
+	/**
+	 * @brief Returns the function that is set to execute every time the object's **Warning** attribute flag **enters** the **Off State**.
+	 *
+	 * The function to be executed is an attribute that might be modified by the **setFnWhnTrnOffWrnngPtr()** method.
+	 *
+	 * @return A function pointer to the function set to execute every time the object's Warning is set to the **Off State**.
+	 * @retval nullptr if there is no function set to execute when the object's Warning enters the **Off State**.
+	 *
+	 * @warning The function code execution will become part of the list of procedures the object executes when it enters the **Warning Off State**, including the modification of affected attribute flags. Making the function code too time-demanding must be handled with care, using alternative execution schemes, for example the function might resume a independent task that suspends itself at the end of its code, to let a new function calling event resume it once again.
+	 */
+	fncPtrType getFnWhnTrnOffWrnng();
+	/**
+	 * @brief Returns the function that is set to execute every time the object's **Pilot** attribute flag **enters** the **On State**.
+	 *
+	 * The function to be executed is an attribute that might be modified by the **setFnWhnTrnOnPilotPtr()** method.
+	 *
+	 * @return A function pointer to the function set to execute every time the object's Pilot is set to the **On State**.
+	 * @retval nullptr if there is no function set to execute when the object's Pilot enters the **On State**.
+	 *
+	 * @warning The function code execution will become part of the list of procedures the object executes when it enters the **Pilot On State**, including the modification of affected attribute flags. Making the function code too time-demanding must be handled with care, using alternative execution schemes, for example the function might resume a independent task that suspends itself at the end of its code, to let a new function calling event resume it once again.
+	 */
+	fncPtrType getFnWhnTrnOnPilot();
+	/**
+	 * @brief Returns the function that is set to execute every time the object's **Warning** attribute flag **enters** the **On State**.
+	 *
+	 * The function to be executed is an attribute that might be modified by the **setFnWhnTrnOnWarnngPtr()** method.
+	 *
+	 * @return A function pointer to the function set to execute every time the object's Warning is set to the **On State**.
+	 * @retval nullptr if there is no function set to execute when the object's Warning enters the **On State**.
+	 *
+	 * @warning The function code execution will become part of the list of procedures the object executes when it enters the **Warning On State**, including the modification of affected attribute flags. Making the function code too time-demanding must be handled with care, using alternative execution schemes, for example the function might resume a independent task that suspends itself at the end of its code, to let a new function calling event resume it once again.
+	 */
+	fncPtrType getFnWhnTrnOnWrnng();
+	/**
+	 * @brief Returns the current value of the pilotOn attribute flag.
+	 *
+	 * The pilotOn flag will be set when the isOn attribute flag is reset (~isOn), while the keepPilot attribute is set. If the keepPilot attribute is false the pilotOn will keep reset independently of the isOn flag value.
+	 *
+	 * @return The current value of the pilotOn flag
+	 * @retval true: the pilotOn flag value is true
+	 * @retval false: the pilotOn flag value is false
+	 */
+    const bool getPilotOn() const;
+	/**
+	 * @brief Returns the current value of the warningOn attribute flag.
+	 *
+	 * The warningOn flag will be set when the configured service time (to keep the ON signal set) is close to expiration, based on a configurable percentage of the total Service time.
+	 *
+	 * @return The current value of the warningOn attribute flag.
+	 *
+	 * @note As there is no configuration setting to keep the warning flag from working, the way to force the flag to stay set or stay reset is by configuring the accepted limits:
+	 * - 0: Will keep the warningOn flag always false (i.e. will turn to true 0 ms before reaching the end of Service Time).
+	 * - 100: Will keep the warningOn flag always true (i.e. will turn to true for the 100% of the Service Time).
+	 */
+    const bool getWrnngOn() const;
+	/**
+	 * @brief Sets the function that will be called to execute every time the object's **Pilot** is **reset**.
+	 *
+	 * The function to be executed must be of the form **void (*newFnWhnTrnOff)()**, meaning it must take no arguments and must return no value, it will be executed only once by the object (recursion must be handled with the usual precautions). When instantiated the attribute value is set to **nullptr**.
+	 *
+	 * @param newFnWhnTrnOff Function pointer to the function intended to be called when the object's **Pilot** is **reset**. Passing **nullptr** as parameter deactivates the function execution mechanism.
+	 */
+	void setFnWhnTrnOffPilotPtr(void(*newFnWhnTrnOff)());
+	/**
+	 * @brief Sets the function that will be called to execute every time the object's **Warning** is **reset**.
+	 *
+	 * The function to be executed must be of the form **void (*newFnWhnTrnOff)()**, meaning it must take no arguments and must return no value, it will be executed only once by the object (recursion must be handled with the usual precautions). When instantiated the attribute value is set to **nullptr**.
+	 *
+	 * @param newFnWhnTrnOff Function pointer to the function intended to be called when the object's **Warning** is **reset**. Passing **nullptr** as parameter deactivates the function execution mechanism.
+	 */
+	void setFnWhnTrnOffWrnngPtr(void(*newFnWhnTrnOff)());
+	/**
+	 * @brief Sets the function that will be called to execute every time the object's **Pilot** is **set**.
+	 *
+	 * The function to be executed must be of the form **void (*newFnWhnTrnOn)()**, meaning it must take no arguments and must return no value, it will be executed only once by the object (recursion must be handled with the usual precautions). When instantiated the attribute value is set to **nullptr**.
+	 *
+	 * @param newFnWhnTrnOn: function pointer to the function intended to be called when the object's **Pilot is set**. Passing **nullptr** as parameter deactivates the function execution mechanism.
+	 */
+	void setFnWhnTrnOnPilotPtr(void(*newFnWhnTrnOn)());
+	/**
+	 * @brief Sets the function that will be called to execute every time the object's **Wrnng** is **set**.
+	 *
+	 * The function to be executed must be of the form **void (*newFnWhnTrnOn)()**, meaning it must take no arguments and must return no value, it will be executed only once by the object (recursion must be handled with the usual precautions). When instantiated the attribute value is set to **nullptr**.
+	 *
+	 * @param newFnWhnTrnOn: function pointer to the function intended to be called when the object's **Wrnng** is **set**. Passing **nullptr** as parameter deactivates the function execution mechanism.
+	 */
+	void setFnWhnTrnOnWrnngPtr(void(*newFnWhnTrnOn)());
+	/**
+	 * @brief Sets the configuration of the keepPilot service attribute.
+	 *
+	 * @param newKeepPilot The new setting for the keepPilot service attribute.
+	 */
+    void setKeepPilot(const bool &newKeepPilot);
+	/**
+	 * @brief See TmLtchMPBttn::setSrvcTime(const unsigned long int)
+	 *
+	 * @note As the warningOn attribute flag behavior is based on a percentage of the service time setting, changing the value of that service time implies changing the time amount for the warning signal service, recalculating such time as the set percentage of the new service time.
+	 */
+    bool setSrvcTime(const unsigned long int &newSvcTime);
+	/**
+	 * @brief Sets the value for the percentage of service time for calculating the warningOn flag value.
+	 *
+	 * The amount of **time before expiration** of service time that the warning flag must be set is defined as a percentage of the total service time so it's a value in the 0 <= wrnngPrctg <= 100 range.
+	 *
+	 * @param newWrnngPrctg The new percentage of service time value used to calculate the time before service time expiration to set the warningOn flag.
+	 *
+	 * @return Success changing the percentage to a new value
+	 * @retval true the value was within range, the new value is set
+	 * @retval false the value was outside range, the value change was dismissed.
+	 */
+	bool setWrnngPrctg (const unsigned int &newWrnngPrctg);
+};
+
+//==========================================================>>
+
+/**
+ * @brief Models an External Unlatch LDD-MPB, a.k.a. Emergency Latched Switch (**XULDD-MPB**)
+ *
+ * The **External released toggle switch** (a.k.a. Emergency latched), keeps the On state since the moment the signal is stable (debounced & delayed), and until an external signal is received. This kind of switch is used when an "abnormal situation" demands the push of the switch On, but a higher authority is needed to reset it to Off from a different signal source. The **On State** will then not only start a response to the exception arisen, but will be kept to flag the triggering event.
+ *  Smoke, flood, intrusion alarms and "last man locks" are some examples of the use of this switch. As the external release signal can be physical or logical generated it can be implemented to be received from a switch or a remote signal of any usual kind.
+ *
+ * class XtrnUnltchMPBttn
+ */
+class XtrnUnltchMPBttn: public LtchMPBttn{
+protected:
+    DbncdDlydMPBttn* _unLtchBttn {nullptr};
+    bool _xtrnUnltchPRlsCcl {false};
+
+ 	virtual void stOffNVURP_Do();
+ 	virtual void updValidUnlatchStatus();
+public:
+ 	/**
+	 * @brief Class constructor
+	 *
+	 * This class constructor makes specific reference to a source for the unlatch signal by including a parameter referencing an object that implements the needed getIsOn() method to get the external unlatch signal.
+	 *
+ 	 * @param unLtchBttn Pointer to a DbncdDlydMPBttn object that will provide the unlatch source signal through it's **getIsOn()** method.
+ 	 *
+ 	 * @warning Referencing a DbncdDlydMPBttn subclass object that keeps the isOn flag set for a preset time period might affect the latching/unlatching process, as this class's objects don't check for the isOn condition of the unlatching object prior to setting it's own isOn flag.
+ 	 *
+ 	 * @note For the other parameters see DbncdDlydMPBttn(const uint8_t, const bool, const bool, const unsigned long int, const unsigned long int)
+ 	 *
+ 	 * @note Other unlatch signal origins might be developed through the unlatch() method provided.
+ 	 */
+    XtrnUnltchMPBttn(const uint8_t &mpbttnPin,  DbncdDlydMPBttn* unLtchBttn,
+        const bool &pulledUp,  const bool &typeNO,  const unsigned long int &dbncTimeOrigSett,  const unsigned long int &strtDelay);
+    /**
+     * @brief Class constructor
+     *
+     * This class constructor instantiates an object that relies on the **unlatch()** method invocation to release the latched MPB
+     *
+     * @note For the parameters see DbncdDlydMPBttn(const uint8_t, const bool, const bool, const unsigned long int, const unsigned long int)
+     */
+    XtrnUnltchMPBttn(const uint8_t &mpbttnPin,  
+        const bool &pulledUp,  const bool &typeNO,  const unsigned long int &dbncTimeOrigSett,  const unsigned long int &strtDelay);
+
+    /**
+     * @brief See DbncdMPBttn::begin(const unsigned long int)
+     */
+    virtual bool begin(const unsigned long int &pollDelayMs = _StdPollDelay);
+    /**
+     * @brief See DbncdMPBttn::clrStatus(bool)
+     */
+    void clrStatus(bool clrIsOn = true);
+};
+
+//==========================================================>>
 #endif   /*_BUTTONTOSWITCH_AVR_H_*/

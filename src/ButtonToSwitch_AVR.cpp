@@ -281,14 +281,14 @@ bool DbncdMPBttn::init(const uint8_t &mpbttnPin, const bool &pulledUp, const boo
 }
 
 void DbncdMPBttn::mpbPollCallback(){
-	if(getIsEnabled()){
+	if(_mpbInstnc->getIsEnabled()){
 		// Input/Output signals update
-		updIsPressed();
+		_mpbInstnc->updIsPressed();
 		// Flags/Triggers calculation & update
-		updValidPressesStatus();
+		_mpbInstnc->updValidPressesStatus();
 	}
 	// State machine status update
-	updFdaState();
+	_mpbInstnc->updFdaState();
 
 	return;
 }
@@ -805,8 +805,7 @@ LtchMPBttn::LtchMPBttn(const uint8_t &mpbttnPin, const bool &pulledUp, const boo
 bool LtchMPBttn::begin(const unsigned long int &pollDelayMs){	//! Refactoring pending
    bool result {false};
 
-   if (pollDelayMs > 0){
-   }
+	result = DbncdMPBttn::begin(pollDelayMs);
 
 	return result;
 }
@@ -842,7 +841,7 @@ const bool LtchMPBttn::getUnlatchRlsPend() const{
 
 void LtchMPBttn::mpbPollCallback(){	//! Refactoring pending
 
-	if(getIsEnabled()){
+	if(_mpbInstnc->getIsEnabled()){
 		// Input/Output signals update
 		updIsPressed();
 		// Flags/Triggers calculation & update
@@ -1107,6 +1106,474 @@ void TgglLtchMPBttn::updValidUnlatchStatus(){
 		}
 	}
 
+	return;
+}
+
+//=========================================================================> Class methods delimiter
+
+TmLtchMPBttn::TmLtchMPBttn(const uint8_t &mpbttnPin, const unsigned long int &actTime, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
+:LtchMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay), _srvcTime{actTime}
+{
+	if(_srvcTime < _MinSrvcTime)    //Best practice would impose failing the constructor (throwing an exception or building a "zombie" object)
+		_srvcTime = _MinSrvcTime;    //this tolerant approach taken for developers benefit, but object will be no faithful to the instantiation parameters
+
+}
+
+void TmLtchMPBttn::clrStatus(bool clrIsOn){
+	_srvcTimerStrt = 0;
+	LtchMPBttn::clrStatus(clrIsOn);
+
+	return;
+}
+
+const unsigned long int TmLtchMPBttn::getSrvcTime() const{
+
+	return _srvcTime;
+}
+
+bool TmLtchMPBttn::setSrvcTime(const unsigned long int &newSrvcTime){
+	bool result {true};
+	if (_srvcTime != newSrvcTime){
+		if (newSrvcTime >= _MinSrvcTime)  //The minimum activation time is _minActTime milliseconds
+			_srvcTime = newSrvcTime;
+		else
+			result = false;
+   }
+
+   return result;
+}
+
+void TmLtchMPBttn::setTmerRstbl(const bool &newIsRstbl){
+	if(_tmRstbl != newIsRstbl)
+		_tmRstbl = newIsRstbl;
+
+	return;
+}
+
+void TmLtchMPBttn::stOffNotVPP_Out(){
+	_srvcTimerStrt = 0;
+
+	return;
+}
+
+void TmLtchMPBttn::stOffVPP_Out(){
+	_srvcTimerStrt = millis();
+
+	return;
+}
+
+void TmLtchMPBttn::updValidUnlatchStatus(){
+	if(_isLatched){
+		if(_validPressPend){
+			if(_tmRstbl)
+				_srvcTimerStrt = millis();
+			_validPressPend = false;
+		}
+		if ((millis() - _srvcTimerStrt) >= _srvcTime){
+			_validUnlatchPend = true;
+			_validUnlatchRlsPend = true;
+		}
+	}
+
+	return;
+}
+
+//=========================================================================> Class methods delimiter
+
+HntdTmLtchMPBttn::HntdTmLtchMPBttn(const uint8_t &mpbttnPin, const unsigned long int &actTime, const unsigned int &wrnngPrctg, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
+:TmLtchMPBttn(mpbttnPin, actTime, pulledUp, typeNO, dbncTimeOrigSett, strtDelay), _wrnngPrctg{wrnngPrctg}
+{
+	_wrnngMs = (_srvcTime * _wrnngPrctg) / 100;   
+}
+
+bool HntdTmLtchMPBttn::begin(const unsigned long int &pollDelayMs){
+   bool result {false};
+
+	result = LtchMPBttn::begin(pollDelayMs);
+
+	return result;
+}
+
+void HntdTmLtchMPBttn::clrStatus(bool clrIsOn){
+	
+	//	Put here class specific sets/resets, including pilot and warning
+	_validWrnngSetPend = false;
+	_validWrnngResetPend = false;
+	_wrnngOn = false; // Direct attribute flag unusual manipulation to avoid triggering Tasks and Functions responses
+	_validPilotSetPend = false;
+	_validPilotResetPend = false;
+	if(_keepPilot)
+		_pilotOn = true; // Direct attribute flag unusual manipulation to avoid triggering Tasks and Functions responses
+	else
+		_pilotOn = false; // Direct attribute flag unusual manipulation to avoid triggering Tasks and Functions responses
+	TmLtchMPBttn::clrStatus(clrIsOn);
+
+	return;
+}
+
+fncPtrType HntdTmLtchMPBttn::getFnWhnTrnOffPilot(){
+
+	return _fnWhnTrnOffPilot;
+}
+
+fncPtrType HntdTmLtchMPBttn::getFnWhnTrnOffWrnng(){
+
+	return _fnWhnTrnOffWrnng;
+}
+
+fncPtrType HntdTmLtchMPBttn::getFnWhnTrnOnPilot(){
+
+	return _fnWhnTrnOnPilot;
+}
+
+fncPtrType HntdTmLtchMPBttn::getFnWhnTrnOnWrnng(){
+	
+	return _fnWhnTrnOnWrnng;
+}
+
+const bool HntdTmLtchMPBttn::getPilotOn() const{
+
+	return _pilotOn;
+}
+
+const bool HntdTmLtchMPBttn::getWrnngOn() const{
+    
+	return _wrnngOn;
+}
+
+void HntdTmLtchMPBttn::mpbPollCallback(){
+	if(_mpbInstnc->getIsEnabled()){
+		// Input/Output signals update
+		updIsPressed();
+		// Flags/Triggers calculation & update
+		updValidPressesStatus();
+		updValidUnlatchStatus();
+		updWrnngOn();
+		updPilotOn();
+	}
+ 	// State machine state update
+ 	updFdaState();
+
+	return;
+}
+
+uint32_t HntdTmLtchMPBttn::_otptsSttsPkg(uint32_t prevVal){
+	prevVal = DbncdMPBttn::_otptsSttsPkg(prevVal);
+	if(_pilotOn){
+		prevVal |= ((uint32_t)1) << PilotOnBitPos;
+	}
+	else{
+		prevVal &= ~(((uint32_t)1) << PilotOnBitPos);
+	}
+	if(_wrnngOn){
+		prevVal |= ((uint32_t)1) << WrnngOnBitPos;
+	}
+	else{
+		prevVal &= ~(((uint32_t)1) << WrnngOnBitPos);
+	}
+
+	return prevVal;
+}
+
+void HntdTmLtchMPBttn::setFnWhnTrnOffPilotPtr(void(*newFnWhnTrnOff)()){
+	if (_fnWhnTrnOffPilot != newFnWhnTrnOff)
+		_fnWhnTrnOffPilot = newFnWhnTrnOff;
+
+	return;	
+}
+
+void HntdTmLtchMPBttn::setFnWhnTrnOffWrnngPtr(void(*newFnWhnTrnOff)()){
+	if (_fnWhnTrnOffWrnng != newFnWhnTrnOff)
+		_fnWhnTrnOffWrnng = newFnWhnTrnOff;
+
+	return;
+}
+
+void HntdTmLtchMPBttn::setFnWhnTrnOnPilotPtr(void(*newFnWhnTrnOn)()){
+	if (_fnWhnTrnOnPilot != newFnWhnTrnOn)
+		_fnWhnTrnOnPilot = newFnWhnTrnOn;
+
+	return;
+}
+
+void HntdTmLtchMPBttn::setFnWhnTrnOnWrnngPtr(void(*newFnWhnTrnOn)()){
+	if (_fnWhnTrnOnWrnng != newFnWhnTrnOn)
+		_fnWhnTrnOnWrnng = newFnWhnTrnOn;
+
+	return;
+}
+
+void HntdTmLtchMPBttn::setKeepPilot(const bool &newKeepPilot){
+	if(_keepPilot != newKeepPilot)
+		_keepPilot = newKeepPilot;
+
+	return;
+}
+
+bool HntdTmLtchMPBttn::setSrvcTime(const unsigned long int &newSrvcTime){
+	bool result {true};
+
+	if (newSrvcTime != _srvcTime){
+		result = TmLtchMPBttn::setSrvcTime(newSrvcTime);
+		if (result)
+			_wrnngMs = (_srvcTime * _wrnngPrctg) / 100;  //If the _srvcTime was changed, the _wrnngMs must be updated as it's a percentage of the first
+	}
+
+	return result;
+}
+
+bool HntdTmLtchMPBttn::setWrnngPrctg (const unsigned int &newWrnngPrctg){
+	bool result{false};
+
+	if(_wrnngPrctg != newWrnngPrctg){
+		if(newWrnngPrctg <= 100){
+			_wrnngPrctg = newWrnngPrctg;
+			_wrnngMs = (_srvcTime * _wrnngPrctg) / 100;
+			result = true;
+		}
+	}
+
+	return result;
+}
+
+void HntdTmLtchMPBttn::stDisabled_In(){
+	//This method is invoked exclusively from the updFdaState, no need to declare it critical section
+	if(_validWrnngSetPend)
+		_validWrnngSetPend = false;
+	if(_validWrnngResetPend)
+		_validWrnngResetPend = false;
+	if(_wrnngOn){
+		_turnOffWrnng();
+	}
+
+	if(_validPilotSetPend)
+		_validPilotSetPend = false;
+	if(_validPilotResetPend)
+		_validPilotResetPend = false;
+	if(_keepPilot && !_isOnDisabled && !_pilotOn){
+		_turnOnPilot();
+	}
+	else if(_pilotOn == true)
+		_turnOffPilot();
+
+	return;
+}
+
+void HntdTmLtchMPBttn::stLtchNVUP_Do(){
+	//This method is invoked exclusively from the updFdaState, no need to declare it critical section
+	if(_validWrnngSetPend){
+		_turnOnWrnng();
+		_validWrnngSetPend = false;
+	}
+	if(_validWrnngResetPend){
+		_turnOffWrnng();
+		_validWrnngResetPend = false;
+	}
+
+	return;
+}
+
+void HntdTmLtchMPBttn::stOffNotVPP_In(){
+	//This method is invoked exclusively from the updFdaState, no need to declare it critical section
+	if(_keepPilot){
+		if(!_pilotOn){
+			_turnOnPilot();
+		}
+	}
+	if(_wrnngOn){
+		_turnOffWrnng();
+	}
+
+	return;
+}
+
+void HntdTmLtchMPBttn::stOffVPP_Out(){
+	//This method is invoked exclusively from the updFdaState, no need to declare it critical section
+	TmLtchMPBttn::stOffVPP_Out();
+	if(_pilotOn){
+		_turnOffPilot();
+	}
+
+	return;
+}
+
+void HntdTmLtchMPBttn::stOnNVRP_Do(){
+	//This method is invoked exclusively from the updFdaState, no need to declare it critical section
+	if(_validWrnngSetPend){
+		_turnOnWrnng();
+		_validWrnngSetPend = false;
+	}
+	if(_validWrnngResetPend){
+		_turnOffWrnng();
+		_validWrnngResetPend = false;
+	}
+
+	return;
+}
+	
+void HntdTmLtchMPBttn::_turnOffPilot(){
+
+	if(_pilotOn){
+		//---------------->> Functions related actions
+		if(_fnWhnTrnOffPilot != nullptr){
+			_fnWhnTrnOffPilot();
+		}
+		//---------------->> Flags related actions
+		_pilotOn = false;
+		setOutputsChange(true);
+	}
+
+	return;
+}
+
+void HntdTmLtchMPBttn::_turnOffWrnng(){
+	if(_wrnngOn){
+		//---------------->> Functions related actions
+		if(_fnWhnTrnOffWrnng != nullptr){
+			_fnWhnTrnOffWrnng();
+		}
+		//---------------->> Flags related actions
+		_wrnngOn = false;
+		setOutputsChange(true);
+	}
+
+	return;
+}
+
+void HntdTmLtchMPBttn::_turnOnPilot(){
+
+	if(!_pilotOn){
+		//---------------->> Functions related actions
+		if(_fnWhnTrnOnPilot != nullptr){
+			_fnWhnTrnOnPilot();
+		}
+		//---------------->> Flags related actions
+		_pilotOn = true;
+		setOutputsChange(true);
+	}
+
+	return;
+}
+
+void HntdTmLtchMPBttn::_turnOnWrnng(){
+
+	if(!_wrnngOn){
+		//---------------->> Functions related actions
+		if(_fnWhnTrnOnWrnng != nullptr){
+			_fnWhnTrnOnWrnng();
+		}
+		//---------------->> Flags related actions
+		_wrnngOn = true;
+		setOutputsChange(true);
+	}
+
+	return;
+}
+
+bool HntdTmLtchMPBttn::updPilotOn(){
+	if (_keepPilot){
+		if(!_isOn && !_pilotOn){
+			_validPilotSetPend = true;
+			_validPilotResetPend = false;
+		}
+		else if(_isOn && _pilotOn){
+			_validPilotResetPend = true;
+			_validPilotSetPend = false;
+		}
+	}
+	else{
+		if(_pilotOn){
+			_validPilotResetPend = true;
+			_validPilotSetPend = false;
+		}
+	}
+
+	return _pilotOn;
+}
+
+bool HntdTmLtchMPBttn::updWrnngOn(){
+	if(_wrnngPrctg > 0){
+		if (_isOn && _isEnabled){	//The _isEnabled evaluation is done to avoid computation of flags that will be ignored if the MPB is disablee
+			if ((millis() - _srvcTimerStrt) >= (_srvcTime - _wrnngMs)){
+				if(_wrnngOn == false){
+					_validWrnngSetPend = true;
+					_validWrnngResetPend = false;
+				}
+			}
+			else if(_wrnngOn == true){
+				_validWrnngResetPend = true;
+				_validWrnngSetPend = false;
+			}
+		}
+		else if(_wrnngOn == true){
+			_validWrnngResetPend = true;
+			_validWrnngSetPend = false;
+		}
+	}
+
+	return _wrnngOn;
+}
+
+//=========================================================================> Class methods delimiter
+
+XtrnUnltchMPBttn::XtrnUnltchMPBttn(const uint8_t &mpbttnPin,  DbncdDlydMPBttn* unLtchBttn,
+        const bool &pulledUp,  const bool &typeNO,  const unsigned long int &dbncTimeOrigSett,  const unsigned long int &strtDelay)
+:LtchMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay), _unLtchBttn{unLtchBttn}
+{
+}
+
+XtrnUnltchMPBttn::XtrnUnltchMPBttn(const uint8_t &mpbttnPin,  
+        const bool &pulledUp,  const bool &typeNO,  const unsigned long int &dbncTimeOrigSett,  const unsigned long int &strtDelay)
+:LtchMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay)
+{
+}
+
+bool XtrnUnltchMPBttn::begin(const unsigned long int &pollDelayMs){
+   bool result {false};
+
+	result = LtchMPBttn::begin(pollDelayMs);
+
+	return result;
+}
+
+void XtrnUnltchMPBttn::clrStatus(bool clrIsOn){
+	_xtrnUnltchPRlsCcl = false;
+	LtchMPBttn::clrStatus(clrIsOn);
+
+	return;
+}
+
+void XtrnUnltchMPBttn::stOffNVURP_Do(){
+	if(_validDisablePend){
+		if(_validUnlatchRlsPend)
+			_validUnlatchRlsPend = false;
+		if(_xtrnUnltchPRlsCcl)
+			_xtrnUnltchPRlsCcl = false;
+		_mpbFdaState = stDisabled;
+		setSttChng();
+	}
+
+	return;
+}
+
+void XtrnUnltchMPBttn::updValidUnlatchStatus(){
+	if(_unLtchBttn != nullptr){
+		if(_isLatched){
+			if (_unLtchBttn->getIsOn() && !_xtrnUnltchPRlsCcl){
+				_validUnlatchPend = true;
+				_xtrnUnltchPRlsCcl = true;
+			}
+			if(!_unLtchBttn->getIsOn() && _xtrnUnltchPRlsCcl){
+				_validUnlatchRlsPend = true;
+				_xtrnUnltchPRlsCcl = false;
+			}
+		}
+		else{
+			if(_xtrnUnltchPRlsCcl)
+				_xtrnUnltchPRlsCcl = false;
+		}
+	}
+	
 	return;
 }
 
