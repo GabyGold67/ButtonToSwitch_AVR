@@ -985,4 +985,708 @@ public:
 };
 
 //==========================================================>>
+
+/**
+ * @brief Abstract class, base to model Double Action LDD-MPBs (**DALDD-MPBs**).
+ *
+ * **Double Action Latched DD-MPB** are MPBs whose distinctive characteristic is that implement switches that present different behaviors based on the time length of the presses detected and the sequence of the presses.
+ * The pattern selected for this class is the following:
+ * - A **short press** makes the MPB to behave as a Toggle LDD-MPB Switch (**ToLDD-MPB**) -designated as the **main behavior**-, swapping from the **Off state** to the **On state** and back as usual LDD-MPB.
+ * - A **long press** activates another behavior, allowing the only MPB to be used as a second MPB. That different behavior -designated as the **secondary behavior**- defines the sub-classes of the **DALDD-MPB** class.
+ * Using a notation where the first component is the Off/On state of the main behavior and the second component the state of the secondary behavior the only possible combinations would be:
+ * - 1. Off-Off
+ * - 2. On-Off
+ * - 3. On-On
+ *
+ * The presses patterns are:
+ * - 1. -> 2.: short press.
+ * - 1. -> 3.: long press.
+ * - 2. -> 3.: long press.
+ * - 2. -> 1.: short press.
+ * - 3. -> 2.: secondary behavior unlatch (subclass dependent, maybe release, external unlatch, etc.)
+ *
+ * @note The **short press** will always be calculated as the Debounce + Delay set attributes.
+ * @note The **long press** is a configurable attribute of the class, the **Secondary Mode Activation Delay** (scndModActvDly) that holds the time after the Debounce + Delay period that the MPB must remain pressed to activate the mentioned mode. The same time will be required to keep pressed the MPB while in **Main Behavior** to enter the **Secondary behavior**.
+ *
+ * @class DblActnLtchMPBttn
+ */
+class DblActnLtchMPBttn: public LtchMPBttn{
+protected:
+	enum fdaDALmpbStts{
+		stOffNotVPP,
+		stOffVPP,
+		stOnMPBRlsd,
+		//--------
+		stOnStrtScndMod,
+		stOnScndMod,
+		stOnEndScndMod,
+		//--------
+		stOnTurnOff,
+		//--------
+		stDisabled
+	};
+   volatile bool _isOnScndry{false};
+	fdaDALmpbStts _mpbFdaState {stOffNotVPP};
+	unsigned long _scndModActvDly {2000};
+	unsigned long _scndModTmrStrt {0};
+	bool _validScndModPend{false};
+
+	void (*_fnWhnTrnOffScndry)() {nullptr};
+	void (*_fnWhnTrnOnScndry)() {nullptr};
+
+	virtual void mpbPollCallback();
+   virtual void stDisabled_In(){};
+   virtual void stOnEndScndMod_Out(){};
+   virtual void stOnScndMod_Do() = 0;
+	virtual void stOnStrtScndMod_In(){};
+	virtual void _turnOffScndry();
+	virtual void _turnOnScndry();
+	virtual void updFdaState();
+	virtual bool updValidPressesStatus();
+   virtual void updValidUnlatchStatus();
+
+public:
+	/**
+	 * @brief Abstract Class constructor
+	 *
+	 * @note For parameters see DbncdDlydMPBttn(const uint8_t, const bool, const bool, const unsigned long int, const unsigned long int)
+	 */
+   DblActnLtchMPBttn(const uint8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
+   /**
+	 * @brief Virtual destructor
+    */
+	~DblActnLtchMPBttn();
+	/**
+	 *
+	 * @brief See DbncdMPBttn::begin(const unsigned long int)
+	 */
+   virtual bool begin(const unsigned long int &pollDelayMs = _StdPollDelay);
+	/**
+	 * @brief See DbncddMPBttn::clrStatus(bool)
+	 */
+   void clrStatus(bool clrIsOn = true);
+	/**
+	 * @brief returns the function that is set to execute every time the object **enters** the **Secondary Off State**.
+	 *
+	 * The function to be executed is an attribute that might be modified by the **setFnWhnTrnOffScndryPtr()** method.
+	 *
+	 * @return A function pointer to the function set to execute every time the object enters the **Secondary Off State**.
+	 * @retval nullptr if there is no function set to execute when the object enters the **Secondary Off State**.
+	 */
+	fncPtrType getFnWhnTrnOffScndry();
+	/**
+	 * @brief Returns the function that is set to execute every time the object **enters** the **Secondary On State**.
+	 *
+	 * The function to be executed is an attribute that might be modified by the **setFnWhnTrnOnScndryPtr()** method.
+	 *
+	 * @return A function pointer to the function set to execute every time the object enters the **Secondary On State**.
+	 * @retval nullptr if there is no function set to execute when the object enters the **Secondary On State**.
+	 */
+	fncPtrType getFnWhnTrnOnScndry();
+	/**
+	 * @brief Returns the current value of the isOnScndry attribute flag
+	 *
+	 * The isOnScndry attribute flag holds the **secondary On state**, when the MPB is pressed for the seted **long press** time from the Off-Off or the On-Off state as described in the DblActnLtchMPBttn class.
+    *
+    * @return The current value of the isOnScndry flag.
+    */
+   bool getIsOnScndry();
+	/**
+	 * @brief Returns the current value of the scndModActvDly class attribute.
+	 *
+	 * The scndModActvDly attribute defines the time length a MPB must remain pressed to consider it a **long press**, needed to activate the **secondary mode**.
+	 *
+	 * @return The current scndModActvDly value, i.e. the delay in milliseconds.
+	 */
+   unsigned long getScndModActvDly();
+	/**
+	 * @brief Sets the function that will be called to execute every time the object **enters** the **Secondary Off State**.
+	 *
+	 * The function to be executed must be of the form **void (*newFnWhnTrnOff)()**, meaning it must take no arguments and must return no value, it will be executed only once by the object (recursion must be handled with the usual precautions). When instantiated the attribute value is set to **nullptr**.
+	 *
+	 * @param newFnWhnTrnOff Function pointer to the function intended to be called when the object **enters** the **Secondary Off State**. Passing **nullptr** as parameter deactivates the function execution mechanism.
+	 */
+	void setFnWhnTrnOffScndryPtr(void(*newFnWhnTrnOff)());
+	/**
+	 * @brief Sets the function that will be called to execute every time the object **enters** the **Secondary On State**.
+	 *
+	 * The function to be executed must be of the form **void (*newFnWhnTrnOff)()**, meaning it must take no arguments and must return no value, it will be executed only once by the object (recursion must be handled with the usual precautions). When instantiated the attribute value is set to **nullptr**.
+	 *
+	 * @param newFnWhnTrnOn: function pointer to the function intended to be called when the object **enters** the **Secondary On State**. Passing **nullptr** as parameter deactivates the function execution mechanism.
+	 */
+	void setFnWhnTrnOnScndryPtr(void (*newFnWhnTrnOn)());
+	/**
+	 * @brief Sets a new value for the scndModActvDly class attribute
+	 *
+	 * The scndModActvDly attribute defines the time length a MPB must remain pressed after the end of the debounce&delay period to consider it a **long press**, needed to activate the **secondary mode**. The value setting must be newVal >= _MinSrvcTime to ensure correct signal processing. See TmLtchMPBttn::setSrvcTime(const unsigned long int) for details.
+	 *
+	 * @param newVal The new value for the scndModActvDly attribute.
+	 *
+	 * @retval true: The new value is in the valid range, the value was updated.
+	 * @retval false: The new value is not in the valid range, the value was not updated.
+	 */
+	bool setScndModActvDly(const unsigned long &newVal);
+};
+
+//==========================================================>>
+
+/**
+ * @brief Models a Debounced Delayed Double Action Latched MPB combo switch (Debounced Delayed DALDD-MPB - **DD-DALDD-MPB**)
+ *
+ * This is a subclass of the **DALDD-MPB** whose **secondary behavior** is that of a DbncdDlydMPBttn (DD-MPB), that implies that:
+ * - While on the 1.state (Off-Off), a short press will activate only the regular **main On state** 2. (On-Off).
+ * - While on the 1.state (Off-Off), a long press will activate both the regular **main On state** and the **secondary On state** simultaneously 3. (On-On).
+ * When releasing the MPB the switch will stay in the **main On state** 2. (On-Off).
+ * While in the 2. state (On-Off), a short press will set the switch to the 1. state (Off-Off)
+ * While in the 2. state (On-Off), a long press will set the switch to the 3. state (On-On), until the releasing of the MPB, returning the switch to the **main On state** 2. (On-Off).
+ *
+ * class DDlydDALtchMPBttn
+ */
+class DDlydDALtchMPBttn: public DblActnLtchMPBttn{
+protected:
+	uint32_t _otptsSttsPkg(uint32_t prevVal = 0);
+   // virtual void stDisabled_In();
+   virtual void stOnEndScndMod_Out();
+   virtual void stOnScndMod_Do();
+   virtual void stOnStrtScndMod_In();
+public:
+   /**
+	 * @brief Class constructor
+    *
+	 * @note For parameters see DbncdDlydMPBttn(const uint8_t, const bool, const bool, const unsigned long int, const unsigned long int)
+    */
+   DDlydDALtchMPBttn(const uint8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
+   /**
+	 * @brief Class virtual destructor
+    */
+   ~DDlydDALtchMPBttn();
+	/**
+	 * @brief See DbncddMPBttn::clrStatus(bool)
+	 */
+   void clrStatus(bool clrIsOn = true);
+};
+
+//==========================================================>>
+
+/**
+ * @brief Models a Slider Double Action LDD-MPB combo switch, a.k.a. off/on/dimmer, a.k.a. off/on/volume radio switch)(**S-DALDD-MPB**)
+ *
+ * This is a subclass of the **DALDD-MPB** whose **secondary behavior** is analog to that of a **Digital potentiometer (DigiPot)** or a **Discreet values increment/decrement register**. That means that when in the second mode, while the MPB remains pressed, an attribute set as a register changes its value -the **otptCurVal** register-.
+ * When the timer callback function used to keep the MPB status updated is called -while in the secondary mode state- the time since the last call is calculated and the time lapse in milliseconds is converted into **Steps**, using as configurable factor the **outputSliderSpeed** in a pre-scaler fashion. At instantiation the **outputSliderSpeed** is configured to 1 (step/millisecond, i.e. 1 step for each millisecond).
+ * The resulting value in "steps" is then factored by the **outputSliderStepSize**, which holds the value that each step will  modify the **otptCurVal** register.
+ * The implemented embedded behavior mechanisms of the class determine how the modification of the otpCurVal register will be made, and the associated effects to the instantiated object's attribute, such as (but not limited to):
+ * - Incrementing otpCurVal register (by the quantity of steps multiplied by the step size) up to the "maximum value" setting.
+ * - Decrementing otpCurVal register (by that quantity) down to the "minimum value" setting.
+ * - Changing the modification's direction (from incrementing to decrementing or vice versa).
+ * The minimum and maximum values, the rate in steps/millisecond, the size of each step and the variation direction (sign of the variation, incrementing or decrementing) are all configurable, as is the starting value and the mechanism to revert the "direction" that includes:
+ * - Revert directions in the next **secondary mode** entry.
+ * - Automatically revert direction when reaching the minimum and maximum values setting.
+ * - Revert direction by methods invocation (see setSldrDirDn(), setSldrDirUp(), swapSldrDir()).
+ *
+ * class SldrDALtchMPBttn
+ */
+class SldrDALtchMPBttn: public DblActnLtchMPBttn{
+
+protected:
+	bool _autoSwpDirOnEnd{true};	// Changes slider direction automatically when reaches _otptValMax or _otptValMin
+	bool _autoSwpDirOnPrss{false};// Changes slider direction each time it enters slider mode
+	bool _curSldrDirUp{true};
+	uint16_t _initOtptCurVal{};
+	uint16_t _otptCurVal{};
+	unsigned long _otptSldrSpd{1};
+	uint16_t _otptSldrStpSize{0x01};
+	uint16_t _otptValMax{0xFFFF};
+	uint16_t _otptValMin{0x0000};
+
+	uint32_t _otptsSttsPkg(uint32_t prevVal = 0);
+	bool _setSldrDir(const bool &newVal);
+   // virtual void stDisabled_In();
+	void stOnEndScndMod_Out();
+   virtual void stOnScndMod_Do();
+	virtual void stOnStrtScndMod_In();
+public:
+   /**
+	 * @brief Class constructor
+    *
+    * @param initVal (Optional) Initial value of the **wiper** (taking the analogy of a potentiometer working parts), in this implementation the value corresponds to the **Output Current Value (otpCurVal)** attribute of the class. As the attribute type is uint16_t and the minimum and maximum limits are set to 0x0000 and 0xFFFF respectively, the initial value might be set to any value of the type. If no value is provided 0xFFFF will be the instantiation value.
+    *
+    * @note For the remaining parameters see DbncdDlydMPBttn(const uint8_t, const bool, const bool, const unsigned long int, const unsigned long int)
+    */
+	SldrDALtchMPBttn(const uint8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0, const uint16_t initVal = 0xFFFF);
+   /**
+	 * @brief Virtual class destructor
+    */
+	~SldrDALtchMPBttn();
+	/**
+	 *
+	 * @note See DbncdMPBttn::clrStatus(bool)
+	 */
+   void clrStatus(bool clrIsOn = true);
+	/**
+	 * @brief Returns the **Output Current Value (otpCurVal)** attribute
+	 *
+	 * @return The otpCurVal register value.
+	 */
+   uint16_t getOtptCurVal();
+   /**
+	 * @brief Returns a boolean value indicating if the "Output Current Value" equals the maximum limit.
+	 * 
+	 * The value returned is the result of comparing the **Output Current Value** to the **Maximum value setting**
+    *
+    * @return The logical result of the comparison
+    * @retval true: The **Output Current Value** is equal to the **Maximum value setting**, i.e. the otpCurVal has reached the "top" of the configured range of accepted values.
+    * @retval false: The **Output Current Value** is **not** equal to the **Maximum value setting**.
+    */
+   bool getOtptCurValIsMax();
+   /**
+	 * @brief Returns the result of comparing the **Output Current Value** to the **Minimum value setting**
+	 * 
+	 * The value returned is the result of comparing the **Output Current Value** to the **Minimum value setting**
+    *
+    * @return The logical result of the comparison
+    * @retval true: The **Output Current Value** is equal to the **Minimum value setting**, i.e. the otpCurVal has reached the "bottom" of the configured range of accepted values.
+    * @retval false: The **Output Current Value** is **not** equal to the **Minimum value setting**.
+    */
+   bool getOtptCurValIsMin();
+	/**
+	 * @brief Returns the current setting for the **Output Slider Speed** value.
+	 *
+	 * The **outputSliderSpeed** attribute is the configurable factor used to convert the time passed since the MPB entered it's secondary mode in milliseconds into **Steps** -Slider mode steps- in a pre-scaler fashion.
+	 *
+	 * @return The outputSliderSpeed attribute value.
+	 *
+	 * @note At instantiation the **outputSliderSpeed** is configured to 1 step/millisecond.
+	 */
+	unsigned long getOtptSldrSpd();
+	/**
+	 * @brief Returns the current setting for the **Output Slider Step Size** value.
+	 *
+	 * The **outputSliderStepSize** is the factor by which the change in steps is multiplied to calculate the total modification of the **otpCurVal** register. As the steps modification is calculated each time the timer callback function is called the variation is done in successive steps while the MPB is kept pressed, and not just when it is finally released.
+	 *
+	 * @return The outputSliderStepSize attribute value.
+	 *
+	 * @note At instantiation the **outputSliderStepSize** is configured to 1 counts/step.
+	 */
+	uint16_t getOtptSldrStpSize();
+	/**
+	 * @brief Returns the top **output current value** register setting
+	 *
+	 * @return The maximum **output current value** set.
+	 */
+   uint16_t getOtptValMax();
+	/**
+	 * @brief Returns the bottom **output current value** register setting
+	 *
+	 * @return The minimum **output current value** set.
+	 */
+	uint16_t getOtptValMin();
+	/**
+	 * @brief Returns the value of the curSldrDirUp attribute
+	 *
+	 * The curSldrDirUp attribute indicates the direction at which the outputCurrentValue register is being modified. If the current slider direction is up, means the change of value must be treated as an increment, while having the current slider direction down means it's value must be treated as a decrement.
+	 *
+	 * @return The current slider direction value
+	 * @retval true The current slider direction is **Up**, the output current value will be incremented.
+	 * @retval false The current slider direction is **Down**, the output current value will be decremented.
+	 */
+	bool getSldrDirUp();
+	/**
+	 * @brief Sets the output current value register.
+	 *
+	 * The new value for the output current value register must be in the range otptValMin <= newVal <= otptValMax
+	 *
+	 * @param newVal The new value for the output current value register.
+	 *
+	 * @return The success in the value change
+	 * @retval true The new value was within valid range, the output current value register is set to the parameter passed.
+	 * @retval false The new value was outside valid range, the change was not made.
+	 */
+	bool setOtptCurVal(const uint16_t &newVal);
+	/**
+	 * @brief Sets the output slider speed (**otptSldrSpd**) attribute.
+	 *
+	 * As described in the SldrDALtchMPBttn class definition, the **otptSldrSpd** value is the factor by which the time between two readings of the MPB pressing state in secondary mode is converted into "slider steps". At instantiation the value is set to 1, meaning 1 millisecond is equivalent to 1 step, the "**slowest**" speed configuration. Rising the value will make each millisecond represent more steps, making the change of current value faster.
+	 *
+	 * @param newVal The new value for the **otptSldrSpd** attribute.
+	 *
+	 * @return The success in the value of the attribute
+	 * @retval true The parameter was a valid value, the attribute is set to the new value.
+	 * @retval false The parameter is an invalid value, the attribute is not changed.
+	 *
+	 * @note Making the **otptSldrSpd** equal to 0 would void the ability to change the slider value, so the range of acceptable values is 1<= newVal <= (2^16-1).
+	 * @warning A "wrong" combination of **otptSldrSpd** and **otptSldrStpSize** might result in value change between readings greater than the range set by the **otptValMin** and the **otptValMax** values. The relation between the four parameters must be kept in mind if the application developed gives the final user the capability to configure those values at runtime.
+	 */
+	bool setOtptSldrSpd(const uint16_t &newVal);
+	/**
+	 * @brief Sets the output slider step size (**otptSldrStpSize**) attribute value.
+	 *
+	 * @param newVal The new value for the outputSliderStepSize attribute.
+	 *
+	 * @note The new value for the step size must be smaller or equal than the size of the valid range of otptCurVal attribute
+	 *
+	 * @retval true If newVal <= (otptValMax - otptValMin), the value of the outputSliderStepSize attribute is changed.
+	 * @retval false Otherwise, and the value of the outputSliderStepSize attribute is not changed.
+	 *
+	 * @note For the secondary function to work like a slider, the condition (newVal < ((_otptValMax - _otptValMin) / _otptSldrSpd)) must be kept
+	 * @note For the secondary function to work like a slider or a toggle switch, the condition (newVal <= ((_otptValMax - _otptValMin) / _otptSldrSpd)) must be kept
+	 * @note For the secondary function to work like a toggle switch, the condition (newVal = ((_otptValMax - _otptValMin) / _otptSldrSpd)) must be kept.
+	 *
+	 * @warning As a consequence of the aforementioned notes, if both **otptSldrStpSize** and **otptSldrSpd** are being changed, the **otptSldrSpd** must be changed first to ensure the new **otptSldrStpSize** doesn't fail the range validation test included in this method.
+	 */
+	bool setOtptSldrStpSize(const uint16_t &newVal);
+	/**
+	 * @brief Sets the output current value register maximum value attribute (otptValMax attribute).
+	 *
+	 * The new value for the otptValMax attribute must be in the range otptValMin < newVal <= 0xFFFF
+	 *
+	 * @param newVal The new value for the otptValMax attribute.
+	 *
+	 * @return The success in the value change
+	 * @retval true The new value was within valid range, the otptValMax attribute change was made.
+	 * @retval false The new value was outside valid range, the change was not made.
+	 *
+	 * @note Due to type constrains, the failure in the value change must be consequence of the selected newVal <= otptValMin
+	 *
+	 * @warning If the otpValMax attribute intended change is to a smaller value, the otpCurVal might be left outside the new valid range (newVal < otpCurVal). In this case the otptCurVal will be changed to be equal to newVal, and so otptCurVal will become equal to otptValMax.
+	 */
+	bool setOtptValMax(const uint16_t &newVal);
+	/**
+	 * @brief Sets the output current value register minimum value attribute (otptValMin attribute).
+	 *
+	 * The new value for the otptValMin attribute must be in the range 0x0000<= newVal < otptValMax.
+	 *
+	 * @param newVal The new value for the otptValMin attribute.
+	 *
+	 * @return The success in the value change
+	 * @retval true The new value was within valid range, the otptValMin attribute change was made.
+	 * @retval false The new value was outside valid range, the change was not made.
+	 *
+	 * @note Due to type constrains, the failure in the value change must be consequence of the selected newVal >= otptValMax
+	 *
+	 * @warning If the otptValMin attribute intended change is to a greater value, the otptCurVal might be left outside the new valid range (newVal > otptCurVal). In this case the otptCurVal will be changed to be equal to newVal, and so otptCurVal will become equal to otptValMin.
+	 */
+	bool setOtptValMin(const uint16_t &newVal);
+	/**
+	 * @brief Sets the value of the curSldrDirUp attribute to false.
+	 *
+	 * The curSldrDirUp attribute dictates how the calculated output value change -resulting from the time lapse between checks, the otptSldrSpd and the otptSldrStpSize attributes- will be applied to the otptCurVal attribute.
+	 * - If curSldrDirUp = false, the output value change will be **subtracted** from otptCurVal, successively down to otptValMin.
+	 *
+	 * @note If the method intends to set the curSldrDirUp to false when the otptCurVal = otptValMin the method will fail, returning false as result.
+	 *
+	 * @return The success in changing the slider direction
+	 * @retval true The change of direction was successful
+	 * @retval true The change of direction failed as the otptCurVal was equal to the extreme value
+	 */
+	bool setSldrDirDn();
+	/**
+	 * @brief Sets the value of the curSldrDirUp attribute to true
+	 *
+	 * The curSldrDirUp attribute dictates how the calculated output value change -resulting from the time lapse between checks, the otptSldrSpd and the otptSldrStpSize attributes- will be applied to the otptCurVal attribute.
+	 * - If curSldrDirUp = true, the output value change will be **added** to otptCurVal, up to otptValMax.
+	 *
+	 * @note If the method intends to set curSldrDirUp to true when the otptCurVal = otptValMax the method will fail, returning false as result.
+	 *
+	 * @return The success in changing the slider direction
+	 * @retval true The change of direction was successful
+	 * @retval true The change of direction failed as the otptCurVal was equal to the extreme value
+	 */
+	bool setSldrDirUp();
+	/**
+	 * @brief Sets the value of the "Auto-Swap Direction on Ends" (**autoSwpDirOnEnd**) attribute.
+	 *
+	 * The autoSwpDirOnEnd is one of the attributes that configures the slider behavior, setting what the MPB must do when reaching one of the output values range limits.
+	 * If a limit -otptValMin or otptValMax- is reached while the MPBttn is kept pressed and in secondary mode, the otptCurVal register increment/decrement can be stopped until a change of direction is invoked through setSldrDirUp(), setSldrDirDn() or swpSldrDir() methods, or automatically through the "Auto-Swap Direction on Ends" (**autoSwpDirOnEnd**) and the "Swap Direction on MPB press" (**autoSwpDirOnPrss**).
+	 * If the **autoSwpDirOnEnd** attribute is set (true) the increment direction of the otptCurVal will be automatically inverted when it reaches otptValMax or otptValMin. If it's not set the otptCurVal will not change value until one of the described alternative methods is invoked, or the MPB is released and pushed back if the **autoSwpDirOnPrss** is set -see **setSwpDirOnPrss(const bool)**.
+	 *
+	 * @param newVal The new value for the autoSwpDirOnEnd attribute
+	 */
+	void setSwpDirOnEnd(const bool &newVal);
+	/**
+	 * @brief Sets the value of the "Auto-Swap Direction On Press" (**autoSwpDirOnPrss**) attribute.
+	 *
+	 * The **autoSwpDirOnPrss** is one of the attributes that configures the slider behavior, setting what the MPB must do when the MPB object enters in secondary mode, referring to the increment or decrement directions.
+	 * If the **autoSwpDirOnPrss** attribute is set (true) the increment direction of the otptCurVal will be automatically inverted every time the MPB is pressed back into secondary mode. If the otptCurVal was incrementing when the MPB was last released. the otptCurVal will start decrementing the next time is pressed to enter secondary mode, and vice versa. If it's not set the otptCurVal will not change direction until it reaches one the limit values, or until one of the described alternative methods is invoked, or the MPB's **autoSwpDirOnEnd** attribute is set -see **setSwpDirOnEnd(const bool)** for more details.
+	 *
+	 * @param newVal The new value for the autoSwpDirOnPrss attribute
+	 */
+	void setSwpDirOnPrss(const bool &newVal);
+	/**
+	 * @brief Inverts the current **curSldrDirUp** attribute value.
+	 *
+	 * Whatever the previous value of the **curSldrDirUp** flag, the method invocation inverts it's value, and as a consequence the inverts the direction of the otptCurVal update. If it was incrementing it will start decrementing, and vice versa, considering all the other factors, attributes and attribute flags involved in the embedded object behavior (minimum and maximum settings, the direction changes if pressed, reaches limits, etc.)
+	 *
+	 * @return The new value of the curSldrDirUp attribute.
+	 */
+	bool swapSldrDir();
+};
+
+//==========================================================>>
+
+/**
+ * @brief Abstract class, base to model Voidable DD-MPBs (**VDD-MPB**).
+ *
+ * **Voidable DD-MPBs** are MPBs whose distinctive characteristic is that implement non-latching switches that while being pressed their state might change from **On State** to a **Voided state** due to different voiding conditions. Depending on the classes the voided state might be **Voided & Off state**, **Voided & On state** or **Voided & Not enforced** states.
+ * Those conditions to change to a voided state include -but are not limited to- the following conditions:
+ * - pressing time
+ * - external signals
+ * - entering the **On state**
+ *
+ * The mechanisms to "un-void" the MPB and return it to an operational state includes -but are not limited to- the following actions:
+ * - releasing the MPBs
+ * - receiving an external signal
+ * - the reading of the **isOn** attribute flag status
+ *
+ * The voiding conditions and the un-voiding mechanisms define the VDD-MPB subclasses.
+ *
+ * @class VdblMPBttn
+ */
+class VdblMPBttn: public DbncdDlydMPBttn{
+private:
+   void setFrcdOtptWhnVdd(const bool &newVal);
+   void setStOnWhnOtpFrcd(const bool &newVal);
+protected:
+	enum fdaVmpbStts{
+ 		stOffNotVPP,
+ 		stOffVPP,
+ 		stOnNVRP,
+		//--------
+		stOnVVP,
+		stOnVddNVUP,
+		stOffVddNVUP,
+		stOffVddVUP,
+		stOffUnVdd,
+		//--------
+ 		stOnVRP,
+		stOnTurnOff,
+		stOff,
+		//--------
+		stDisabled
+ 	};
+ 	fdaVmpbStts _mpbFdaState {stOffNotVPP};
+
+	void (*_fnWhnTrnOffVdd)() {nullptr};
+	void (*_fnWhnTrnOnVdd)() {nullptr};
+	bool _frcOtptLvlWhnVdd {true};
+	bool _isVoided{false};
+	bool _stOnWhnOtptFrcd{false};
+	bool _validVoidPend{false};
+	bool _validUnvoidPend{false};
+
+	virtual void mpbPollCallback();
+	uint32_t _otptsSttsPkg(uint32_t prevVal = 0);
+	bool setVoided(const bool &newVoidValue);
+	virtual void stDisabled_In();
+	virtual void stDisabled_Out();
+	virtual void stOffNotVPP_In(){};
+	virtual void stOffVddNVUP_Do(){};	//This provides a setting point for calculating the _validUnvoidPend
+	virtual void stOffVPP_Do(){};	// This provides a setting point for the voiding mechanism to be started
+	void _turnOffVdd();
+	void _turnOnVdd();
+	virtual void updFdaState();
+	virtual bool updVoidStatus() = 0;
+public:
+    /**
+     * @brief Class constructor
+     *
+     * @param isOnDisabled (Optional) Sets the instantiation value for the isOnDisabled flag attribute.
+     *
+     * @note For the other parameters see DbncdDlydMPBttn(GPIO_TypeDef*, const uint16_t, const bool, const bool, const unsigned long int, const unsigned long int)
+     */
+	VdblMPBttn(const uint8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0, const bool &isOnDisabled = false);
+    /**
+     * @brief Default virtual destructor
+     */
+	virtual ~VdblMPBttn();
+    /**
+     * @brief See DbncdMPBttn::clrStatus(bool)
+     */
+	void clrStatus(bool clrIsOn = true);
+    /**
+ 	 * @brief Returns the function that is set to execute every time the object **exits** the **Voided State**.
+ 	 *
+ 	 * The function to be executed is an attribute that might be modified by the **setFnWhnTrnOffVddPtr()** method.
+ 	 *
+ 	 * @return A function pointer to the function set to execute every time the object enters the **Unvoided or "Voieded Off" State**.
+ 	 * @retval nullptr if there is no function set to execute when the object enters the **Unvoided (or "Voided Off") State**.
+ 	 */
+	fncPtrType getFnWhnTrnOffVdd();
+ 	/**
+ 	 * @brief Returns the function that is set to execute every time the object **enters** the **Voided or "Voided On" State**.
+ 	 *
+ 	 * The function to be executed is an attribute that might be modified by the **setFnWhnTrnOnVddPtr()** method.
+ 	 *
+ 	 * @return A function pointer to the function set to execute every time the object enters the **Voided (or "Voided On") State**.
+ 	 * @retval nullptr if there is no function set to execute when the object enters the **Voided State**.
+ 	 */
+ 	fncPtrType getFnWhnTrnOnVdd();
+    /**
+    * @brief Returns the value of the frcOtptLvlWhnVdd attribute.
+    *
+    * The frcOtptLvlWhnVdd (Force Output Level When Voided) attribute configures the object to either keep it's isOn attribute flag current value when entering the **voided state** (false) or to force it to a specific isOn value (true).
+    *
+    * @return the current value of the frcOtptLvlWhnVdd attribute.
+    *
+     * @note As of this version of the library no VdblMPBttn class or subclasses **make use of the frcOtptLvlWhnVdd attribute**, their inclusion is "New Features Under Development" related to the refactoring of **binary states** to **Non-binary states**.
+     */
+    bool getFrcOtptLvlWhnVdd();
+    /**
+     * @brief Returns the current value of the isVoided attribute flag
+     *
+     * @return The value of the flag.
+     * @retval true The object is in **voided state**
+     * @retval false The object is in **not voided state**
+     */
+	const bool getIsVoided() const;
+    /**
+     * @brief Returns the value of the frcOtptLvlWhnVdd attribute.
+     *
+     * The frcOtptLvlWhnVdd (Force Output Level When Voided) attribute configures the object to either keep it's isOn attribute flag current value when entering the **voided state** (false) or to force it to a specific isOn value (true).
+	  * 
+	  * If the object is set to force to a specific isOn value (true), the forced value to be set will be determined by the **stOnWhnOtptFrcd attribute**.
+     *
+     * @return the current value of the frcOtptLvlWhnVdd attribute.
+     *
+     * @note As of this version of the library no VdblMPBttn class or subclasses **make use of the frcOtptLvlWhnVdd attribute**, their inclusion is "New Features Under Development" related to the refactoring of **binary states** to **Non-binary states**.
+     */
+	bool getStOnWhnOtpFrcd();
+    /**
+ 	 * @brief Sets the function that will be called to execute every time the object's **isVoided** attribute flag is **reset**.
+ 	 *
+ 	 * The function to be executed must be of the form **void (*newFnWhnTrnOff)()**, meaning it must take no arguments and must return no value, it will be executed only once by the object (recursion must be handled with the usual precautions). When instantiated the attribute value is set to **nullptr**.
+ 	 *
+ 	 * @param newFnWhnTrnOff Function pointer to the function intended to be called when the object's **isVoided** attribute flag is **reset**. Passing **nullptr** as parameter deactivates the function execution mechanism.
+ 	 */
+ 	void setFnWhnTrnOffVddPtr(void(*newFnWhnTrnOff)());
+ 	/**
+ 	 * @brief Sets the function that will be called to execute every time the object's **isVoided attribute flag** is **set**.
+ 	 *
+ 	 * The function to be executed must be of the form **void (*newFnWhnTrnOn)()**, meaning it must take no arguments and must return no value, it will be executed only once by the object (recursion must be handled with the usual precautions). When instantiated the attribute value is set to **nullptr**.
+ 	 *
+ 	 * @param newFnWhnTrnOn: function pointer to the function intended to be called when the object's **isVoided is set**. Passing **nullptr** as parameter deactivates the function execution mechanism.
+ 	 */
+ 	void setFnWhnTrnOnVddPtr(void(*newFnWhnTrnOn)());
+	 /**
+     * @brief Sets the value of the isVoided attribute flag to false
+     *
+     * @warning The value of the isVoided attribute flag is computed as a result of the current state of the instantiated object, considering the inputs and embedded simulated behavior.
+     * - Arbitrarily setting a value to the isVoided attribute flag might affect the normal behavior path for the object.
+     * - The attribute flag value might return to it's natural value when the behavior imposes the change.
+     * - The use of this method must be limited to certain states and conditions of the object, being the most suitable situation while the object is in **Disabled state**: If the application development requires the isVoided attribute flag to be in a specific value, this method and the setIsVoided() method are the required tools.
+     *
+     * @retval true
+     */
+	bool setIsNotVoided();
+    /**
+     * @brief Sets the value of the isVoided attribute flag to true.
+     *
+     * @warning See the Warnings for setIsNotVoided()
+     *
+     * @retval true
+     */
+	bool setIsVoided();
+};
+
+//==========================================================>>
+
+/**
+ * @brief Models a Time Voidable DD-MPB, a.k.a. Anti-tampering switch (**TVDD-MPB**)
+ *
+ * The **Time Voidable Momentary Push Button** keeps the **On state** since the moment the signal is stable (debounce & delay process) and until the moment the push button is released, or until a preset time in the **On state** is reached. Then the switch will return to the Off position until the push button is released and pushed back.
+ * This kind of switches are used to activate limited resources related management or physical safety devices, and the possibility of a physical blocking of the switch to extend the ON signal forcibly beyond designer's plans is highly undesired. Water valves, door unlocking mechanisms, hands-off security mechanisms, high power heating devices are some of the usual uses for these type of switches.
+ *
+ * class TmVdblMPBttn
+ */
+class TmVdblMPBttn: public VdblMPBttn{
+protected:
+	unsigned long int _voidTime;
+	unsigned long int _voidTmrStrt{0};
+
+	virtual void stOffNotVPP_In();
+	virtual void stOffVddNVUP_Do();	//This provides a setting point for calculating the _validUnvoidPend
+	virtual void stOffVPP_Do();	// This provides a setting point for the voiding mechanism to be started
+	bool updIsPressed();
+	virtual bool updVoidStatus();
+public:
+    /**
+     * @brief Class constructor
+     *
+     * @param voidTime The time -in milliseconds- the MPB must be pressed to enter the **voided state**.
+     *
+     * @note For the rest of the parameters see VdblMPBttn(const uint8_t, const bool, const bool, const unsigned long int, const unsigned long int, const bool)
+     */
+	TmVdblMPBttn(const uint8_t &mpbttnPin, unsigned long int voidTime, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0, const bool &isOnDisabled = false);
+    /**
+     * @brief Class virtual destructor
+     */
+	virtual ~TmVdblMPBttn();
+    /**
+     * @brief See DbncdMPBttn::begin(const unsigned long int)
+     */
+	virtual bool begin(const unsigned long int &pollDelayMs = _StdPollDelay);
+    /**
+     * @brief See DbncdMPBttn::clrStatus(bool)
+     */
+	void clrStatus();
+    /**
+     * @brief Returns the voidTime attribute current value.
+     *
+     * The voidTime attribute holds the time -in milliseconds- the MPB must be pressed to enter the **voided state**.
+     *
+     * @return The current value of the voidTime attribute.
+     */
+	const unsigned long int getVoidTime() const;
+    /**
+     * @brief Sets a new value to the Void Time attribute
+     *
+     * @param newVoidTime New value for the Void Time attribute
+     *
+     * @note To ensure a safe and predictable behavior from the instantiated objects a minimum Void Time (equal to the minimum Service Time) setting guard is provided, ensuring data and signals processing are completed before voiding process is enforced by the timer. The guard is set by the defined _MinSrvcTime constant.
+     *
+     * @retval: true if the newVoidTime parameter is equal to or greater than the minimum setting guard. The attribute value is changed.
+     * @retval: false otherwise. The attribute value is not changed.
+     */
+	bool setVoidTime(const unsigned long int &newVoidTime);
+};
+
+//==========================================================>>
+
+/**
+ * @brief Models a Single Service Voidable DD-MPB a.k.a. Trigger switch (**SSVDD-MPB**)
+ *
+ * The **Single Service Voidable Momentary Push Button** keeps the **On state** since the moment the signal is stable (debounce & delay process) and until the moment the provided mechanisms implemented to be executed when the switch enters the **On State** are started, that means calling the **fnWhnTrnOn** function, notifying the **taskToNotify** task and setting the **isOn** attribute flag.
+ * After the configured mechanisms are triggered and the attribute flag is set to **true** (the only mandatory action is the attribute flag setting, all the others are configurable to execute or not) the MPB will enter the **Voided State**, forcing the MPB into the **Off State**. The SnglSrvcVdblMPBttn class objects requires the MPB to be released to exit the **Voided State**, restarting the cycle.
+ * This kind of switches are used to handle "Single Shot Trigger" style signals, ensuring one single signal per push.
+ *
+ * @attention Depending on checking the **isOn** flag reading trough the getIsOn() method might surely fail due to the high risk of missing the short time the flag will be raised before it is again taken down by the voidance of the MPB. The use of the non-polling facilities ensures no loss of signals and enough time to execute the code depending on the "trigger activation", including the **fnWhnTrnOn** function, and the **taskToNotify** task.
+ *
+ * @note Due to the short time the **isOn** flag will be raised, as described above, the  resuming of the **taskWhileOn** activation mechanism is disabled in this class. For that purpose the setTaskWhileOn(const TaskHandle_t) is made not accessible by setting it's accessibility to **protected**.
+ *
+ * @note Due to the short time the **isOn** flag will be raised, as described above, the short time between the **fnWhnTrnOn** function and the **fnWhnTrnOff** function callings must also need to be evaluated by the user.
+ *
+ * @class SnglSrvcVdblMPBttn
+ */
+class SnglSrvcVdblMPBttn: public VdblMPBttn{
+protected:
+   virtual void stOffVddNVUP_Do();	//This provides the calculation for the _validUnvoidPend
+   virtual bool updVoidStatus();
+public:
+   /**
+	 * @brief Class constructor
+    *
+    * @note For the parameters see DbncdDlydMPBttn(const uint8_t, const bool, const bool, const unsigned long int, const unsigned long int)
+    */
+	SnglSrvcVdblMPBttn(const uint8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
+   /**
+    * @brief Class virtual destructor
+    */
+   virtual ~SnglSrvcVdblMPBttn();
+   /**
+    * @brief See DbncdMPBttn::begin(const unsigned long int)
+    */
+   virtual bool begin(const unsigned long int &pollDelayMs = _StdPollDelay);
+};
+
+//==========================================================>>
+
 #endif   /*_BUTTONTOSWITCH_AVR_H_*/

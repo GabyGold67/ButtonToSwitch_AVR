@@ -1,14 +1,15 @@
 /**
   ******************************************************************************
-  * @file	: 01_DbncdMPBttn_1b.ino
-  * @brief  : Example for the ButtonToSwitch_AVR library DbncdMPBttn class
+  * @file	: 13_SnglSrvcVdblMPBttn_1b.ino
+  * @brief  : Example for the ButtonToSwitch_AVR library SnglSrvcVdblMPBttn class
   *
   *   Framework: Arduino
   *   Platform: AVR
   * 
-  * The example instantiates a DbncdMPBttn object using:
+  * The example instantiates a SnglSrvcVdblMPBttn object using:
   * 	- 1 push button between GND and dmpbMainInpt
   * 	- 1 led with it's corresponding resistor between GND and dmpbIsOnOtpt
+  * 	- 1 led with it's corresponding resistor between GND and dmpbVoidedOtpt
   * 	- 1 led with it's corresponding resistor between GND and dmpbIsEnabledOtpt
   *
   * This simple example instantiates the SnglSrvcVdblMPBttn object in the setup(),
@@ -18,7 +19,7 @@
   * When a change in the object's outputs attribute flags values is detected, it
   * manages the loads and resources that the switch turns On and Off, in this
   * example case are the output of some GPIO pins.
-  * 
+  *
   * A time controlling code section changes the isEnabled attribute of the MPBttn
   * after a time period, changing the MPBttn from enabled to disabled and then
   * back, to test the MPBttn behavior when enabling and disabling the MPBttn
@@ -44,22 +45,26 @@
 
 const uint8_t dmpbMainInpt{6};
 const uint8_t dmpbIsOnOtpt{3};
+const uint8_t dmpbVoidedOtpt{8};
 const uint8_t dmpbIsEnabledOtpt{4};
 
-DbncdMPBttn myDMPBttn (dmpbMainInpt);
+SnglSrvcVdblMPBttn myDMPBttn (dmpbMainInpt);
 
 unsigned long int enbldOnOffTm{10000};
 unsigned long int lstSwpTm{0};
 
 void setup() {
   digitalWrite(dmpbIsOnOtpt, LOW);
+  digitalWrite(dmpbVoidedOtpt, LOW);
   digitalWrite(dmpbIsEnabledOtpt, LOW);
 
   pinMode(dmpbIsOnOtpt, OUTPUT);
+  pinMode(dmpbVoidedOtpt, OUTPUT);
   pinMode(dmpbIsEnabledOtpt, OUTPUT);
 
+  myDMPBttn.setStrtDelay(100);
   myDMPBttn.setIsOnDisabled(false);
-  myDMPBttn.begin(40); 
+  myDMPBttn.begin(20);
 }
 
 void loop() {
@@ -71,9 +76,10 @@ void loop() {
     lstSwpTm = millis();
   }
 
-  if(myDMPBttn.getOutputsChange()){ //This checking is done for saving resources, avoiding the rewriting of the pin value if there are no state changes in the MPB status
+  if(myDMPBttn.getOutputsChange()){
     digitalWrite(dmpbIsOnOtpt, (myDMPBttn.getIsOn())?HIGH:LOW);    
+    digitalWrite(dmpbVoidedOtpt, (myDMPBttn.getIsVoided())?HIGH:LOW);    
     digitalWrite(dmpbIsEnabledOtpt, (myDMPBttn.getIsEnabled())?LOW:HIGH);    
-    myDMPBttn.setOutputsChange(false); //If the OutputChanges attibute flag is used, reset it's value to detect the next need to refresh outputs.
+    myDMPBttn.setOutputsChange(false);
   }
 }  

@@ -1,17 +1,17 @@
 /**
   ******************************************************************************
-  * @file	: 07_XtrnUnltchMPBttn_1a.ino
-  * @brief  : Example for the ButtonToSwitch_AVR library XtrnUnltchMPBttn class
+  * @file	: 12_DDlydDALtchMPBttn_1a.ino
+  * @brief  : Example for the ButtonToSwitch_AVR library DDlydDALtchMPBttn class
   *
   *   Framework: Arduino
   *   Platform: AVR
   * 
-  * The example instantiates a XtrnUnltchMPBttn object using:
+  * The example instantiates a DDlydDALtchMPBttn object using:
   * 	- 1 push button between GND and dmpbMainInpt
-  * 	- 1 push button between GND and dmpbAuxInpt
   * 	- 1 led with it's corresponding resistor between GND and dmpbIsOnOtpt
+  * 	- 1 led with it's corresponding resistor between GND and dmpbIsOnScndryOtpt
   *
-  * This simple example instantiates the XtrnUnltchMPBttn object in the setup(),
+  * This simple example instantiates the DDlydDALtchMPBttn object in the setup(),
   * and checks it's attributes flags through the getters methods.
   * 
   * When a change in the object's outputs attribute flags values is detected, it
@@ -35,26 +35,26 @@
 #include <ButtonToSwitch_AVR.h>
 
 const uint8_t dmpbMainInpt{6};
-const uint8_t dmpbAuxInpt{2};
 
 const uint8_t dmpbIsOnOtpt{3};
+const uint8_t dmpbIsOnScndryOtpt{9};
 
-DbncdDlydMPBttn myUnltchMPBttn (dmpbAuxInpt);
-DbncdDlydMPBttn* myUnltchMPBttnPtr{&myUnltchMPBttn};
-
-XtrnUnltchMPBttn myDMPBttn(dmpbMainInpt, myUnltchMPBttnPtr, true, true, 50, 50);
+DDlydDALtchMPBttn myDMPBttn (dmpbMainInpt);
 
 void setup() {
-
   digitalWrite(dmpbIsOnOtpt, LOW);
-  pinMode(dmpbIsOnOtpt, OUTPUT);
+  digitalWrite(dmpbIsOnScndryOtpt, LOW);
 
-  myDMPBttn.begin(20);  
+  pinMode(dmpbIsOnOtpt, OUTPUT);
+  pinMode(dmpbIsOnScndryOtpt, OUTPUT);
+
+  myDMPBttn.begin(40);  
 }
 
 void loop() {
-  if(myDMPBttn.getOutputsChange()){ //This checking is done for saving resources, avoiding the rewriting of the pin value if there are no state changes in the MPB status
+  if(myDMPBttn.getOutputsChange()){
     digitalWrite(dmpbIsOnOtpt, (myDMPBttn.getIsOn())?HIGH:LOW);    
-    myDMPBttn.setOutputsChange(false); //If the OutputChanges attibute flag is used, reset it's value to detect the next need to refresh outputs.
+    digitalWrite(dmpbIsOnScndryOtpt, (myDMPBttn.getIsOnScndry())?HIGH:LOW);    
+    myDMPBttn.setOutputsChange(false);
   }
 }  

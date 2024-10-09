@@ -839,7 +839,7 @@ const bool LtchMPBttn::getUnlatchRlsPend() const{
 	return _validUnlatchRlsPend;
 }
 
-void LtchMPBttn::mpbPollCallback(){	//! Refactoring pending
+void LtchMPBttn::mpbPollCallback(){
 
 	if(_mpbInstnc->getIsEnabled()){
 		// Input/Output signals update
@@ -1533,6 +1533,14 @@ bool XtrnUnltchMPBttn::begin(const unsigned long int &pollDelayMs){
 
 	result = LtchMPBttn::begin(pollDelayMs);
 
+	if (result){
+		if(_unLtchBttn != nullptr)
+			result = _unLtchBttn->begin();
+		else
+			result = true;
+	}
+
+
 	return result;
 }
 
@@ -1579,6 +1587,1154 @@ void XtrnUnltchMPBttn::updValidUnlatchStatus(){
 
 //=========================================================================> Class methods delimiter
 
+DblActnLtchMPBttn::DblActnLtchMPBttn(const uint8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
+:LtchMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay)
+{
+}
+
+DblActnLtchMPBttn::~DblActnLtchMPBttn()
+{
+}
+
+bool DblActnLtchMPBttn::begin(const unsigned long int &pollDelayMs) {
+	bool result{false};
+
+	result = LtchMPBttn::begin(pollDelayMs);
+
+	return result;
+}
+
+void DblActnLtchMPBttn::clrStatus(bool clrIsOn){
+	_scndModTmrStrt = 0;
+	_validScndModPend = false;
+	if(clrIsOn && _isOnScndry)
+		_turnOffScndry();
+	LtchMPBttn::clrStatus(clrIsOn);
+
+	return;
+}
+
+fncPtrType DblActnLtchMPBttn::getFnWhnTrnOffScndry(){
+
+	return _fnWhnTrnOffScndry;
+}
+
+fncPtrType DblActnLtchMPBttn::getFnWhnTrnOnScndry(){
+
+	return _fnWhnTrnOnScndry;
+}
+
+bool DblActnLtchMPBttn::getIsOnScndry(){
+
+	return _isOnScndry;
+}
+
+unsigned long DblActnLtchMPBttn::getScndModActvDly(){
+
+	return _scndModActvDly;
+}
+
+void DblActnLtchMPBttn::mpbPollCallback(){
+	if(_mpbInstnc->getIsEnabled()){
+		// Input/Output signals update
+		updIsPressed();
+		// Flags/Triggers calculation & update
+		updValidPressesStatus();
+	}
+ 	// State machine state update
+	updFdaState();
+
+	return;
+}
+
+void DblActnLtchMPBttn::setFnWhnTrnOffScndryPtr(void (*newFnWhnTrnOff)()){
+	if (_fnWhnTrnOffScndry != newFnWhnTrnOff){
+		_fnWhnTrnOffScndry = newFnWhnTrnOff;
+	}
+
+	return;
+}
+
+void DblActnLtchMPBttn::setFnWhnTrnOnScndryPtr(void (*newFnWhnTrnOn)()){
+	if (_fnWhnTrnOnScndry != newFnWhnTrnOn)
+		_fnWhnTrnOnScndry = newFnWhnTrnOn;
+
+	return;
+}
+
+bool DblActnLtchMPBttn::setScndModActvDly(const unsigned long &newVal){
+	bool result {true};
+
+	if(newVal != _scndModActvDly){
+		if (newVal >= _MinSrvcTime){  //The minimum activation time is _minActTime
+			_scndModActvDly = newVal;
+		}
+		else{
+			result = false;
+		}
+	}
+
+	return result;
+}
+
+void DblActnLtchMPBttn::_turnOffScndry(){
+
+	if(_isOnScndry){
+		//---------------->> Functions related actions
+		if(_fnWhnTrnOffScndry != nullptr)
+			_fnWhnTrnOffScndry();
+		//---------------->> Flags related actions
+		_isOnScndry = false;
+		setOutputsChange(true);
+	}
+
+	return;
+}
+
+void DblActnLtchMPBttn::_turnOnScndry(){
+
+	if(!_isOnScndry){
+		//---------------->> Functions related actions
+		if(_fnWhnTrnOnScndry != nullptr)
+			_fnWhnTrnOnScndry();
+		//---------------->> Flags related actions
+		_isOnScndry = true;
+		setOutputsChange(true);
+	}
+
+	return;
+}
+
+void DblActnLtchMPBttn::updFdaState(){
+	switch(_mpbFdaState){
+		case stOffNotVPP:
+			//In: >>---------------------------------->>
+			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+			//Do: >>---------------------------------->>
+			if(_validPressPend || _validScndModPend){
+				_mpbFdaState = stOffVPP;	//Start pressing timer
+				setSttChng();
+			}
+			if(_validDisablePend){
+				_mpbFdaState = stDisabled;	//The MPB has been disabled
+				setSttChng();
+			}
+			//Out: >>---------------------------------->>
+			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+			break;
+
+		case stOffVPP:
+			//In: >>---------------------------------->>
+			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+			//Do: >>---------------------------------->>
+			if(!_isOn){
+				_turnOn();
+			}
+			if(_validScndModPend){
+				_scndModTmrStrt = millis();	//>Gaby is this needed after separating this class from the sldr... class? Better do a subclass function!
+				_mpbFdaState = stOnStrtScndMod;
+				setSttChng();
+			}
+			else if(_validPressPend && _validReleasePend){
+				_validPressPend = false;
+				_validReleasePend = false;
+				_mpbFdaState = stOnMPBRlsd;
+				setSttChng();
+			}
+			//Out: >>---------------------------------->>
+			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+			break;
+
+		case stOnStrtScndMod:
+			//In: >>---------------------------------->>
+			if(_sttChng){
+				stOnStrtScndMod_In();
+				clrSttChng();
+			}	// Execute this code only ONCE, when entering this state
+			//Do: >>---------------------------------->>
+			_mpbFdaState = stOnScndMod;
+			setSttChng();
+			//Out: >>---------------------------------->>
+			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
+
+		case stOnScndMod:
+			//In: >>---------------------------------->>
+			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+			//Do: >>---------------------------------->>
+			if(!_validReleasePend){
+				//Operating in Second Mode
+				stOnScndMod_Do();
+			}
+			else{
+				// MPB released, close Slider mode, move on to next state
+				_mpbFdaState = stOnEndScndMod;
+				setSttChng();
+			}
+			if(_validDisablePend){
+				_mpbFdaState = stDisabled;	//The MPB has been disabled
+				setSttChng();
+			}
+			//Out: >>---------------------------------->>
+			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+			break;
+
+		case stOnEndScndMod:
+			//In: >>---------------------------------->>
+			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+			//Do: >>---------------------------------->>
+			_scndModTmrStrt = 0;
+			_validScndModPend = false;
+			_mpbFdaState = stOnMPBRlsd;
+			setSttChng();
+			//Out: >>---------------------------------->>
+			if(_sttChng){
+				stOnEndScndMod_Out();
+			}
+//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
+
+		case stOnMPBRlsd:
+			//In: >>---------------------------------->>
+			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+			//Do: >>---------------------------------->>
+			if(_validScndModPend){
+				_scndModTmrStrt = millis();
+				_mpbFdaState = stOnStrtScndMod;
+				setSttChng();
+			}
+			else if(_validPressPend && _validReleasePend){
+				_validPressPend = false;
+				_validReleasePend = false;
+				_mpbFdaState = stOnTurnOff;
+				setSttChng();
+			}
+			if(_validDisablePend){
+				_mpbFdaState = stDisabled;	//The MPB has been disabled
+				setSttChng();
+			}
+			//Out: >>---------------------------------->>
+			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+			break;
+
+		case stOnTurnOff:
+			//In: >>---------------------------------->>
+			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+			//Do: >>---------------------------------->>
+			_turnOff();
+			_mpbFdaState = stOffNotVPP;
+			setSttChng();
+			//Out: >>---------------------------------->>
+			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+			break;
+
+		case stDisabled:
+			//In: >>---------------------------------->>
+			if(_sttChng){
+				stDisabled_In();
+				if(_isOn != _isOnDisabled){
+					if(_isOn)
+						_turnOff();
+					else
+						_turnOn();
+				}
+				if(_isOnScndry != _isOnDisabled){
+					if(_isOnScndry)
+						_turnOffScndry();
+					else
+						_turnOnScndry();
+				}
+				clrStatus(false);	//Clears all flags and timers, _isOn value will not be affected
+				_isEnabled = false;
+				_validDisablePend = false;
+				setOutputsChange(true);
+				clrSttChng();
+			}	// Execute this code only ONCE, when entering this state
+			//Do: >>---------------------------------->>
+			if(_validEnablePend){
+				_isEnabled = true;
+				_validEnablePend = false;
+				setOutputsChange(true);
+			}
+			if(_isEnabled && !updIsPressed()){	//The stDisabled status will be kept until the MPB is released for security reasons
+				_mpbFdaState = stOffNotVPP;
+				setSttChng();
+			}
+
+			//Out: >>---------------------------------->>
+			if(_sttChng){
+				clrStatus(true);
+			}	// Execute this code only ONCE, when exiting this state
+			break;
+	default:
+		break;
+	}
+
+	return;
+}
+
+bool DblActnLtchMPBttn::updValidPressesStatus(){
+	if(_isPressed){
+		if(_dbncRlsTimerStrt != 0)
+			_dbncRlsTimerStrt = 0;
+		if(_dbncTimerStrt == 0){    //It was not previously pressed
+			_dbncTimerStrt = millis();	//Started to be pressed
+		}
+		else{
+			if ((millis() - _dbncTimerStrt) >= ((_dbncTimeTempSett + _strtDelay) + _scndModActvDly)){
+				_validScndModPend = true;
+				_validPressPend = false;
+			} else if ((millis() - _dbncTimerStrt) >= (_dbncTimeTempSett + _strtDelay)){
+				_validPressPend = true;
+			}
+			if(_validPressPend || _validScndModPend){
+				_validReleasePend = false;
+				_prssRlsCcl = true;
+			}
+		}
+	}
+	else{
+		if(_dbncTimerStrt != 0)
+			_dbncTimerStrt = 0;
+		if(!_validReleasePend && _prssRlsCcl){
+			if(_dbncRlsTimerStrt == 0){    //It was not previously pressed
+				_dbncRlsTimerStrt = millis();	//Started to be UNpressed
+			}
+			else{
+				if ((millis() - _dbncRlsTimerStrt) >= (_dbncRlsTimeTempSett)){
+					_validReleasePend = true;
+					_prssRlsCcl = false;
+				}
+			}
+		}
+	}
+
+	return (_validPressPend || _validScndModPend);
+}
+
+void DblActnLtchMPBttn::updValidUnlatchStatus(){
+	_validUnlatchPend = true;
+
+	return;
+}
+
+//=========================================================================> Class methods delimiter
+
+DDlydDALtchMPBttn::DDlydDALtchMPBttn(const uint8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
+:DblActnLtchMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay)
+{
+}
+
+DDlydDALtchMPBttn::~DDlydDALtchMPBttn()
+{
+}
+
+void DDlydDALtchMPBttn::clrStatus(bool clrIsOn){
+	if(clrIsOn && _isOnScndry){
+		_turnOffScndry();
+	}
+	DblActnLtchMPBttn::clrStatus(clrIsOn);
+
+	return;
+}
+
+uint32_t DDlydDALtchMPBttn::_otptsSttsPkg(uint32_t prevVal){
+	prevVal = DbncdMPBttn::_otptsSttsPkg(prevVal);
+	if(_isOnScndry)
+		prevVal |= ((uint32_t)1) << IsOnScndryBitPos;
+	else
+		prevVal &= ~(((uint32_t)1) << IsOnScndryBitPos);
+
+	return prevVal;
+}
+
+/*void DDlydDALtchMPBttn::stDisabled_In(){	
+	if(_isOnScndry != _isOnDisabled){
+		if(_isOnDisabled)
+			_turnOnScndry();
+		else
+			_turnOffScndry();
+	}
+
+	return;
+}*/
+
+void DDlydDALtchMPBttn::stOnEndScndMod_Out(){
+	if(_isOnScndry){
+		_turnOffScndry();
+	}
+
+	return;
+}
+
+void DDlydDALtchMPBttn::stOnScndMod_Do(){
+
+	return;
+}
+
+void DDlydDALtchMPBttn::stOnStrtScndMod_In(){
+	if(!_isOnScndry){
+		_turnOnScndry();
+	}
+
+	return;
+}
+
+//=========================================================================> Class methods delimiter
+
+SldrDALtchMPBttn::SldrDALtchMPBttn(const uint8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay, const uint16_t initVal)
+:DblActnLtchMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay), _initOtptCurVal{initVal}
+{
+	_otptCurVal = _initOtptCurVal;
+}
+
+SldrDALtchMPBttn::~SldrDALtchMPBttn()
+{
+}
+
+void SldrDALtchMPBttn::clrStatus(bool clrIsOn){
+	// Might the option to return the _otpCurVal to the initVal be added? To one the extreme values?
+	if(clrIsOn && _isOnScndry)
+		_turnOffScndry();
+	DblActnLtchMPBttn::clrStatus(clrIsOn);
+
+	return;
+}
+
+uint16_t SldrDALtchMPBttn::getOtptCurVal(){
+
+	return _otptCurVal;
+}
+
+bool SldrDALtchMPBttn::getOtptCurValIsMax(){
+
+	return (_otptCurVal == _otptValMax);
+}
+
+bool SldrDALtchMPBttn::getOtptCurValIsMin(){
+
+	return (_otptCurVal == _otptValMin);
+}
+
+unsigned long SldrDALtchMPBttn::getOtptSldrSpd(){
+
+	return _otptSldrSpd;
+}
+
+uint16_t SldrDALtchMPBttn::getOtptSldrStpSize(){
+
+	return _otptSldrStpSize;
+}
+
+uint16_t SldrDALtchMPBttn::getOtptValMax(){
+
+	return _otptValMax;
+}
+
+uint16_t SldrDALtchMPBttn::getOtptValMin(){
+
+	return _otptValMin;
+}
+
+bool SldrDALtchMPBttn::getSldrDirUp(){
+
+	return _curSldrDirUp;
+}
+
+uint32_t SldrDALtchMPBttn::_otptsSttsPkg(uint32_t prevVal){
+	prevVal = DbncdMPBttn::_otptsSttsPkg(prevVal);
+	prevVal |= (((uint32_t)_otptCurVal) << OtptCurValBitPos);
+
+	return prevVal;
+}
+
+bool SldrDALtchMPBttn::setOtptCurVal(const uint16_t &newVal){
+	bool result{true};
+
+	if(_otptCurVal != newVal){
+		if(newVal >= _otptValMin && newVal <= _otptValMax)
+			_otptCurVal = newVal;
+		else
+			result = false;
+	}
+
+	return result;
+}
+
+bool SldrDALtchMPBttn::setOtptSldrSpd(const uint16_t &newVal){
+	bool result{true};
+
+	if(newVal != _otptSldrSpd){
+		if(newVal > 0)
+			_otptSldrSpd = newVal;
+		else
+			result = false;
+	}
+
+	return result;
+}
+
+bool SldrDALtchMPBttn::setOtptSldrStpSize(const uint16_t &newVal){
+	bool result{true};
+
+	if(newVal != _otptSldrStpSize){
+		if((newVal > 0) && (newVal <= (_otptValMax - _otptValMin) / _otptSldrSpd))	//If newVal == (_otptValMax - _otptValMin) the slider will work as kind of an On/Off switch
+			_otptSldrStpSize = newVal;
+		else
+			result = false;
+	}
+
+	return result;
+}
+
+bool SldrDALtchMPBttn::setOtptValMax(const uint16_t &newVal){
+	bool result{true};
+
+	if(newVal != _otptValMax){
+		if(newVal > _otptValMin){
+			_otptValMax = newVal;
+			if(_otptCurVal > _otptValMax){
+				_otptCurVal = _otptValMax;
+				setOutputsChange(true);
+			}
+		}
+		else{
+			result = false;
+		}
+	}
+
+	return result;
+}
+
+bool SldrDALtchMPBttn::setOtptValMin(const uint16_t &newVal){
+	bool result{true};
+
+	if(newVal != _otptValMin){
+		if(newVal < _otptValMax){
+			_otptValMin = newVal;
+			if(_otptCurVal < _otptValMin){
+				_otptCurVal = _otptValMin;
+				setOutputsChange(true);
+			}
+		}
+		else{
+			result = false;
+		}
+	}
+
+	return result;
+}
+
+bool SldrDALtchMPBttn::_setSldrDir(const bool &newVal){
+	bool result{true};
+
+	if(newVal != _curSldrDirUp){
+		if(newVal){	//Try to set new direction Up
+			if(_otptCurVal != _otptValMax)
+				_curSldrDirUp = true;
+		}
+		else{		//Try to set new direction down
+			if(_otptCurVal != _otptValMin)
+				_curSldrDirUp = false;
+		}
+		if(_curSldrDirUp != newVal)
+			result = false;
+	}
+
+	return result;
+}
+
+bool SldrDALtchMPBttn::setSldrDirDn(){
+
+	return _setSldrDir(false);
+}
+
+bool SldrDALtchMPBttn::setSldrDirUp(){
+
+	return _setSldrDir(true);
+}
+
+void SldrDALtchMPBttn::setSwpDirOnEnd(const bool &newVal){
+	if(_autoSwpDirOnEnd != newVal)
+		_autoSwpDirOnEnd = newVal;
+
+	return;
+}
+
+void SldrDALtchMPBttn::setSwpDirOnPrss(const bool &newVal){
+	if(_autoSwpDirOnPrss != newVal)
+		_autoSwpDirOnPrss = newVal;
+
+	return;
+}
+
+/*void SldrDALtchMPBttn::stDisabled_In(){
+	if(_isOnScndry != _isOnDisabled){
+		if(_isOnDisabled)
+			_turnOnScndry();
+		else
+			_turnOffScndry();
+	}
+
+	return;
+}*/
+
+void SldrDALtchMPBttn::stOnEndScndMod_Out(){
+	if(_isOnScndry)
+		_turnOffScndry();
+
+	return;
+}
+
+void SldrDALtchMPBttn::stOnScndMod_Do(){
+	// Operating in Slider mode, change the associated value according to the time elapsed since last update
+	//and the step size for every time unit elapsed
+	uint16_t _otpStpsChng{0};
+	unsigned long _sldrTmrNxtStrt{0};
+	unsigned long _sldrTmrRemains{0};
+
+	_sldrTmrNxtStrt = millis();
+	_otpStpsChng = (_sldrTmrNxtStrt - _scndModTmrStrt) /_otptSldrSpd;
+	_sldrTmrRemains = ((_sldrTmrNxtStrt - _scndModTmrStrt) % _otptSldrSpd) * _otptSldrSpd;
+	_sldrTmrNxtStrt -= _sldrTmrRemains;
+	_scndModTmrStrt = _sldrTmrNxtStrt;	//This ends the time management section of the state, calculating the time
+
+	if(_curSldrDirUp){
+		// The slider is moving up
+		if(_otptCurVal != _otptValMax){
+			if((_otptValMax - _otptCurVal) >= (_otpStpsChng * _otptSldrStpSize)){
+				//The value change is in range
+				_otptCurVal += (_otpStpsChng * _otptSldrStpSize);
+			}
+			else{
+				//The value change goes out of range
+				_otptCurVal = _otptValMax;
+			}
+			setOutputsChange(true);
+		}
+		if(getOutputsChange()){
+			if(_otptCurVal == _otptValMax){
+				if(_autoSwpDirOnEnd == true){
+					_curSldrDirUp = false;
+				}
+			}
+		}
+	}
+	else{
+		// The slider is moving down
+		if(_otptCurVal != _otptValMin){
+			if((_otptCurVal - _otptValMin) >= (_otpStpsChng * _otptSldrStpSize)){
+				//The value change is in range
+				_otptCurVal -= (_otpStpsChng * _otptSldrStpSize);
+			}
+			else{
+				//The value change goes out of range
+				_otptCurVal = _otptValMin;
+			}
+			setOutputsChange(true);
+		}
+		if(getOutputsChange()){
+			if(_otptCurVal == _otptValMin){
+				if(_autoSwpDirOnEnd == true){
+					_curSldrDirUp = true;
+				}
+			}
+		}
+	}
+
+	return;
+}
+
+void SldrDALtchMPBttn::stOnStrtScndMod_In(){
+	if(!_isOnScndry)
+		_turnOnScndry();
+	if(_autoSwpDirOnPrss)
+		swapSldrDir();
+
+	return;
+}
+
+bool SldrDALtchMPBttn::swapSldrDir(){
+
+	return _setSldrDir(!_curSldrDirUp);
+}
+
+//=========================================================================> Class methods delimiter
+
+VdblMPBttn::VdblMPBttn(const uint8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay, const bool &isOnDisabled)
+:DbncdDlydMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay)
+{
+	_isOnDisabled = isOnDisabled;
+}
+
+VdblMPBttn::~VdblMPBttn()
+{
+}
+
+void VdblMPBttn::clrStatus(bool clrIsOn){
+	if(_isVoided){
+		setIsNotVoided();
+	}
+	DbncdMPBttn::clrStatus(clrIsOn);
+
+	return;
+}
+
+fncPtrType VdblMPBttn::getFnWhnTrnOffVdd(){
+
+	return _fnWhnTrnOffVdd;
+}
+
+fncPtrType VdblMPBttn::getFnWhnTrnOnVdd(){
+	
+	return _fnWhnTrnOnVdd;
+}
+
+bool VdblMPBttn::getFrcOtptLvlWhnVdd(){
+
+	return _frcOtptLvlWhnVdd;
+}
+
+const bool VdblMPBttn::getIsVoided() const{
+
+    return _isVoided;
+}
+
+bool VdblMPBttn::getStOnWhnOtpFrcd(){
+
+	return _stOnWhnOtptFrcd;
+}
+
+void VdblMPBttn::mpbPollCallback(){
+	if(_mpbInstnc->getIsEnabled()){
+		// Input/Output signals update
+		updIsPressed();
+		// Flags/Triggers calculation & update
+		updValidPressesStatus();
+		updVoidStatus();
+	}
+ 	// State machine state update
+	updFdaState();
+
+	return;
+}
+
+uint32_t VdblMPBttn::_otptsSttsPkg(uint32_t prevVal){
+	prevVal = DbncdMPBttn::_otptsSttsPkg(prevVal);
+
+	if(_isVoided)
+		prevVal |= ((uint32_t)1) << IsVoidedBitPos;
+	else
+		prevVal &= ~(((uint32_t)1) << IsVoidedBitPos);
+
+	return prevVal;
+}
+
+void VdblMPBttn::setFnWhnTrnOffVddPtr(void(*newFnWhnTrnOff)()){
+	if (_fnWhnTrnOffVdd != newFnWhnTrnOff){
+		_fnWhnTrnOffVdd = newFnWhnTrnOff;
+	}
+
+	return;
+}
+
+void VdblMPBttn::setFnWhnTrnOnVddPtr(void(*newFnWhnTrnOn)()){
+	if (_fnWhnTrnOnVdd != newFnWhnTrnOn)
+		_fnWhnTrnOnVdd = newFnWhnTrnOn;
+
+	return;
+}
+
+void VdblMPBttn::setFrcdOtptWhnVdd(const bool &newVal){
+	if(_frcOtptLvlWhnVdd != newVal)
+		_frcOtptLvlWhnVdd = newVal;
+
+	return;
+}
+
+bool VdblMPBttn::setIsNotVoided(){
+
+	return setVoided(false);
+}
+
+bool VdblMPBttn::setIsVoided(){
+
+	return setVoided(true);
+}
+
+void VdblMPBttn::setStOnWhnOtpFrcd(const bool &newVal){
+	if(_stOnWhnOtptFrcd != newVal)
+		_stOnWhnOtptFrcd = newVal;
+
+	return;
+}
+
+bool VdblMPBttn::setVoided(const bool &newVoidValue){
+	if(_isVoided != newVoidValue){
+		if(newVoidValue)
+			_turnOnVdd();
+		else
+			_turnOffVdd();
+	}
+
+	return true;
+}
+
+void VdblMPBttn::stDisabled_In(){
+	if(_isOn != _isOnDisabled){
+		if(_isOn)
+			_turnOff();
+		else
+			_turnOn();
+	}
+	clrStatus(false);	//Clears all flags and timers, _isOn value will not be affected
+
+	return;
+}
+
+void VdblMPBttn::stDisabled_Out(){
+	clrStatus(true);	//Clears all flags and timers, _isOn value **will** be reset
+
+	return;
+}
+
+void VdblMPBttn::_turnOffVdd(){
+
+	if(_isVoided){
+		//---------------->> Functions related actions
+		if(_fnWhnTrnOffVdd != nullptr)
+			_fnWhnTrnOffVdd();
+		//---------------->> Flags related actions
+		_isVoided = false;
+		setOutputsChange(true);
+	}
+
+	return;
+}
+
+void VdblMPBttn::_turnOnVdd(){
+
+	if(!_isVoided){
+		//---------------->> Functions related actions
+		if(_fnWhnTrnOnVdd != nullptr)
+			_fnWhnTrnOnVdd();
+		//---------------->> Flags related actions
+		_isVoided = true;
+		setOutputsChange(true);
+	}
+
+	return;
+}
+
+void VdblMPBttn::updFdaState(){
+	switch(_mpbFdaState){
+		case stOffNotVPP:
+			//In: >>---------------------------------->>
+			if(_sttChng){
+				stOffNotVPP_In();
+				_turnOffVdd();		//This should be part of stOffNotVPP_In(), refactoring needed
+				clrSttChng();
+			}	// Execute this code only ONCE, when entering this state
+			//Do: >>---------------------------------->>
+			if(_validPressPend){
+				_mpbFdaState = stOffVPP;
+				setSttChng();
+			}
+			if(_validDisablePend){
+				_mpbFdaState = stDisabled;	//The MPB has been disabled
+				setSttChng();
+			}
+			//Out: >>---------------------------------->>
+			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+			break;
+
+		case stOffVPP:
+			//In: >>---------------------------------->>
+			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+			//Do: >>---------------------------------->>
+			if(!_isOn){
+				_turnOn();
+			}
+			_validPressPend = false;
+			stOffVPP_Do();	// This provides a setting point for the voiding mechanism to be started
+			_mpbFdaState = stOnNVRP;
+			setSttChng();
+			//Out: >>---------------------------------->>
+			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
+
+		case stOnNVRP:
+			//In: >>---------------------------------->>
+			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+			//Do: >>---------------------------------->>
+			if(_validVoidPend){
+				_mpbFdaState = stOnVVP;
+				setSttChng();
+			}
+			if(_validReleasePend){
+				_mpbFdaState = stOnVRP;
+				setSttChng();
+			}
+			if(_validDisablePend){
+				_mpbFdaState = stDisabled;	//The MPB has been disabled
+				setSttChng();
+			}
+			//Out: >>---------------------------------->>
+			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+			break;
+
+		case stOnVVP:
+			if(_sttChng){
+				_turnOnVdd();
+				_validVoidPend = false;
+				clrSttChng();}	// Execute this code only ONCE, when entering this state
+			//Do: >>---------------------------------->>
+			_mpbFdaState = stOnVddNVUP;
+			setSttChng();
+			//Out: >>---------------------------------->>
+			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
+
+		case stOnVddNVUP:
+			//In: >>---------------------------------->>
+			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+			//Do: >>---------------------------------->>
+			_turnOff();
+			_mpbFdaState = stOffVddNVUP;
+			setSttChng();
+			//Out: >>---------------------------------->>
+			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
+
+		case stOffVddNVUP:
+			//In: >>---------------------------------->>
+			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+			//Do: >>---------------------------------->>
+			stOffVddNVUP_Do();
+			if(_validUnvoidPend){
+				_mpbFdaState = stOffVddVUP;
+				setSttChng();
+			}
+			if(_validDisablePend){
+				_mpbFdaState = stDisabled;	//The MPB has been disabled
+				setSttChng();
+			}
+			//Out: >>---------------------------------->>
+			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+			break;
+
+		case stOffVddVUP:
+			//In: >>---------------------------------->>
+			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+			//Do: >>---------------------------------->>
+			_turnOffVdd();
+			_validUnvoidPend = false;
+			_mpbFdaState = stOffUnVdd;
+			setSttChng();
+			//Out: >>---------------------------------->>
+			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
+
+		case stOffUnVdd:
+			//In: >>---------------------------------->>
+			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+			//Do: >>---------------------------------->>
+			_mpbFdaState = stOff;
+			setSttChng();
+			//Out: >>---------------------------------->>
+			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+			break;
+
+		case stOnVRP:
+			//In: >>---------------------------------->>
+			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+			//Do: >>---------------------------------->>
+			_validReleasePend = false;
+			_mpbFdaState = stOnTurnOff;
+			setSttChng();
+			//Out: >>---------------------------------->>
+			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
+
+		case stOnTurnOff:
+			//In: >>---------------------------------->>
+			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+			//Do: >>---------------------------------->>
+			_turnOff();
+			_mpbFdaState = stOff;
+			setSttChng();
+			//Out: >>---------------------------------->>
+			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
+
+		case stOff:
+			//In: >>---------------------------------->>
+			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+			//Do: >>---------------------------------->>
+			_mpbFdaState = stOffNotVPP;
+			setSttChng();
+			//Out: >>---------------------------------->>
+			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+			break;
+
+		case stDisabled:
+			//In: >>---------------------------------->>
+			if(_sttChng){
+				_validDisablePend = false;
+				stDisabled_In();
+				_isEnabled = false;
+				setOutputsChange(true);
+				clrSttChng();
+			}	// Execute this code only ONCE, when entering this state
+			//Do: >>---------------------------------->>
+			if(_validEnablePend){
+				_turnOff();
+				_isEnabled = true;
+				_validEnablePend = false;
+				setOutputsChange(true);
+			}
+			if(_isEnabled && !updIsPressed()){	//The stDisabled status will be kept until the MPB is released for security reasons
+				_mpbFdaState = stOffNotVPP;
+				setSttChng();
+			}
+			//Out: >>---------------------------------->>
+			if(_sttChng){
+				stDisabled_Out();
+			}	// Execute this code only ONCE, when exiting this state
+			break;
+
+		default:
+			break;
+	}
+
+	return;
+}
+
+//=========================================================================> Class methods delimiter
+
+TmVdblMPBttn::TmVdblMPBttn(const uint8_t &mpbttnPin, unsigned long int voidTime, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay, const bool &isOnDisabled)
+:VdblMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay, isOnDisabled), _voidTime{voidTime}
+{
+}
+
+TmVdblMPBttn::~TmVdblMPBttn()
+{
+}
+
+bool TmVdblMPBttn::begin(const unsigned long int &pollDelayMs){
+   bool result {false};
+
+	result =  DbncdDlydMPBttn::begin(pollDelayMs);
+
+   return result;
+}
+
+void TmVdblMPBttn::clrStatus(){
+   _voidTmrStrt = 0;
+   VdblMPBttn::clrStatus();
+
+   return;
+}
+
+const unsigned long int TmVdblMPBttn::getVoidTime() const{
+
+	return _voidTime;
+}
+
+bool TmVdblMPBttn::setVoidTime(const unsigned long int &newVoidTime){
+	bool result{true};
+
+	if(newVoidTime != _voidTime){
+		if(newVoidTime >= _MinSrvcTime)
+			_voidTime = newVoidTime;
+		else
+			result = false;
+	}
+
+	return result;
+}
+
+void TmVdblMPBttn::stOffNotVPP_In(){
+	_voidTmrStrt = 0;
+
+	return;
+}
+
+void TmVdblMPBttn::stOffVddNVUP_Do(){
+	if(_validReleasePend){
+		_validReleasePend = false;
+		_validUnvoidPend = true;
+	}
+
+	return;
+}
+
+void TmVdblMPBttn::stOffVPP_Do(){	// This provides a setting point for the voiding mechanism to be started
+   _voidTmrStrt = millis();
+
+	return;
+}
+
+bool TmVdblMPBttn::updIsPressed(){
+
+	return DbncdDlydMPBttn::updIsPressed();
+}
+
+bool TmVdblMPBttn::updVoidStatus(){
+   bool result {false};
+
+   if(_voidTmrStrt != 0){
+		if ((millis() - _voidTmrStrt) >= (_voidTime)){ // + _dbncTimeTempSett + _strtDelay
+			result = true;
+		}
+	}
+   _validVoidPend = result;
+
+	return _validVoidPend;
+}
+
+//=========================================================================> Class methods delimiter
+
+SnglSrvcVdblMPBttn::SnglSrvcVdblMPBttn(const uint8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
+:VdblMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay, false)
+{
+	_isOnDisabled = false;
+   _frcOtptLvlWhnVdd = true;	//This attribute is subclass inherent characteristic, no setter will be provided for it
+   _stOnWhnOtptFrcd = false;	//This attribute is subclass inherent characteristic, no setter will be provided for it
+}
+
+SnglSrvcVdblMPBttn::~SnglSrvcVdblMPBttn()
+{
+}
+
+bool SnglSrvcVdblMPBttn::begin(const unsigned long int &pollDelayMs){
+   bool result {false};
+
+	result =  DbncdDlydMPBttn::begin(pollDelayMs);
+
+   return result;
+}
+
+void SnglSrvcVdblMPBttn::stOffVddNVUP_Do(){
+	if(_validReleasePend){
+		_validReleasePend = false;
+		_validUnvoidPend = true;
+	}
+
+	return;
+}
+
+bool SnglSrvcVdblMPBttn::updVoidStatus(){
+	bool result {false};
+
+	if(_isOn)
+		result = true;
+	_validVoidPend = result;
+
+	return _validVoidPend;
+}
+
+//=========================================================================> Class methods delimiter
+
 unsigned long int findMCD(unsigned long int a, unsigned long int b) {
    unsigned long int result{ 0 };
 
@@ -1595,3 +2751,52 @@ unsigned long int findMCD(unsigned long int a, unsigned long int b) {
 
 	return result; // At this point, a and b are equal and represent the MCD
 }
+
+/**
+ * @brief Unpackages a 32-bit value into a DbncdMPBttn object status
+ * 
+ * The 32-bit encoded and packaged is used for inter-task object status comunication, passed as a "notification value" in a xTaskNotify() execution.
+ * For each bit value attribute flag represented see DbncdMPBttn::getOtptsSttsPkgd()
+ * 
+ * @param pkgOtpts A 32-bit value holding a DbncdMPBttn status encoded
+ * @return A MpbOtpts_t type element containing the information decoded
+ */
+MpbOtpts_t otptsSttsUnpkg(uint32_t pkgOtpts){
+	MpbOtpts_t mpbCurSttsDcdd {0};
+
+	if(pkgOtpts & (((uint32_t)1) << IsOnBitPos))
+		mpbCurSttsDcdd.isOn = true;
+	else
+		mpbCurSttsDcdd.isOn = false;
+
+	if(pkgOtpts & (((uint32_t)1) << IsEnabledBitPos))
+		mpbCurSttsDcdd.isEnabled = true;
+	else
+		mpbCurSttsDcdd.isEnabled = false;
+
+	// From here on the attribute flags are not present in every subclass!!
+	if(pkgOtpts & (((uint32_t)1) << PilotOnBitPos))
+		mpbCurSttsDcdd.pilotOn = true;
+	else
+		mpbCurSttsDcdd.pilotOn = false;
+
+	if(pkgOtpts & (((uint32_t)1) << WrnngOnBitPos))
+		mpbCurSttsDcdd.wrnngOn = true;
+	else
+		mpbCurSttsDcdd.wrnngOn = false;
+
+	if(pkgOtpts & (((uint32_t)1) << IsVoidedBitPos))
+		mpbCurSttsDcdd.isVoided = true;
+	else
+		mpbCurSttsDcdd.isVoided = false;
+
+	if(pkgOtpts & (((uint32_t)1) << IsOnScndryBitPos))
+		mpbCurSttsDcdd.isOnScndry = true;
+	else
+		mpbCurSttsDcdd.isOnScndry = false;
+
+	mpbCurSttsDcdd.otptCurVal = (pkgOtpts & 0xffff0000) >> OtptCurValBitPos;
+
+	return mpbCurSttsDcdd;
+}
+

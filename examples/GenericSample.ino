@@ -11,7 +11,8 @@
   * 	- 1 led with it's corresponding resistor between GND and dmpbIsOnOtpt
   *
   * This simple example instantiates the <ThisClass> object in the setup(),
-  * and checks it's attributes flags through the getters methods.
+  * and then checks it's attributes flags through the getters methods in the
+  * loop().
   * 
   * When a change in the object's outputs attribute flags values is detected, it
   * manages the loads and resources that the switch turns On and Off, in this

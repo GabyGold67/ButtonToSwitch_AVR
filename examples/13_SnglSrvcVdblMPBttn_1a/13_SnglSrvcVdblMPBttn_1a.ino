@@ -1,18 +1,19 @@
 /**
   ******************************************************************************
-  * @file	: 07_XtrnUnltchMPBttn_1a.ino
-  * @brief  : Example for the ButtonToSwitch_AVR library XtrnUnltchMPBttn class
+  * @file	: 13_SnglSrvcVdblMPBttn_1a.ino
+  * @brief  : Example for the ButtonToSwitch_AVR library SnglSrvcVdblMPBttn class
   *
   *   Framework: Arduino
   *   Platform: AVR
   * 
-  * The example instantiates a XtrnUnltchMPBttn object using:
+  * The example instantiates a SnglSrvcVdblMPBttn object using:
   * 	- 1 push button between GND and dmpbMainInpt
-  * 	- 1 push button between GND and dmpbAuxInpt
   * 	- 1 led with it's corresponding resistor between GND and dmpbIsOnOtpt
+  * 	- 1 led with it's corresponding resistor between GND and dmpbVoidedOtpt
   *
-  * This simple example instantiates the XtrnUnltchMPBttn object in the setup(),
-  * and checks it's attributes flags through the getters methods.
+  * This simple example instantiates the SnglSrvcVdblMPBttn object in the setup(),
+  * and then checks it's attributes flags through the getters methods in the
+  * loop().
   * 
   * When a change in the object's outputs attribute flags values is detected, it
   * manages the loads and resources that the switch turns On and Off, in this
@@ -35,26 +36,25 @@
 #include <ButtonToSwitch_AVR.h>
 
 const uint8_t dmpbMainInpt{6};
-const uint8_t dmpbAuxInpt{2};
-
 const uint8_t dmpbIsOnOtpt{3};
+const uint8_t dmpbVoidedOtpt{8};
 
-DbncdDlydMPBttn myUnltchMPBttn (dmpbAuxInpt);
-DbncdDlydMPBttn* myUnltchMPBttnPtr{&myUnltchMPBttn};
-
-XtrnUnltchMPBttn myDMPBttn(dmpbMainInpt, myUnltchMPBttnPtr, true, true, 50, 50);
+SnglSrvcVdblMPBttn myDMPBttn (dmpbMainInpt);
 
 void setup() {
-
   digitalWrite(dmpbIsOnOtpt, LOW);
+  digitalWrite(dmpbVoidedOtpt, LOW);
   pinMode(dmpbIsOnOtpt, OUTPUT);
+  pinMode(dmpbVoidedOtpt, OUTPUT);
 
-  myDMPBttn.begin(20);  
+  myDMPBttn.setStrtDelay(100);
+  myDMPBttn.begin(20);
 }
 
 void loop() {
-  if(myDMPBttn.getOutputsChange()){ //This checking is done for saving resources, avoiding the rewriting of the pin value if there are no state changes in the MPB status
+  if(myDMPBttn.getOutputsChange()){
     digitalWrite(dmpbIsOnOtpt, (myDMPBttn.getIsOn())?HIGH:LOW);    
-    myDMPBttn.setOutputsChange(false); //If the OutputChanges attibute flag is used, reset it's value to detect the next need to refresh outputs.
+    digitalWrite(dmpbVoidedOtpt, (myDMPBttn.getIsVoided())?HIGH:LOW);    
+    myDMPBttn.setOutputsChange(false);
   }
 }  
