@@ -12,7 +12,7 @@
   * behavior of standard electromechanical switches**.
   *
   * @author	: Gabriel D. Goldman
-  * @version v1.0.0
+  * @version v4.0.0
   * @date	: Created on: 10/09/2024
   * 		: Last modification: 30/09/2024
   * @copyright GPL-3.0 license
@@ -58,7 +58,7 @@ const uint8_t OtptCurValBitPos{16};
 	 * @brief Type to hold the complete set of output attribute flags from any DbncdMPBttn class and subclasses object.
 	 *
 	 * Only two members (isOn and isEnabled) are relevant to all classes, the rest of the members might be relevant for one or more of the DbcndMPBttn subclasses.
-	 * The type is provided as a standard return value for the decoding of the 32-bit notification value provided by the use of the xTaskNotify() inter-task mechanism. See setTaskToNotify(const TaskHandle_t) for more information.
+	 * The type is provided as a standard for the encoding and decoding of the MPBttn status as a 32-bit value provided for trasnmition through communications devices.
 	 */
 	struct MpbOtpts_t{
 		bool isOn;
@@ -79,17 +79,16 @@ typedef  fncPtrType (*ptrToTrnFnc)();
 //===========================>> BEGIN General use function prototypes
 MpbOtpts_t otptsSttsUnpkg(uint32_t pkgOtpts);
 unsigned long int findMCD(unsigned long int a, unsigned long int b);
-
 //===========================>> END General use function prototypes
 
 /**
  * @note This ButtonToSwitch_AVR implementation relies on the TimerOne library by paulstoffregen to manage the time generated INT.  
  * 
- * Being the facilities provided by the TimerOne limited to the execution of only ONE timer interrupt, the setup selected for this development is the following:
+ * Being the facilities provided by the TimerOne library limited to the execution of only ONE timer interrupt, the setup selected for this development is the following:
  * - A static array of pointers to all the DbncdMPBttn class and subclasses objects -pointed by **_mpbsInstncsLstPtr**- to be kept updated is created automatically when the first element is added with the **begin()** method. This **"list of MPBs to keep updated"** will grow as more elements are added. The object elements will be taken out of the list by using the **end()** method. When the list is left with no elements it'll be deleted automatically.
  * - Each object will hold the attribute for it's time period between updates: **_pollPeriodMs**
  * - Each object will hold the attribute for the last time it was updated: **_lstPollTime**
- * - Each object will hold the attribute flag to be included or ignored for the periodic update -to be used by the pause() and resume() methods- **_updTmrAttchd**. Depending on that attribute flag value the object will or will be not updated albeit being present in the **"list of MPBs to keep updated"**. This is included for temporary states, avoiding the time and resources needed to take out and replace back an object from the update list by using **begin()** or **end()**
+ * - Each object will hold the attribute flag to be included or ignored for the periodic update -to be used by the pause() and resume() methods- **_updTmrAttchd**. Depending on that attribute flag value the object will or will be not updated albeit being present in the **"list of MPBs to keep updated"**. This mechanism is included for temporary pausing, avoiding the time and resources needed to take out and replace back an object from the update list by using **begin()** or **end()**
  * The begin() and end() will work the inclusion and exclusion of the object in the **"list of MPBs to keep updated"** -pointed to by **_mpbsInstncsLstPtr**- just verifying the object's **_updTmrAttchd** is set to true when the begin is executed.
  * - The timer interrupt period is a common attribute (static) to all the DbncdMPBttn class and subclasses objects **_updTimerPeriod**, it will be set as the MCD of each and every **timer attached** object in the **"list of MPBs to keep updated"**. The use of a MCD calculated time period is resource optimization oriented, to reduce interrupts to the minimum strictly needed and avoiding a fixed time setting. The best use of the resources by using the longer periods still suitable to do the updating job and selecting different MPBs update time that have a higher MCD is left to the developer best knowledge.
  * That implies that the **_updTimerPeriod** should be updated:
@@ -114,7 +113,7 @@ unsigned long int findMCD(unsigned long int a, unsigned long int b);
  *
  * This class provides the resources needed to process a momentary digital input signal -as the one provided by a MPB (Momentary Push Button)- returning a clean signal to be used as a switch, implementing the needed services to replace a wide range of physical related switch characteristics: Debouncing, deglitching, disabling.
  *
- * More physical switch situations can be emulated, like temporarily disconnecting it (isDisabled=true and isOnDisabled=false), short circuiting it (isDisabled=true and isOnDisabled=true) and others.
+ * @note More physical switch situations can be emulated, like temporarily disconnecting it (isDisabled=true and isOnDisabled=false), short circuiting it (isDisabled=true and isOnDisabled=true) and others.
  *
  * @class DbncdMPBttn
  */
@@ -181,7 +180,7 @@ protected:
 	void _popMpb(DbncdMPBttn** &DMpbTmrUpdLst, DbncdMPBttn* mpbToPop);
 	void _pushMpb(DbncdMPBttn** &DMpbTmrUpdLst, DbncdMPBttn* mpbToPush);
 	void _setIsEnabled(const bool &newEnabledValue);
-	void _setLstPollTime(const unsigned long int &newLstPollTIme);	//! Implemented to avoid direct manipulation of the _lstPollTime attribute
+	void _setLstPollTime(const unsigned long int &newLstPollTIme);
 	void setSttChng();
 	void _turnOff();
 	void _turnOn();
@@ -203,7 +202,6 @@ public:
 	 * @param pulledUp (Optional) boolean, indicates if the input pin must be configured as INPUT_PULLUP (true, default value), or INPUT_PULLDOWN (false), to calculate correctly the expected voltage level in the input pin. The pin is configured by the constructor so no previous programming is needed. The pin must be free to be used as a digital input, and must be a pin with an internal pull-up circuit, as not every GPIO pin has the option.
 	 * @param typeNO (Optional) boolean, indicates if the MPB is a Normally Open (NO) switch (true, default value), or Normally Closed (NC) (false), to calculate correctly the expected level of voltage indicating the MPB is pressed.
 	 * @param dbncTimeOrigSett (Optional) unsigned long integer (uLong), indicates the time (in milliseconds) to wait for a stable input signal before considering the MPB to be pressed (or not pressed). If no value is passed the constructor will assign the minimum value provided in the class, that is 20 milliseconds as it is an empirical value obtained in various published tests.
-	 *
 	 */
 	DbncdMPBttn(const uint8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0);
 	/**
@@ -214,19 +212,19 @@ public:
 	/**
 	 * @brief Attaches the instantiated object to a timer that monitors the input pins and updates the object status.
 	 * 
-	 * The frequency of the periodic monitoring is passed as a parameter in milliseconds, and is a value that must be small (frequent) enough to keep the object updated, but not so frequent that wastes resources from other tasks. A default value is provided based on empirical results obtained in various published tests.
+	 * The frequency of the periodic monitoring is passed as a parameter in milliseconds, and is a value that must be small (frequent) enough to keep the object updated, but not so frequent that wastes resources useful for other tasks. A default value is provided based on empirical results obtained in various published tests.
 	 * 
 	 * @attention Due to the fact that the available resources limits the timers available to a single one, attaching the timer to keep different instantiated objects status updated involves several steps:
 	 * - The method adds the object to an array of MPBttns objects to keep updated (after checking the object was not already included in the array).
-	 * - As every object in the array has an independent time setting to be updated, a calculus must be made to set the timer to the best suited time to reduce the number of interrupts of the normal execution of the main code to check if any MPBttn object is set to be updated, while keeping those status updated in the intended time.
-	 * - If this is the first object to be added to the status update array (or all the objects in the array were in **Paused State**, so the timer interrupt was disabled), set the timer period and **start the timer**.
-	 * - If this is not the first active (not paused) object in the status update array **modify (if required) the timer set period** to the new calculated one
+	 * - As every object in the array has an independent time setting to be updated, a calculus must be done to set the timer to the best suited time to reduce the number of interrupts of the normal execution of the main code to check if any MPBttn object is set to be updated, while keeping those status updated in the set time.
+	 * - When the first object is added to the status update array (or all the objects in the array were in **Paused State**, so the timer interrupt was disabled), set the timer period and **start the timer**.
+	 * - When is not the first active (not paused) object in the status update array **modify (if required) the timer set period** to the new calculated one.
 	 *
 	 * @param pollDelayMs (Optional) unsigned long integer (ulong), the time between polls in milliseconds.
 	 *
 	 * @return Boolean indicating if the object could be attached to a timer.
 	 * @retval true: the object could be attached to the timer -or it was already attached to a timer when the method was invoked-.
-	 * @retval false: the object could not be attached to the timer, because the parameter passed for the timer was 0 (zero).
+	 * @retval false: the object could not be attached to the timer, because the parameter passed for the timer was invalid: 0 (zero).
 	 */
 	virtual bool begin(const unsigned long int &pollDelayMs = _StdPollDelay);
 	/**
@@ -236,8 +234,8 @@ public:
 	 *
 	 * @param clrIsOn Optional boolean value, indicates if the _isOn flag must be included to be cleared:
 	 *
-	 * - true (default value) includes the isOn flag.
-	 * - false excludes the isOn flag.
+	 * - true: (default value) includes the isOn flag.
+	 * - false: excludes the isOn flag.
 	 */
 	void clrStatus(bool clrIsOn = true);
    /**
@@ -254,24 +252,25 @@ public:
    /**
 	 * @brief Enables the input signal processing.
 	 *
-	 * Invoking the enable() method on a object in **Disabled state** sends it a message requesting to resume it's normal operation. The execution of the re-enabling of the object implies:
+	 * Invoking the enable() method on a object in **Disabled state** sends it a message requesting to resume it's normal operation. The execution of the enabling of the object implies:
+	 * - Clearing all previous counters, timers, inputs readings and output calculations, including clearing the **isOn state**, see void clrStatus(bool)
 	 * - Resuming all input signals reading.
-	 * - Resuming all output flag computation from the "fresh startup" state, including clearing the **isOn state**
-	 * - Due to strict security enforcement the object will not be allowed to enter the **Enabled state** if the MPB was pressed when the enable message was received and until a MPB release is efectively detected.
+	 * - Resuming all output flag computation from the "fresh startup" state
+	 * @warning Due to strict security enforcement the object will not be allowed to enter the **Enabled state** if the MPB was pressed when the enable message was received and until a MPB release is efectively detected.
     */
 	void enable();
 	/**
 	 * @brief Detaches the object from the timer that monitors the input pins, compute and updates the object's status.
 	 *
-	 * @attention Due to the fact that the available resources limits the timers available to a single one (see bool begin(const unsigned long int) for details ), dettaching the object from the timer involves several steps:
+	 * @attention Due to the fact that the available resources limits the timers available to a single one (see bool begin(const unsigned long int) for details), dettaching the object from the timer involves several steps:
 	 * - Pausing the object: that will take care of the recalculation of the the update time period, setting it and stop the timer if no active objects are left in the list.
 	 * - Removing the object from the list of objects to keep updated.
 	 * 
-	 * @note The immediate detachment of the object from the timer that keeps it's state updated implies that the object's state will be kept, whatever that state is it. If a certain status is preferred some of the provided methods should be used for that including clrStatus(), resetFda(), disable(), setIsOnDisabled(), etc.
+	 * @note The immediate detachment of the object from the timer that keeps it's state updated implies that the object's state will be kept, whatever that state is it. If a certain status is preferred some of the provided methods should be used for that including clrStatus(bool), resetFda(), disable(), setIsOnDisabled(), etc.
 	 *
 	 * @return Boolean indicating the success of the operation
 	 * @retval true: the object detachment procedure and timer entry removal was successful.
-	 * @retval false: the object detachment and/or entry removal was rejected by the O.S..
+	 * @retval false: the object detachment and/or entry removal was rejected.
 	 */
 	bool end();    
 	/**
@@ -290,7 +289,7 @@ public:
 	 * @return A function pointer to the function set to execute every time the object enters the **Off State**.
 	 * @retval nullptr if there is no function set to execute when the object enters the **Off State**.
 	 *
-	 * @warning The function code execution will become part of the list of procedures the object executes when it entering the **Off State**, including the modification of affected attribute flags, suspending the execution of the task running while in **On State** and others. Making the function code too time demanding must be handled with care, using alternative execution schemes, for example the function might resume a independent task that suspends itself at the end of its code, to let a new function calling event resume it once again.
+	 * @warning The function code execution will become part of the list of procedures the object executes when it enters the **Off State**, including the possibility to modify  attribute flags and others. Making the function code too time demanding must be handled with care, using alternative execution schemes, for example (and not limited to) the function might set flags, modify counters and parameters to set the conditions to execute some code in the main loop, and that suspends itself at the end of its code, to let a new function calling event resume it once again.
 	 */
 	fncPtrType getFnWhnTrnOff();
 	/**
@@ -301,7 +300,7 @@ public:
 	 * @return A function pointer to the function set to execute every time the object enters the **On State**.
 	 * @retval nullptr if there is no function set to execute when the object enters the **On State**.
 	 *
-	 * 	 * @warning The function code execution will become part of the list of procedures the object executes when it entering the **On State**, including the modification of affected attribute flags, suspending the execution of the task running while in **On State** and others. Making the function code too time demanding must be handled with care, using alternative execution schemes, for example the function might resume a independent task that suspends itself at the end of its code, to let a new function calling event resume it once again.
+	 * @warning The function code execution will become part of the list of procedures the object executes when it enters the **On State**, including the possibility to modify  attribute flags and others. Making the function code too time demanding must be handled with care, using alternative execution schemes, for example (and not limited to) the function might set flags, modify counters and parameters to set the conditions to execute some code in the main loop, and that suspends itself at the end of its code, to let a new function calling event resume it once again.
 	 */
 	fncPtrType getFnWhnTrnOn();
    /**
@@ -316,17 +315,17 @@ public:
    /**
 	 * @brief Returns the value of the **isOn** attribute flag.
 	 *
-	 * The **isOn** attribute flag is the fundamental attribute of the object, it might be considered the "Raison d'etre" of all this classes design: the isOn signal is not just the detection of an expected voltage value at a mcu pin, but the combination of that voltage level, filtered and verified, for a determined period of time and until a new event modifies that situation.  While other mechanism are provided to execute code when the status of the object changes, all but the **isOn** flag value update are optionally executed.
+	 * The **isOn** attribute flag is the fundamental attribute of the object, it might be considered the "Raison d'etre" of all this classes design: the isOn signal is not just the detection of an expected voltage value of a mcu pin, but the combination of that voltage level, filtered and verified, for a determined period of time and until a new event modifies that situation.  While other mechanism are provided to execute code when the status of the object changes, all but the **isOn** flag value update might be optionally executed.
 	 *
     * @retval true: The object is in **On state**.
     * @retval false: The object is in **Off state**.
     */
 	const bool getIsOn () const;
    /**
-	 * @brief Returns the value of the **isOnDisabled** attribute flag.
+	 * @brief Returns the value of the **isOnDisabled** attribute.
 	 *
 	 * When instantiated the class, the object is created in **Enabled state**. That might be changed when needed.
-	 * In the **Disabled state** the input signals for the MPB are not processed, and the output will be set to the **On state** or the **Off state** depending on this attribute flag's value.
+	 * In the **Disabled state** the input signals for the MPB are not processed, and the output will be set to the **On state** or the **Off state** depending on this attribute's value.
 	 * The reasons to disable the ability to change the output, and keep it on either state until re-enabled are design and use dependent.
 	 * The flag value might be changed by the use of the **setIsOnDisabled()** method.
     *
@@ -343,7 +342,9 @@ public:
 	 */
 	const unsigned long int getLstPollTime();
    /**
-    * @brief Returns the relevant attribute flags values for the object state encoded as a 32 bits value, useful to pass current state of the object to a function managing the outputs as a parameter.
+    * @brief Returns the relevant attribute flags values for the object state encoded as a 32 bits value.
+	 * 
+	 * Having a standard single data unit holding the all the relevant information describing the object's status is useful to pass current state to a function and for transmission purposes. The function otptsSttsUnpkg(uint32_t) is provided to unpackage the data into a MpbOtpts_t structure holding the information decoded.
     *
     * @return A 32-bit unsigned value representing the object's attribute flags current values.
     */
@@ -353,7 +354,7 @@ public:
 	 *
 	 * The instantiated objects include attributes linked to their computed state, which represent the behavior expected from their respective electromechanical simulated counterparts.
 	 * When any of those attributes values change, the **outputsChange** flag is set. The flag only signals changes have happened -not which flags, nor how many times changes have taken place- since the last **outputsChange** flag reset.
-	 * The **outputsChange** flag must be reset (or set if desired) through the setOutputsChange() method.
+	 * The **outputsChange** flag must be reset through the setOutputsChange(false) method after the outputs processing code is executed.
 	 *
     * @retval true: any of the object's behavior flags have changed value since last time **outputsChange** flag was reseted.
     * @retval false: no object's behavior flags have changed value since last time **outputsChange** flag was reseted.
@@ -362,9 +363,9 @@ public:
 	/**
 	 * @brief Returns the poll period time setting attribute's value
 	 * 
-	 * The poll period time in milliseconds (pollPeriodMs) attribute sets the time period between state updates for the current object. The time period, in milliseconds, is set when the object begin(&pollParam) method is called, and will be conserved through the use of the pause() and resume() methods. The only way to change it is by calling the end() method and then restarting the timer polling with a new begin() with a different value as parameter.
+	 * The poll period time in milliseconds (pollPeriodMs) attribute sets the time period between state updates for the current object. The time period, in milliseconds, is set when the object begin(unsigned long int) method is called, and will be held through the use of the pause() and resume() methods. The only way to change it is by calling the end() method and then restarting the timer polling with a new begin() with a different value as parameter.
 	 * 
-	 * @attention The value passed in the begin() method is very important for the object and the system behavior. Setting a very small value will be resources consuming, as the timer will be interrupting the normal execution to keep the object state updated, surely more frequently than really needed. Setting a very large value will result in a very slow updated object, making the execution less responsive than needed. See virtual bool begin(const unsigned long int) for more details. If not provided in the begin() method a standard value of 10 milliseconds is used.
+	 * @attention The value passed in the begin(const unsigned long int) method is very important for the object and the system behavior. Setting a very small value will be resource consuming, as the timer will be interrupting the normal code execution to keep the object state updated, surely more frequently than really needed. Setting a very large value will result in a very slow updated object, making the execution less responsive than needed. See virtual bool begin(const unsigned long int) for more details. If not provided in the begin() method a standard value of 10 milliseconds is used.
 	 * 
 	 * @return The time setting for the poll period time in milliseconds.
 	 */
@@ -372,7 +373,7 @@ public:
    /**
     * @brief Returns the current value of strtDelay attribute.
     *
-    * Returns the current value of time used by the object to rise the isOn flag, after the debouncing process ends, in milliseconds. If the MPB is released before completing the debounce **and** the strtDelay time, no press will be detected by the object, and the isOn flag will not be affected. The original value for the delay process used at instantiation time might be changed with the **setStrtDelay()** method, so this method is provided to get the current value in use.
+    * Returns the current value of time used by the object to rise the isOn attribute flag, after the debouncing process ends, in milliseconds. If the MPB is released before completing the debounce **and** the strtDelay time, no press will be detected by the object, and the isOn flag will not be affected. The original value for the delay process used at instantiation time might be changed with the **setStrtDelay()** method, so this method is provided to get the current value in use.
     *
     * @return The current strtDelay time in milliseconds.
     *
@@ -380,9 +381,9 @@ public:
     */
 	unsigned long int getStrtDelay();
 	/**
-	 * @brief Returns the value of the Attached to the update timer attribute
+	 * @brief Returns the value of the **Attached to the update timer** attribute.
 	 * 
-	 * Even when the instantiated object might be included in  the **"list of MPBs to keep updated"**, the final element that defines if an object is intended to have it's status updated is the attribute "Attached to the updating timer" **updTmrAttchd**. This flag is used to include or exclude the object from the updating process, without having to eliminate it or include it in the mentioned array list, specially useful for situations like the pause() and resume() methods.
+	 * Even when the instantiated object might be included in  the **"list of MPBs to keep updated"**, the final element that defines if an object is intended to have it's status updated is the attribute "Attached to the updating timer" **updTmrAttchd**. This value is used to include or exclude the object from the updating process without having to eliminate it or include it in the mentioned array list -both activities are time and resources consuming-, specially useful for situations like the pause() and resume() methods.
 	 * 
 	 * @return The value of the updTmrAttchd attribute value
 	 * @retval true: The object is set up to be updated by the timer events
@@ -398,10 +399,12 @@ public:
 	/**
 	 * @brief Pauses the software timer updating the computation of the object's internal flags value (object's state).
 	 *
-	 * The immediate stop of the timer that keeps the object's state updated implies that the object's state will be kept, whatever that state is it. The same consideration as the end() method applies referring to options to modify the state in which the object will be while in the **Pause state**.
+	 * The immediate exclusion from the timer that keeps the object's state updated implies that the object's state will be kept, whatever that state is it. The same consideration as the end() method applies referring to options to modify the state in which the object will be while in the **Pause state**.
 	 *
-	 * @retval true: the object's timer could be stopped by the O.S.(or it was already stopped).
-	 * @retval false: the object's timer couldn't be stopped by the O.S..
+	 * @retval true: the object was set not to be updated by the timer.
+	 * @retval false: the object was not included in the "List of MPBttns to keep updated", so it couldn't be paused.
+	 * 
+	 * @note For better understanding on the timer update mechanism used and it's management see begin(const unsigned long int) for details.
 	 */
 	bool pause();
 	/**
@@ -419,10 +422,10 @@ public:
 	/**
 	 * @brief Restarts the software timer updating the calculation of the object internal flags.
 	 *
-	 *  The timer will stop calling the functions for computing the flags values after calling the **pause()** method and will not be updated until the timer is restarted with this method.
+	 *  The timer will stop calling the functions for computing the flags values after calling the **pause()** method and will not be updated until the object is reatached to the timer with this method.
 	 *
-	 * @retval true: the object's timer could be restarted by the O.S..
-	 * @retval false: the object's timer couldn't be restarted by the O.S..
+	 * @retval true: the object's timer updating could be resumed.
+	 * @retval false: the object was not included in the "List of MPBttns to keep updated", so it's updating couldn't be resumed.
 	 *
 	 * @warning This method will restart the inactive timer after a **pause()** method. If the object's timer was modified by an **end()* method then a **begin()** method will be needed to restart it's timer.
 	 */
@@ -442,7 +445,7 @@ public:
 	/**
 	 * @brief Sets the function that will be called to execute every time the object **enters** the **Off State**.
 	 *
-	 * The function to be executed must be of the form **void (*newFnWhnTrnOff)()**, meaning it must take no arguments and must return no value, it will be executed only once by the object (recursion must be handled with the usual precautions). When instantiated the attribute value is set to **nullptr**.
+	 * The function to be executed must be of the form void (*newFnWhnTrnOff)(), meaning it must take no arguments and must return no value, it will be executed only once by the object (recursion must be handled with the usual precautions). When the object is instantiated the attribute value is set to **nullptr**.
 	 *
 	 * @param newFnWhnTrnOff Function pointer to the function intended to be called when the object **enters** the **Off State**. Passing **nullptr** as parameter deactivates the function execution mechanism.
 	 */
@@ -450,20 +453,20 @@ public:
 	/**
 	 * @brief Sets the function that will be called to execute every time the object **enters** the **On State**.
 	 *
-	 * The function to be executed must be of the form **void (*newFnWhnTrnOff)()**, meaning it must take no arguments and must return no value, it will be executed only once by the object (recursion must be handled with the usual precautions). When instantiated the attribute value is set to **nullptr**.
+	 * The function to be executed must be of the form void (*newFnWhnTrnOff)(), meaning it must take no arguments and must return no value, it will be executed only once by the object (recursion must be handled with the usual precautions). When instantiated the attribute value is set to **nullptr**.
 	 *
 	 * @param newFnWhnTrnOn: function pointer to the function intended to be called when the object **enters** the **On State**. Passing **nullptr** as parameter deactivates the function execution mechanism.
 	 */
 	void setFnWhnTrnOnPtr(void (*newFnWhnTrnOn)());
    /**
-	 * @brief Sets the value of the **isOnDisabled** attribute flag.
+	 * @brief Sets the value of the **isOnDisabled** attribute.
 	 *
 	 * When instantiated the class, the object is created in **Enabled state**. That might be changed as needed.
-	 * While in the **Disabled state** the input signals for the MPB are not processed, and the output will be set to the **On state** or the **Off state** depending on this flag value.
+	 * While in the **Disabled state** the input signals for the MPB are not processed, and the output will be set to the **On state** or the **Off state** depending on this attribute value.
 	 *
 	 * @note The reasons to disable the ability to change the output, and keep it on either state until re-enabled are design and use dependent, being an obvious one security reasons, disabling the ability of the users to manipulate the switch while keeping the desired **On/Off state**. A simple example would be to keep a light on in a place where a meeting is taking place, disabling the lights switches and keeping the **On State**. Another obvious one would be to keep a machine off while servicing it's internal mechanisms, disabling the possibility of turning it on.
     *
-    * @warning If the method is invoked while the object is disabled, and the **isOnDisabled** attribute flag is changed, then the **isOn** attribute flag will have to change accordingly. Changing the **isOn** flag value implies that **all** the implemented mechanisms related to the change of the **isOn** attribute flag value will be invoked.
+    * @warning If the method is invoked while the object is disabled, and the **isOnDisabled** attribute flag is changed, then the **isOn** attribute flag will have to change accordingly. Changing the **isOn** flag value implies that **all** the implemented mechanisms related to the change of the **isOn** attribute flag value will be executed.
     */
 	void setIsOnDisabled(const bool &newIsOnDisabled);
    /**
@@ -520,7 +523,7 @@ public:
      *
      * @note Setting the delay attribute to 0 makes the instantiated object act exactly as a Debounced MPB (D-MPB)
      * 
-     * @warning: Using very high **strtDelay** values is valid but might make the system seem less responsive, be aware of how it will affect the user experience.
+     * @warning: Using very high **strtDelay** values is valid but might make the system behavior less responsive, be aware of how it will affect the user experience.
      */
 	void setStrtDelay(const unsigned long int &newStrtDelay);
 };
@@ -602,9 +605,9 @@ public:
 	/**
 	 * @brief Returns the value of the trnOffASAP attribute flag.
 	 *
-	 * As described in the class characteristics the unlatching process comprises two stages, Validated Unlatch Signal and Validates unlatch Release Signal, that might be generated simultaneously or separated in time. The **trnOffASAP** attribute flag sets the behavior of the MPB in the second case.
-	 * - If the **trnOffASAP** attribute flag is set (true) the **isOn** flag will be reset as soon as the **Validated Unlatch Signal** is detected
-	 * - If the **trnOffASAP** flag is reset (false) the **isOn** flag will be reset only when the **Validated Unlatch Release signal** is detected.
+	 * As described in the class characteristics the unlatching process comprises two stages, Validated Unlatch Signal and Validated unlatch Release Signal, that might be generated simultaneously or separated in time. The **trnOffASAP** attribute flag sets the behavior of the MPB in the second case.
+	 * - If the **trnOffASAP** attribute flag is set (true) the **isOn** flag will be reset as soon as the **Validated Unlatch signal start** is detected
+	 * - If the **trnOffASAP** flag is reset (false) the **isOn** flag will be reset only when the **Validated Unlatch signal end** is detected.
 	 *
 	 * @return The current value of the trnOffASAP attribute flag.
 	 */
@@ -736,6 +739,8 @@ public:
      *
      * @retval true if the newSrvcTime parameter is equal to or greater than the minimum setting guard, the new value is set.
      * @retval false The newSrvcTime parameter is less than the minimum setting guard, the srvcTime attribute was not changed.
+	  * 
+	  * @attention The "service time completed", as every other timing related behavior of the MPBttn objects, is computed and updated by the attached timer, and the checking period is the one set by the begin(unsigned long int) method. There must be some correlation between both values. If the timer is set to a very high value, the "service time" will not be checked so frequently, so the service time will be completed, but the MPBttn status will not be updated untill next timer update calling. That's also the reason why each MPBttn object might be configured with different update periods of time: to check more frequently on those objects with short service times, less frequently on those objects that don't require to be checked so frequently, and avoid the time loss by checking every MPBttn at it's optimal pace.
      */
     bool setSrvcTime(const unsigned long int &newSrvcTime);
     /**
@@ -815,7 +820,7 @@ public:
 	 * @return A function pointer to the function set to execute every time the object's Pilot is set to the **Off State**.
 	 * @retval nullptr if there is no function set to execute when the object's Pilot enters the **Off State**.
 	 *
-	 * @warning The function code execution will become part of the list of procedures the object executes when it enters the **Pilot Off State**, including the modification of affected attribute flags. Making the function code too time-demanding must be handled with care, using alternative execution schemes, for example the function might resume a independent task that suspends itself at the end of its code, to let a new function calling event resume it once again.
+	 * @warning The function code execution will become part of the list of procedures the object executes when it enters the **Pilot Off State**, including the possibility to modify  attribute flags and others. Making the function code too time demanding must be handled with care, using alternative execution schemes, for example (and not limited to) the function might set flags, modify counters and parameters to set the conditions to execute some code in the main loop, and that suspends itself at the end of its code, to let a new function calling event resume it once again.
 	 */
 	fncPtrType getFnWhnTrnOffPilot();
 	/**
@@ -826,7 +831,7 @@ public:
 	 * @return A function pointer to the function set to execute every time the object's Warning is set to the **Off State**.
 	 * @retval nullptr if there is no function set to execute when the object's Warning enters the **Off State**.
 	 *
-	 * @warning The function code execution will become part of the list of procedures the object executes when it enters the **Warning Off State**, including the modification of affected attribute flags. Making the function code too time-demanding must be handled with care, using alternative execution schemes, for example the function might resume a independent task that suspends itself at the end of its code, to let a new function calling event resume it once again.
+	 * @warning The function code execution will become part of the list of procedures the object executes when it enters the **Warning Off State**, including the possibility to modify  attribute flags and others. Making the function code too time demanding must be handled with care, using alternative execution schemes, for example (and not limited to) the function might set flags, modify counters and parameters to set the conditions to execute some code in the main loop, and that suspends itself at the end of its code, to let a new function calling event resume it once again.
 	 */
 	fncPtrType getFnWhnTrnOffWrnng();
 	/**
@@ -837,7 +842,7 @@ public:
 	 * @return A function pointer to the function set to execute every time the object's Pilot is set to the **On State**.
 	 * @retval nullptr if there is no function set to execute when the object's Pilot enters the **On State**.
 	 *
-	 * @warning The function code execution will become part of the list of procedures the object executes when it enters the **Pilot On State**, including the modification of affected attribute flags. Making the function code too time-demanding must be handled with care, using alternative execution schemes, for example the function might resume a independent task that suspends itself at the end of its code, to let a new function calling event resume it once again.
+	 * @warning The function code execution will become part of the list of procedures the object executes when it enters the **Pilot ON State**, including the possibility to modify  attribute flags and others. Making the function code too time demanding must be handled with care, using alternative execution schemes, for example (and not limited to) the function might set flags, modify counters and parameters to set the conditions to execute some code in the main loop, and that suspends itself at the end of its code, to let a new function calling event resume it once again.
 	 */
 	fncPtrType getFnWhnTrnOnPilot();
 	/**
@@ -848,7 +853,7 @@ public:
 	 * @return A function pointer to the function set to execute every time the object's Warning is set to the **On State**.
 	 * @retval nullptr if there is no function set to execute when the object's Warning enters the **On State**.
 	 *
-	 * @warning The function code execution will become part of the list of procedures the object executes when it enters the **Warning On State**, including the modification of affected attribute flags. Making the function code too time-demanding must be handled with care, using alternative execution schemes, for example the function might resume a independent task that suspends itself at the end of its code, to let a new function calling event resume it once again.
+	 * @warning The function code execution will become part of the list of procedures the object executes when it enters the **Warning On State**, including the possibility to modify  attribute flags and others. Making the function code too time demanding must be handled with care, using alternative execution schemes, for example (and not limited to) the function might set flags, modify counters and parameters to set the conditions to execute some code in the main loop, and that suspends itself at the end of its code, to let a new function calling event resume it once again.
 	 */
 	fncPtrType getFnWhnTrnOnWrnng();
 	/**
@@ -937,7 +942,7 @@ public:
  * @brief Models an External Unlatch LDD-MPB, a.k.a. Emergency Latched Switch (**XULDD-MPB**)
  *
  * The **External released toggle switch** (a.k.a. Emergency latched), keeps the On state since the moment the signal is stable (debounced & delayed), and until an external signal is received. This kind of switch is used when an "abnormal situation" demands the push of the switch On, but a higher authority is needed to reset it to Off from a different signal source. The **On State** will then not only start a response to the exception arisen, but will be kept to flag the triggering event.
- *  Smoke, flood, intrusion alarms and "last man locks" are some examples of the use of this switch. As the external release signal can be physical or logical generated it can be implemented to be received from a switch or a remote signal of any usual kind.
+ *  Smoke, flood, intrusion alarms, "manager autorization needed" and "last man locks" are some examples of the use of this switch. As the external release signal can be physical or logical generated it can be implemented to be received from a switch or a remote signal of any usual kind.
  *
  * class XtrnUnltchMPBttn
  */

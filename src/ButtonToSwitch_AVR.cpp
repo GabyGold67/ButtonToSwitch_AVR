@@ -434,6 +434,8 @@ bool DbncdMPBttn::resume(){		//! Final coding pending!!!
 				If TimerWasStopped
 					Timer1.Start()
 				set _updTmrAttchd to true
+		Else (was not in the list)
+			Return false
 
 	*/
 
