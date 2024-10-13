@@ -120,15 +120,15 @@ bool DbncdMPBttn::begin(const unsigned long int &pollDelayMs) {
 		_pushMpb(_mpbsInstncsLstPtr, _mpbInstnc);	// Add the MPB to the "MPBs to be updated list"
 
 		if (_updTimerPeriod == 0){   // The timer was not running (empty list or all listed objects not attached to the refresh)
-			_updTimerPeriod = _updTmrsMCDCalc();
+			_updTimerPeriod = _pollPeriodMs;	//! As at this moment this is the only active MPB it's poll time is THE int time, otherwise the line would be _updTimerPeriod = _updTmrsMCDCalc();
 			Timer1.attachInterrupt(_ISRMpbsRfrshCb);
-			Timer1.initialize(_updTimerPeriod*1000);	// The MPBs manages times in milliseconds, the timer in microseconds
+			Timer1.initialize(_updTimerPeriod * 1000);	// The MPBs manages times in milliseconds, the timer in microseconds
 			Timer1.start();			
 		}
-		else{	// The "MPBs to be updated was not empty, pollTime must be recalculated and if changes set Timer1.setPeriod() invoked
+		else{	// The "MPBs to be updated list" was not empty, pollTime must be recalculated and if changes set Timer1.setPeriod() invoked
 			if(_pollPeriodMs != _updTimerPeriod){
 				_updTimerPeriod = _updTmrsMCDCalc();
-				Timer1.setPeriod(_updTimerPeriod*1000);
+				Timer1.setPeriod(_updTimerPeriod * 1000);
 			}
 		}
 		result = true;
@@ -171,21 +171,17 @@ void DbncdMPBttn::enable(){
 	return _setIsEnabled(true);
 }
 
-bool DbncdMPBttn::end(){	//! Final coding pending!!!
+bool DbncdMPBttn::end(){
    bool result {false};
 
 	result = pause();	//Will mark the object as non updatable, recalculate the update time and sets the timer period, or stops it if no updatable objects are left in the list.
 	if (result){
-		/* 
-		Pop this MPB from the list to keep updated
-			if it wasn't there the pop wouldn't fail
-			If it was the last element of the list it will delete the list
-		If the list pointer _mpbsInstncsLstPtr = nullptr
-			Ensure the _updTimerPeriod = 0
-			Stop Timer1
-
-		*/
 		_popMpb(_mpbsInstncsLstPtr, _mpbInstnc);	// Removes the MPB from the "MPBs to be updated list". If the list is empty after the removal this method deletes the list.
+		if(_mpbsInstncsLstPtr == nullptr){	// The "MPBs to be updated list" is empty, stop the Timer1
+			_updTimerPeriod = 0;
+			Timer1.stop();
+			Timer1.detachInterrupt();
+		}
 	}
 
    return result;
@@ -293,25 +289,35 @@ void DbncdMPBttn::mpbPollCallback(){
 	return;
 }
 
-bool DbncdMPBttn::pause(){	//! Final coding pending!!!
+bool DbncdMPBttn::pause(){
    bool result {false};
+	int arrSize{0};
+	bool mpbFnd{false};
 
-	/* This is only to pause the checking timer for THIS MPB, that means 
-   Check if the MPB is in the _mpbsInstncsLstPtr
-		if it's in the list: check for the _updTmrAttchd attribute
-			If _updTmrAttchd == true
-				set to false
-				recalculate _updTimerPeriod
-				if _updTimerPeriod == 0
-					Means no active MPBs, stop the Timer1
-				else
-					if the new _updTimerPeriod differs from the old one
-						Set the new _updTimerPeriod
-						Timer1.setPeriod(_updTimerPeriod)
-		Else (was not in the list)
-			Return false
-
-	*/
+	if(_mpbsInstncsLstPtr != nullptr){	// If there is no "MPBs to be updated list", this object can't be in the list
+		while(*(_mpbsInstncsLstPtr + arrSize) != nullptr){
+			if(*(_mpbsInstncsLstPtr + arrSize) == _mpbInstnc){
+				mpbFnd = true;
+				break;
+			}
+			else{
+				++arrSize;
+			}
+		}
+		if(mpbFnd){	// This MPBttn was found in the "MPBs to be updated list"
+			if (_updTmrAttchd == true){	// And was attached to the update timer
+				_updTmrAttchd = false;
+				_updTimerPeriod = _updTmrsMCDCalc();
+				if(_updTimerPeriod == 0){	//No active MPBs where found in the "MPBs to be updated list", set the timer to pause
+					Timer1.stop();
+				}
+				else{
+					Timer1.setPeriod(_updTimerPeriod * 1000);
+				}
+			}
+			result = true;
+		}
+	}
 
    return result;
 }
@@ -419,28 +425,44 @@ void DbncdMPBttn::resetFda(){
 	return;
 }
 
-bool DbncdMPBttn::resume(){		//! Final coding pending!!!
+bool DbncdMPBttn::resume(){
+	int arrSize{0};
+	bool mpbFnd{false};
    bool result {false};
+	unsigned long int tmpUpdTmrPrd{0};
 
-	/* This is only to resume the checking timer for THIS MPB, that means 
-   Check if the MPB is in the _mpbsInstncsLstPtr
-		if it's in the list: check for the _updTmrAttchd attribute
-			If _updTmrAttchd == false
-				if current _updTimerPeriod == 0
-					TimerWasStopped
-				recalculate _updTimerPeriod
-				if the new _updTimerPeriod differs from the old one
-					Set the new _updTimerPeriod (Timer1.setPeriod(_updTimerPeriod))
-				If TimerWasStopped
-					Timer1.Start()
-				set _updTmrAttchd to true
-		Else (was not in the list)
-			Return false
+	if(_mpbsInstncsLstPtr != nullptr){	// If there is no "MPBs to be updated list", this object can't be in the list to be resumed
+		while(*(_mpbsInstncsLstPtr + arrSize) != nullptr){
+			if(*(_mpbsInstncsLstPtr + arrSize) == _mpbInstnc){
+				mpbFnd = true;
+				break;
+			}
+			else{
+				++arrSize;
+			}
+		}
+		if(mpbFnd){	// This MPBttn was found in the "MPBs to be updated list"
+			if (_updTmrAttchd == false){	// And it was not attached to the update timer: attach and calculate updTimerPeriod
+				if(_pollPeriodMs > 0){	// The periodic polling time is a non-zero value, it can be resumed, else it fails
+					_updTmrAttchd = true;
+					tmpUpdTmrPrd = _updTmrsMCDCalc();
+					if(_updTimerPeriod != tmpUpdTmrPrd){
+						Timer1.setPeriod(tmpUpdTmrPrd * 1000);
+						if(_updTimerPeriod == 0){	//No active MPBs where found in the "MPBs to be updated list", set the timer to pause
+							Timer1.resume();
+						}
+						_updTimerPeriod = tmpUpdTmrPrd;
+					}
+					result = true;
+				}
+			}
+			else{	// The object was in the "MPBs to be updated list" and was set to be updated, no need for further changes, reply success
+				result = true;
+			}
+		}
+	}
 
-	*/
-
-
-	return result;
+   return result;
 }
 
 bool DbncdMPBttn::setDbncTime(const unsigned long int &newDbncTime){

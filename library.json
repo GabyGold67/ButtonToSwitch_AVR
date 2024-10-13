@@ -1,0 +1,38 @@
+{
+    "name": "ButtonToSwitch_AVR",
+    "version": "4.0.0",
+    
+    "description": "Implement simple to complex switches out of simple buttons -or any other momentary digital input signal- this library with an easy consistent API will take care of debouncing, deglitching, toggle on-off, keep activation times in a completely unnatended manner.. This Arduino library includes classes that lets you implement all kind of switches out of simple buttons (Momentary Push Buttons or MPBs), PIR sensors, RFID readers or any other source of momentary digital signals. Add any kind of switch to a project by using simple MPBs and this library to simulate the internal mechanism of each of them, starting from a Debounced Push Button and extending to Delayed Start Push Button, Toggle (Latched) Push Button, Time Latched Push Button, External Release Latched Push Button, Staircase Timed Button, On/Off/Dimmers, and more... The library gives the embedded behavior to build more complex switches classes by simple composition: menu panels, rotary enum switches, etc." ,
+    "keywords": "momentary, push, button, debounce, switch, latch, toggle, release, warning, security, staircase, timer, slider, dimmer",
+    
+    "repository":
+    {
+      "type": "git",
+      "url": "https://github.com/GabyGold67/ButtonToSwitch_AVR"
+    },
+    "authors":
+    [
+      {
+        "name": "Gabriel D. Goldman",
+        "email": "gdgoldman67@hotmail.com",
+        "url": "https://github.com/GabyGold67",
+        "maintainer": true
+      }
+    ],
+
+    "license": "GPL-3.0-or-later",
+    "homepage": "https://www.gnu.org/licenses/gpl-3.0-standalone.html",
+    "dependencies":
+    [
+      {
+        "owner": "paulstoffregen",
+        "name": "TimerOne",
+        "version": "^1.1.1",
+        "frameworks": "arduino",
+        "platforms": "atmelavr"
+  
+      }
+    ] ,
+      "frameworks": "arduino",
+    "platforms": "atmelavr"
+  }

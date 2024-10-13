@@ -1,0 +1,139 @@
+###############################################
+# Syntax Coloring Map For mpbToSwitch_AVR
+###############################################
+
+###############################################
+# Datatypes (KEYWORD1)
+###############################################
+
+DbncdMPBttn	KEYWORD1
+DbncdDlydMPBttn KEYWORD1
+TogglLtchMPBttn  KEYWORD1
+TmLtchMPBttn    KEYWORD1
+HntdTmLtchMPBttn  KEYWORD1
+XtrnUnltchMPBttn    KEYWORD1
+DDlydDALtchMPBttn KEYWORD1
+SldrDALtchMPBttn  KEYWORD1
+TmVdblMPBttn    KEYWORD1
+SnglSrvcVdblMPBttn   KEYWORD1
+
+###############################################
+# Methods and Functions (KEYWORD2)
+###############################################
+# DbncdMPBttn
+#############
+begin   KEYWORD2
+clrStatus   KEYWORD2
+disable  KEYWORD2
+enable   KEYWORD2
+end KEYWORD2
+getCurDbncTime  KEYWORD2
+getFnWhnTrnOff KEYWORD2
+getFnWhnTrnOn  KEYWORD2
+getIsEnabled   KEYWORD2
+getIsOn KEYWORD2
+getIsOnDisabled   KEYWORD2
+getLstPollTime KEYWORD2
+getOtptsSttsPkgd  KEYWORD2
+getOutputsChange  KEYWORD2
+getPollPeriodMs KEYWORD2
+getStrtDelay   KEYWORD2
+getUpdTmrAttchd   KEYWORD2
+init    KEYWORD2
+pause   KEYWORD2
+resetDbncTime   KEYWORD2
+resetFda KEYWORD2
+resume  KEYWORD2
+setDbncTime KEYWORD2
+setFnWhnTrnOffPtr KEYWORD2
+setFnWhnTrnOnPtr  KEYWORD2
+setIsOnDisabled   KEYWORD2
+setOutputsChange  KEYWORD2
+################
+#DbncdDlydMPBttn
+################
+setStrtDelay    KEYWORD2
+###############
+#TgglLtchMPBttn
+###############
+getIsLatched   KEYWORD2
+getTrnOffASAP  KEYWORD2
+getUnlatchPend  KEYWORD2
+getUnlatchRlsPend KEYWORD2
+setTrnOffASAP  KEYWORD2
+setUnlatchPend  KEYWORD2
+setUnlatchRlsPend KEYWORD2
+unlatch  KEYWORD2
+#############
+#TmLtchMPBttn
+#############
+getSrvcTime KEYWORD2
+setSrvcTime  KEYWORD2
+setTmerRstbl    KEYWORD2
+#################
+#HntdTmLtchMPBttn
+#################
+getFnWhnTrnOffPilot  KEYWORD2
+getFnWhnTrnOffWrnng  KEYWORD2
+getFnWhnTrnOnPilot   KEYWORD2
+getFnWhnTrnOnWrnng   KEYWORD2
+getPilotOn  KEYWORD2
+getWrnngOn  KEYWORD2
+setFnWhnTrnOffPilotPtr  KEYWORD2
+setFnWhnTrnOffWrnngPtr  KEYWORD2
+setFnWhnTrnOnPilotPtr   KEYWORD2
+setFnWhnTrnOnWrnngPtr   KEYWORD2
+setKeepPilot    KEYWORD2
+setWrnngPrctg  KEYWORD2
+##################
+#DDlydDALtchMPBttn
+##################
+getFnWhnTrnOffScndry KEYWORD2
+getFnWhnTrnOnScndry  KEYWORD2
+getIsOnScndry  KEYWORD2
+getScndModActvDly KEYWORD2
+setFnWhnTrnOffScndryPtr KEYWORD2
+setFnWhnTrnOnScndryPtr  KEYWORD2
+setScndModActvDly KEYWORD2
+#################
+#SldrDALtchMPBttn
+#################
+getOtptCurVal  KEYWORD2
+getOtptCurValIsMax   KEYWORD2
+getOtptCurValIsMin   KEYWORD2
+getOtptSldrSpd KEYWORD2
+getOtptSldrStpSize   KEYWORD2
+getOtptValMax  KEYWORD2
+getOtptValMin  KEYWORD2
+getSldrDirUp   KEYWORD2
+setOtptCurVal  KEYWORD2
+setOtptSldrSpd KEYWORD2
+setOtptSldrStpSize   KEYWORD2
+setOtptValMax  KEYWORD2
+setOtptValMin  KEYWORD2
+setSldrDirDn   KEYWORD2
+setSldrDirUp   KEYWORD2
+setSwpDirOnEnd KEYWORD2
+setSwpDirOnPrss   KEYWORD2
+swapSldrDir KEYWORD2
+###########
+#TmVdblMPBttn
+###########
+getFnWhnTrnOffVdd KEYWORD2
+getFnWhnTrnOnVdd  KEYWORD2
+getFrcOtptLvlWhnVdd KEYWORD2
+getIsVoided KEYWORD2
+getStOnWhnOtpFrcd KEYWORD2
+getVoidTime KEYWORD2
+setFnWhnTrnOffVddPtr KEYWORD2
+setFnWhnTrnOnVddtPtr KEYWORD2
+setIsNotVoided KEYWORD2
+setIsVoided KEYWORD2
+setVoidTime KEYWORD2
+###############################################
+# Constants (LITERAL1)
+###############################################
+_HwMinDbncTime LITERAL1
+_InvalidPinNum LITERAL1
+_MinSrvcTime LITERAL1
+_StdPollDelay LITERAL1
