@@ -1,0 +1,5 @@
+<map id="LtchMPBttn::setUnlatchRlsPend" name="LtchMPBttn::setUnlatchRlsPend">
+<area shape="rect" id="Node000001" title="Sets the value of the &quot;Valid Unlatch Release Pending&quot; attribute." alt="" coords="194,5,405,32"/>
+<area shape="rect" id="Node000002" href="$class_ltch_m_p_bttn.html#a25933288a98bd0a2efc406e7a009fbc1" title="Sets the values of the flags needed to unlatch a latched MPB." alt="" coords="5,5,146,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="178,21,146,21,146,16,178,16"/>
+</map>

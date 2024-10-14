@@ -1,0 +1,5 @@
+<map id="DbncdMPBttn::resetDbncTime" name="DbncdMPBttn::resetDbncTime">
+<area shape="rect" id="Node000001" title="Resets the debounce process time of the object to the value used at instantiation." alt="" coords="5,5,206,32"/>
+<area shape="rect" id="Node000002" href="$class_dbncd_m_p_bttn.html#afa8a94396ee3fe8f9cc41c8ea9d8b8d3" title="Sets the debounce process time." alt="" coords="254,5,443,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="206,16,238,16,238,21,206,21"/>
+</map>

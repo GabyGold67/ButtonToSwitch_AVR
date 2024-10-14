@@ -30,8 +30,8 @@
   * @warning **Use of this library is under your own responsibility**
   ******************************************************************************
   */
-#ifndef _BUTTONTOSWITCH_AVR_H_
-#define _BUTTONTOSWITCH_AVR_H_
+#ifndef _BUTTONTOSWITCH_H_
+#define _BUTTONTOSWITCH_H_
 
 #include <Arduino.h>
 #include <stdint.h>
@@ -1694,4 +1694,4 @@ public:
 
 //==========================================================>>
 
-#endif   /*_BUTTONTOSWITCH_AVR_H_*/
+#endif   /*_BUTTONTOSWITCH_H_*/

@@ -40,7 +40,7 @@
   ******************************************************************************
   */
 #include <Arduino.h>
-#include <ButtonToSwitch_AVR.h>
+#include <ButtonToSwitch.h>
 
 const uint8_t dmpbMainInpt{6};
 const uint8_t dmpbAuxInpt{2};
@@ -61,6 +61,7 @@ void setup() {
   pinMode(dmpbIsOnOtpt, OUTPUT);
   pinMode(dmpbIsEnabledOtpt, OUTPUT);
 
+  myUnltchMPBttn.begin(20);
   myDMPBttn.setStrtDelay(50);
   myDMPBttn.setIsOnDisabled(false);
   myDMPBttn.begin(40); 

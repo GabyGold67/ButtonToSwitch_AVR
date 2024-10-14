@@ -1,0 +1,5 @@
+<map id="SldrDALtchMPBttn::setOtptValMin" name="SldrDALtchMPBttn::setOtptValMin">
+<area shape="rect" id="Node000001" title="Sets the output current value register minimum value attribute (otptValMin attribute)." alt="" coords="5,5,189,48"/>
+<area shape="rect" id="Node000002" href="$class_dbncd_m_p_bttn.html#af79e9d677c23bc8e387f7161b3294c30" title="Sets the value of the attribute flag indicating if a change took place in any of the output attribute..." alt="" coords="237,13,457,40"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="189,24,221,24,221,29,189,29"/>
+</map>

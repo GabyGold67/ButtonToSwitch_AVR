@@ -31,7 +31,7 @@
   ******************************************************************************
   */
 #include <Arduino.h>
-#include <ButtonToSwitch_AVR.h>
+#include <ButtonToSwitch.h>
 #include <TimerOne.h>
 //===========================>> BEGIN General use Global variables
 //===========================>> END General use Global variables

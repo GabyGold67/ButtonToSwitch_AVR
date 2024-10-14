@@ -1,0 +1,21 @@
+<map id="LtchMPBttn" name="LtchMPBttn">
+<area shape="rect" id="Node000001" title="Abstract class, base to model Latched Debounced Delayed MPBs (LDD&#45;MPB)." alt="" coords="352,155,442,181"/>
+<area shape="rect" id="Node000004" href="$class_dbl_actn_ltch_m_p_bttn.html" title="Abstract class, base to model Double Action LDD&#45;MPBs (DALDD&#45;MPBs)." alt="" coords="110,229,247,256"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="346,189,218,231,216,226,344,184"/>
+<area shape="rect" id="Node000007" href="$class_tggl_ltch_m_p_bttn.html" title="Models a Toggle Latch DD&#45;MPB, a.k.a. a Toggle Switch (ToLDD&#45;MPB)." alt="" coords="272,229,387,256"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="377,195,343,231,339,227,373,191"/>
+<area shape="rect" id="Node000008" href="$class_tm_ltch_m_p_bttn.html" title="Models a Timer Latch DD&#45;MPB, a.k.a. Timer Switch (TiLDD&#45;MPB)." alt="" coords="410,229,520,256"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="421,191,455,227,452,231,418,195"/>
+<area shape="rect" id="Node000010" href="$class_xtrn_unltch_m_p_bttn.html" title="Models an External Unlatch LDD&#45;MPB, a.k.a. Emergency Latched Switch (XULDD&#45;MPB)" alt="" coords="544,229,672,256"/>
+<area shape="poly" id="edge9_Node000001_Node000010" title=" " alt="" coords="449,184,572,226,570,231,447,189"/>
+<area shape="rect" id="Node000002" href="$class_dbncd_dlyd_m_p_bttn.html" title="Models a Debounced Delayed MPB (DD&#45;MPB)." alt="" coords="332,80,462,107"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="400,122,400,154,394,154,394,122"/>
+<area shape="rect" id="Node000003" href="$class_dbncd_m_p_bttn.html" title="Base class, models a Debounced Momentary Push Button (D&#45;MPB)." alt="" coords="346,5,449,32"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="400,48,400,80,394,80,394,48"/>
+<area shape="rect" id="Node000005" href="$class_d_dlyd_d_a_ltch_m_p_bttn.html" title="Models a Debounced Delayed Double Action Latched MPB combo switch (Debounced Delayed DALDD&#45;MPB &#45; DD&#45;D..." alt="" coords="5,304,152,331"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="150,267,98,306,94,301,147,263"/>
+<area shape="rect" id="Node000006" href="$class_sldr_d_a_ltch_m_p_bttn.html" title="Models a Slider Double Action LDD&#45;MPB combo switch, a.k.a. off/on/dimmer, a.k.a. off/on/volume radio ..." alt="" coords="176,304,309,331"/>
+<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="202,266,233,302,229,305,198,270"/>
+<area shape="rect" id="Node000009" href="$class_hntd_tm_ltch_m_p_bttn.html" title="Models a Hinted Timer Latch DD&#45;MPB, a.k.a. Staircase Switch (HTiLDD&#45;MPB)." alt="" coords="396,304,534,331"/>
+<area shape="poly" id="edge8_Node000008_Node000009" title=" " alt="" coords="468,272,468,304,462,304,462,272"/>
+</map>

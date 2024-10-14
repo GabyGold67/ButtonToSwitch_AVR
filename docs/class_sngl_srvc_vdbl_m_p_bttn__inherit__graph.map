@@ -1,0 +1,9 @@
+<map id="SnglSrvcVdblMPBttn" name="SnglSrvcVdblMPBttn">
+<area shape="rect" id="Node000001" title="Models a Single Service Voidable DD&#45;MPB a.k.a. Trigger switch (SSVDD&#45;MPB)" alt="" coords="5,229,150,256"/>
+<area shape="rect" id="Node000002" href="$class_vdbl_m_p_bttn.html" title="Abstract class, base to model Voidable DD&#45;MPBs (VDD&#45;MPB)." alt="" coords="32,155,123,181"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="80,197,80,229,75,229,75,197"/>
+<area shape="rect" id="Node000003" href="$class_dbncd_dlyd_m_p_bttn.html" title="Models a Debounced Delayed MPB (DD&#45;MPB)." alt="" coords="12,80,143,107"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="80,122,80,154,75,154,75,122"/>
+<area shape="rect" id="Node000004" href="$class_dbncd_m_p_bttn.html" title="Base class, models a Debounced Momentary Push Button (D&#45;MPB)." alt="" coords="26,5,129,32"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="80,48,80,80,75,80,75,48"/>
+</map>

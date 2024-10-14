@@ -33,7 +33,7 @@
   ******************************************************************************
   */
 #include <Arduino.h>
-#include <ButtonToSwitch_AVR.h>
+#include <ButtonToSwitch.h>
 
 const uint8_t dmpbMainInpt{6};
 const uint8_t dmpbIsOnOtpt{3};

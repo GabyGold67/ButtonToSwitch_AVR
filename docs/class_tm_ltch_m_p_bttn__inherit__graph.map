@@ -1,0 +1,11 @@
+<map id="TmLtchMPBttn" name="TmLtchMPBttn">
+<area shape="rect" id="Node000001" title="Models a Timer Latch DD&#45;MPB, a.k.a. Timer Switch (TiLDD&#45;MPB)." alt="" coords="19,229,129,256"/>
+<area shape="rect" id="Node000005" href="$class_hntd_tm_ltch_m_p_bttn.html" title="Models a Hinted Timer Latch DD&#45;MPB, a.k.a. Staircase Switch (HTiLDD&#45;MPB)." alt="" coords="5,304,143,331"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="77,272,77,304,71,304,71,272"/>
+<area shape="rect" id="Node000002" href="$class_ltch_m_p_bttn.html" title="Abstract class, base to model Latched Debounced Delayed MPBs (LDD&#45;MPB)." alt="" coords="29,155,119,181"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="77,197,77,229,71,229,71,197"/>
+<area shape="rect" id="Node000003" href="$class_dbncd_dlyd_m_p_bttn.html" title="Models a Debounced Delayed MPB (DD&#45;MPB)." alt="" coords="9,80,139,107"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="77,122,77,154,71,154,71,122"/>
+<area shape="rect" id="Node000004" href="$class_dbncd_m_p_bttn.html" title="Base class, models a Debounced Momentary Push Button (D&#45;MPB)." alt="" coords="22,5,126,32"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="77,48,77,80,71,80,71,48"/>
+</map>
