@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
   * @file	: 07_XtrnUnltchMPBttn_1a.ino
-  * @brief  : Example for the ButtonToSwitch_AVR library XtrnUnltchMPBttn class
+  * @brief  : Example for the ButtonToSwitch library XtrnUnltchMPBttn class
   *
   *   Framework: Arduino
   *   Platform: AVR
@@ -24,7 +24,7 @@
   * 				    07/10/2024 Last update
   *
   ******************************************************************************
-  * @attention	This file is part of the examples folder for the ButtonToSwitch_AVR
+  * @attention	This file is part of the examples folder for the ButtonToSwitch
   * library. All files needed are provided as part of the source code for the library.
   * 
   * Released into the public domain in accordance with "GPL-3.0-or-later" license terms.
