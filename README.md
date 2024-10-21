@@ -50,7 +50,7 @@ Just to add possibilities, consider that everywhere the **"Momentary Push Button
 
 # [For ButtonToSwitch for Arduino Library Complete Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_AVR/)
 
-![ButtonToSwitch Library Classes Hierarchy](./Extras/MomentaryPushButtonUMLClassesOnly.jpg)
+![ButtonToSwitch Library Classes Hierarchy](./extras/MomentaryPushButtonUMLClassesOnly.jpg)
 
 ### The main output attribute flag kept updated for each and every class is the **isOn** flag, which defines the _**Off State**_ (isOn=false) and the _**On State**_ (isOn=true) of the instantiated objects.  
 
