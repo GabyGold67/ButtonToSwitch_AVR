@@ -25,7 +25,7 @@
 var NAVTREE =
 [
   [ "ButtonToSwitch Library for Arduino", "index.html", [
-    [ "<strong>Buttons to Switches Library</strong> (ButtonToSwitch)", "index.html", "index" ],
+    [ "Buttons to Switches Library (ButtonToSwitch)", "index.html", "index" ],
     [ "Classes", "annotated.html", [
       [ "Class List", "annotated.html", "annotated_dup" ],
       [ "Class Index", "classes.html", null ],

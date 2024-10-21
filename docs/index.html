@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.12.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>ButtonToSwitch Library for Arduino: &lt;strong&gt;Buttons to Switches Library&lt;/strong&gt; (ButtonToSwitch)</title>
+<title>ButtonToSwitch Library for Arduino: Buttons to Switches Library (ButtonToSwitch)</title>
 <link rel="icon" href="Complex_Switch_Sq.ico" type="image/x-icon" />
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
@@ -99,15 +99,19 @@ $(function(){initNavTree('index.html',''); initResizable(true); });
 </div>
 
 <div><div class="header">
-  <div class="headertitle"><div class="title"><b>Buttons to Switches Library</b> (ButtonToSwitch) </div></div>
+  <div class="headertitle"><div class="title">Buttons to Switches Library (ButtonToSwitch) </div></div>
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><p><a class="anchor" id="md__c_1_2_users_2_dev_padawan_2_documents_2_my_01_projects_2_training_01_projects_2_libs_dev___a_v_r_2lib_2_button_to_switch___a_v_r_2_r_e_a_d_m_e"></a></p>
-<h1><a class="anchor" id="the-driving-concept-is-pretty-simple-stop-checking-an-input-pin-voltage-start-asking-if-the-switch-is-on-or-off"></a>
-<b>The driving concept is pretty simple: stop checking an input pin voltage, start asking if the switch is On or Off.</b></h1>
+<h1><a class="anchor" id="the-driving-concept-is-pretty-simple"></a>
+The driving concept is pretty simple:</h1>
+<h1><a class="anchor" id="autotoc_md--_stop-checking-the-input-pin-voltage_"></a>
+- <em>Stop checking the input pin voltage.</em></h1>
+<h1><a class="anchor" id="autotoc_md--_start-asking-if-the-switch-is-on-or-off_"></a>
+- <em>Start asking if the switch is On or Off.</em></h1>
 <p>This Arduino library is a refactoring of my own <b>ButtonToSwitch_STM32 (RTOS)</b> and <b>ButtonToSwitch_ESP32 (RTOS-Arduino)</b> libraries. For making this possible this library depends on the <a href="https://github.com/PaulStoffregen/TimerOne">TimerOne library</a> and supports every platform suported by that library. Several forks of the library exist to support different architectures, including ESP32 boards, Arduino Uno-R4, and others.</p>
-<h1><a class="anchor" id="an-arduino-library-that-builds-switch-mechanisms-replacements-out-of-simple-push-buttons"></a>
-An Arduino library that builds switch mechanisms replacements out of simple push buttons.</h1>
+<h2><a class="anchor" id="an-arduino-library-that-builds-switch-mechanisms-replacements-out-of-simple-push-buttons"></a>
+An Arduino library that builds switch mechanisms replacements out of simple push buttons.</h2>
 <p>By using just a push button (a.k.a. momentary switches or momentary buttons, <em><b>MPB</b></em> for short from here on) the classes implemented in this library will manage, calculate and update different parameters to <b>generate the behavior of standard electromechanical switches</b>. Those parameters include presses, releases, timings, counters or secondary input readings as needed.</p>
 <p>The instantiated switch state is calculated independently by the use of the timer, that keeps the state of the objects created constantly updated including the ON/OFF condition, without constant polling needed. The timer setup is managed by in-class methods, including the possibility to pause, resume or end the timer of each object independently of the others. <br  />
  Each class offers a wide range of methods to set, read and modify every significant aspect of each switch mechanism simulated, and the signal received from the push button is debounced for a correct behavior of the event processing. <br  />
@@ -281,13 +285,13 @@ The <b>Debounced Momentary Button</b> keeps the ON state since the moment the si
 <a href="https://gabygold67.github.io/ButtonToSwitch_AVR/">For ButtonToSwitch Library Complete Documentation Click Here!</a></h2>
 <hr  />
  <h1><a class="anchor" id="dbncddlydmpbttn-class"></a>
-<b>DbncdDlydMPBttn class</b></h1>
+DbncdDlydMPBttn class</h1>
 <h2><a class="anchor" id="the-debounced-delayed-momentary-button-keeps-the-on-state-since-the-moment-the-signal-is-stable-debouncing-process-plus-a-delay-added-and-until-the-moment-the-push-button-is-released"></a>
 The <b>Debounced Delayed Momentary Button</b> keeps the ON state since the moment the signal is stable (debouncing process), plus a delay added, and until the moment the push button is released.</h2>
 <p>The reasons to add the delay are design related and are usually used to avoid registering unintentional presses, or to give some equipment that needs time between repeated activations the benefit of the pause. If the push button is released before the delay configured, no press is registered at all. The delay time in this class as in the other classes that implements it, might be zero (0), defined by the developer and/or modified in runtime. <br  />
 </p>
 <h1><a class="anchor" id="added-or-modified-methods-for-dbncddlydmpbttn-class"></a>
-<b>Added or modified Methods for DbncdDlydMPBttn class</b></h1>
+Added or modified Methods for DbncdDlydMPBttn class</h1>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Method   </th><th class="markdownTableHeadNone">Parameters    </th></tr>
@@ -302,14 +306,14 @@ The <b>Debounced Delayed Momentary Button</b> keeps the ON state since the momen
 </table>
 <hr  />
  <h2><a class="anchor" id="methods-definition-and-use-description-1"></a>
-<b>Methods definition and use description</b></h2>
+Methods definition and use description</h2>
 <h1><a class="anchor" id="for-dbncddlydmpbttn-class-members-documentation-click-herehttpsgabygold67githubiobuttontoswitch_avrclass_dbncd_dlyd_m_p_bttn-membershtml"></a>
 <a href="https://gabygold67.github.io/ButtonToSwitch_AVR/class_dbncd_dlyd_m_p_bttn-members.html">For DbncdDlydMPBttn class Members Documentation Click Here!</a></h1>
 <h2><a class="anchor" id="for-buttontoswitch-library-complete-documentation-click-herehttpsgabygold67githubiobuttontoswitch_avr-1"></a>
 <a href="https://gabygold67.github.io/ButtonToSwitch_AVR/">For ButtonToSwitch Library Complete Documentation Click Here!</a></h2>
 <hr  />
  <h1><a class="anchor" id="ltchmpbttn-class"></a>
-<b>LtchMPBttn class</b></h1>
+LtchMPBttn class</h1>
 <p>This is an <b>Abstract Class</b> meaning that no object can be instantiated from it. The members defined are meant to be available for the <a class="el" href="class_ltch_m_p_bttn.html" title="Abstract class, base to model Latched Debounced Delayed MPBs (LDD-MPB).">LtchMPBttn</a> <b>subclasses</b> instantiated objects, and define common behavior for all the "Latched Button Subclasses". </p>
 <h2><a class="anchor" id="latched-dd-mpbs-are-mpbs-whose-distinctive-characteristic-is-that-models-switches-that-keep-the-on-state-since-the-moment-the-input-signal-is-stable-debouncing--delay-process-and-keeps-the-on-state-after-the-mpb-is-released-and-until-an-event-un-latches-them-setting-them-free-to-go-back-to-the-off-state"></a>
 <b>Latched DD-MPBs</b> are MPBs whose distinctive characteristic is that models switches that keep the ON state since the moment the input signal is stable (debouncing + Delay process), and keeps the ON state after the MPB is released and until an event un-latches them, setting them free to go back to the <b>Off State</b>.</h2>
@@ -332,7 +336,7 @@ The <b>Debounced Delayed Momentary Button</b> keeps the ON state since the momen
 </ol>
 <p>The class provides methods to generate those validated signals independently of the designated signal source to modify the instantiated object behavior if needed by the design requirements, Validated Unlatch signal (see LtchMPBttn::setUnlatchPend(const bool) ), Validated Unlatch Release signal (see LtchMPBttn::setUnlatchRlsPend(const bool) ), or to <b>set</b> both flags to generate an unlatch (see <a class="el" href="class_ltch_m_p_bttn.html#a25933288a98bd0a2efc406e7a009fbc1" title="Sets the values of the flags needed to unlatch a latched MPB.">LtchMPBttn::unlatch()</a> ).</p>
 <h2><a class="anchor" id="added-or-modified-methods-for-ltchmpbttn-class"></a>
-<b>Added or Modified Methods for LtchMPBttn class</b></h2>
+Added or Modified Methods for LtchMPBttn class</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Method   </th><th class="markdownTableHeadNone">Parameters    </th></tr>
@@ -355,20 +359,20 @@ The <b>Debounced Delayed Momentary Button</b> keeps the ON state since the momen
 </table>
 <hr  />
  <h2><a class="anchor" id="methods-definition-and-use-description-2"></a>
-<b>Methods definition and use description</b></h2>
+Methods definition and use description</h2>
 <h1><a class="anchor" id="for-ltchdmpbttn-subclasses-common-members-documentation-click-herehttpsgabygold67githubiobuttontoswitch_avrclass_ltch_m_p_bttn-membershtml"></a>
 <a href="https://gabygold67.github.io/ButtonToSwitch_AVR/class_ltch_m_p_bttn-members.html">For LtchdMPBttn Subclasses Common Members Documentation Click Here!</a></h1>
 <h2><a class="anchor" id="for-buttontoswitch-library-complete-documentation-click-herehttpsgabygold67githubiobuttontoswitch_avr-2"></a>
 <a href="https://gabygold67.github.io/ButtonToSwitch_AVR/">For ButtonToSwitch Library Complete Documentation Click Here!</a></h2>
 <hr  />
  <h1><a class="anchor" id="tgglltchmpbttn-class"></a>
-<b>TgglLtchMPBttn class</b></h1>
+TgglLtchMPBttn class</h1>
 <h2><a class="anchor" id="the-toggle-switch--keeps-the-on-state-since-the-moment-the-signal-is-stable-debouncing--delay-process-and-keeps-the-on-state-after-the-push-button-is-released-and-until-it-is-pressed-once-again"></a>
 The <b>Toggle switch</b> keeps the ON state since the moment the signal is stable (debouncing + Delay process), and keeps the ON state after the push button is released and until it is pressed once again.</h2>
 <p>So this simulates a simple On-Off switch like the ones used to turn on/off a room light, or any electronic device. There's a lot of advantages in software simulated switches: any amount of switches might be set up in a parallel configuration, so that an unlimited number of entrances or easy accessible points can each have a switch to turn on/off the same resource, the switch might be temporarily disabled, either keeping the On State or the Off State, and some more. <br  />
 </p>
 <h2><a class="anchor" id="added-or-modified-methods-for-ltchmpbttn-class-1"></a>
-<b>Added or Modified Methods for LtchMPBttn class</b></h2>
+Added or Modified Methods for LtchMPBttn class</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Method   </th><th class="markdownTableHeadNone">Parameters    </th></tr>
@@ -377,20 +381,20 @@ The <b>Toggle switch</b> keeps the ON state since the moment the signal is stabl
 </table>
 <hr  />
  <h2><a class="anchor" id="methods-definition-and-use-description-3"></a>
-<b>Methods definition and use description</b></h2>
+Methods definition and use description</h2>
 <h1><a class="anchor" id="for-tgglltchdmpbttn-subclasses-common-members-documentation-click-herehttpsgabygold67githubiobuttontoswitch_avrclass_tggl_ltch_m_p_bttn-membershtml"></a>
 <a href="https://gabygold67.github.io/ButtonToSwitch_AVR/class_tggl_ltch_m_p_bttn-members.html">For TgglLtchdMPBttn Subclasses Common Members Documentation Click Here!</a></h1>
 <h2><a class="anchor" id="for-buttontoswitch-library-complete-documentation-click-herehttpsgabygold67githubiobuttontoswitch_avr-3"></a>
 <a href="https://gabygold67.github.io/ButtonToSwitch_AVR/">For ButtonToSwitch Library Complete Documentation Click Here!</a></h2>
 <hr  />
  <h1><a class="anchor" id="tmltchmpbttn-class"></a>
-<b>TmLtchMPBttn class</b></h1>
+TmLtchMPBttn class</h1>
 <h2><a class="anchor" id="the-time-latched-or-timer-switch-keeps-the-on-state-since-the-moment-the-signal-is-debounced-and-delayed-and-keeps-the-on-state-during-a-set-time"></a>
 The <b>Time latched</b> or <b>Timer Switch</b> keeps the ON state <b>since the moment the signal is debounced and delayed</b>, and keeps the ON state during a set time.</h2>
 <p>The <b>Service time</b> is set at instantiation, and can be modified through the provided methods. The switch implementation gives the option to allow to reset the timer before reaches the time limit if the push button is pressed again. <br  />
 </p>
 <h2><a class="anchor" id="added-or-modified-methods-for-tmltchmpbttn-class"></a>
-<b>Added or Modified Methods for TmLtchMPBttn class</b></h2>
+Added or Modified Methods for TmLtchMPBttn class</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Method   </th><th class="markdownTableHeadNone">Parameters    </th></tr>
@@ -405,20 +409,20 @@ The <b>Time latched</b> or <b>Timer Switch</b> keeps the ON state <b>since the m
 </table>
 <hr  />
  <h2><a class="anchor" id="methods-definition-and-use-description-4"></a>
-<b>Methods definition and use description</b></h2>
+Methods definition and use description</h2>
 <h1><a class="anchor" id="for-tmltchdmpbttn-subclasses-common-members-documentation-click-herehttpsgabygold67githubiobuttontoswitch_avrclass_tm_ltch_m_p_bttn-membershtml"></a>
 <a href="https://gabygold67.github.io/ButtonToSwitch_AVR/class_tm_ltch_m_p_bttn-members.html">For TmLtchdMPBttn Subclasses Common Members Documentation Click Here!</a></h1>
 <h2><a class="anchor" id="for-buttontoswitch-library-complete-documentation-click-herehttpsgabygold67githubiobuttontoswitch_avr-4"></a>
 <a href="https://gabygold67.github.io/ButtonToSwitch_AVR/">For ButtonToSwitch Library Complete Documentation Click Here!</a></h2>
 <hr  />
  <h1><a class="anchor" id="hntdtmltchmpbttn-class"></a>
-<b>HntdTmLtchMPBttn class</b></h1>
+HntdTmLtchMPBttn class</h1>
 <h2><a class="anchor" id="the-hinted-timer-latched-or-staircase-timer-switch-keeps-the-on-state-since-the-moment-the-signal-is-debounced-and-keeps-the-state-during-a-set-time-has-the-capability-to-give-a-warning-when-the-service-time-is-close-to-the-end-and-the-possibility-to-set-a-third-signal-on-while-the-switch-is-off"></a>
 The <b>Hinted Timer Latched</b>, or <b>Staircase Timer Switch</b>, keeps the ON state since the moment the signal is debounced, and keeps the state during a set time, has the capability to give a warning when the service time is close to the end and the possibility to set a third signal ON while the switch is off.</h2>
 <p>The <b>Service time</b> is set at instantiation, and can be modified through the provided methods. The switch implementation gives the option to allow to reset the timer before it gets to the end if the push button is pressed, the option to give a warning when the time is close to the end through a second flag (remaining time is defined as a percentage of the total ON time and it's configurable), and the possibility to set a third signal ON while the switch is off, just like the pilot light (hint) in a staircase timer switch. The warning signal is independent of the pilot hint. <br  />
 </p>
 <h2><a class="anchor" id="added-or-modified-methods-for-hntdtmltchmpbttn-class"></a>
-<b>Added or Modified Methods for HntdTmLtchMPBttn class</b></h2>
+Added or Modified Methods for HntdTmLtchMPBttn class</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Method   </th><th class="markdownTableHeadNone">Parameters    </th></tr>
@@ -451,20 +455,20 @@ The <b>Hinted Timer Latched</b>, or <b>Staircase Timer Switch</b>, keeps the ON 
 </table>
 <hr  />
  <h2><a class="anchor" id="methods-definition-and-use-description-5"></a>
-<b>Methods definition and use description</b></h2>
+Methods definition and use description</h2>
 <h1><a class="anchor" id="for-hntdtmltchmpbttn-class-members-documentation-click-herehttpsgabygold67githubiobuttontoswitch_avrclass_hntd_tm_ltch_m_p_bttn-membershtml"></a>
 <a href="https://gabygold67.github.io/ButtonToSwitch_AVR/class_hntd_tm_ltch_m_p_bttn-members.html">For HntdTmLtchMPBttn class Members Documentation Click Here!</a></h1>
 <h2><a class="anchor" id="for-buttontoswitch-library-complete-documentation-click-herehttpsgabygold67githubiobuttontoswitch_avr-5"></a>
 <a href="https://gabygold67.github.io/ButtonToSwitch_AVR/">For ButtonToSwitch Library Complete Documentation Click Here!</a></h2>
 <hr  />
  <h1><a class="anchor" id="xtrnunltchmpbttn-class"></a>
-<b>XtrnUnLtchMPBttn class</b></h1>
+XtrnUnLtchMPBttn class</h1>
 <h2><a class="anchor" id="the-external-released-toggle-aka-emergency-latched-keeps-the-on-state-since-the-moment-the-signal-is-debounced--delayed-and-until-an-external-signal-is-received"></a>
 The <b>External released toggle</b> (a.k.a. Emergency latched), keeps the On state since the moment the signal is debounced &amp; delayed, and until an external signal is received.</h2>
 <p>This kind of switch is used when an "abnormal situation" demands the push of the switch On, but a higher authority is needed to reset it to Off from a different signal source. Smoke, flood, Supervisor callout, intrusion alarms and "last man locks" are some examples of the use of this switch. As the external release signal can be physically or logically generated it can be implemented to be received from a switch or a remote signal of any usual kind. <br  />
 </p>
 <h2><a class="anchor" id="added-or-modified-methods-for-xtrnunltchmpbttn-class"></a>
-<b>Added or Modified Methods for XtrnUnltchMPBttn class</b></h2>
+Added or Modified Methods for XtrnUnltchMPBttn class</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Method   </th><th class="markdownTableHeadNone">Parameters    </th></tr>
@@ -475,14 +479,14 @@ The <b>External released toggle</b> (a.k.a. Emergency latched), keeps the On sta
 </table>
 <hr  />
  <h2><a class="anchor" id="methods-definition-and-use-description-6"></a>
-<b>Methods definition and use description</b></h2>
+Methods definition and use description</h2>
 <h1><a class="anchor" id="for-xtrnunltchmpbttn-class-members-documentation-click-herehttpsgabygold67githubiobuttontoswitch_avrclass_xtrn_unltch_m_p_bttn-membershtml"></a>
 <a href="https://gabygold67.github.io/ButtonToSwitch_AVR/class_xtrn_unltch_m_p_bttn-members.html">For XtrnUnltchMPBttn class Members Documentation Click Here!</a></h1>
 <h2><a class="anchor" id="for-buttontoswitch-library-complete-documentation-click-herehttpsgabygold67githubiobuttontoswitch_avr-6"></a>
 <a href="https://gabygold67.github.io/ButtonToSwitch_AVR/">For ButtonToSwitch Library Complete Documentation Click Here!</a></h2>
 <hr  />
 <h2><a class="anchor" id="autotoc_md-dblactnltchmpbttn-class--"></a>
-# <b>DblActnLtchMPBttn class</b></h2>
+# DblActnLtchMPBttn class</h2>
 <p>This is an <b>Abstract Class</b> meaning that no object can be instantiated from it. The members defined are meant to be available for the <b>Double Action Latched DD-MPB</b> (<a class="el" href="class_dbl_actn_ltch_m_p_bttn.html" title="Abstract class, base to model Double Action LDD-MPBs (DALDD-MPBs).">DblActnLtchMPBttn</a>) <b>subclasses</b> instantiated objects, and define common behavior for all the "Double Action Latched Button Subclasses". <br  />
 </p>
 <h2><a class="anchor" id="double-action-latched-dd-mpb-are-mpbs-whose-distinctive-characteristic-is-that-models-switches-that-present-different-behaviors-based-on-the-time-length-of-the-presses-detected-and-the-sequence-of-the-short-and-long-presses"></a>
@@ -544,14 +548,14 @@ The <b>External released toggle</b> (a.k.a. Emergency latched), keeps the On sta
 </table>
 <hr  />
  <h2><a class="anchor" id="methods-definition-and-use-description-7"></a>
-<b>Methods definition and use description</b></h2>
+Methods definition and use description</h2>
 <h1><a class="anchor" id="for-dblactnltchmpbttn-subclasses-common-members-documentation-click-herehttpsgabygold67githubiobuttontoswitch_avrclass_dbl_actn_ltch_m_p_bttn-membershtml"></a>
 <a href="https://gabygold67.github.io/ButtonToSwitch_AVR/class_dbl_actn_ltch_m_p_bttn-members.html">For DblActnLtchMPBttn Subclasses Common Members Documentation Click Here!</a></h1>
 <h2><a class="anchor" id="for-buttontoswitch-library-complete-documentation-click-herehttpsgabygold67githubiobuttontoswitch_avr-7"></a>
 <a href="https://gabygold67.github.io/ButtonToSwitch_AVR/">For ButtonToSwitch Library Complete Documentation Click Here!</a></h2>
 <hr  />
-<h2><a class="anchor" id="autotoc_md-ddlyddaltchmpbttn-class"></a>
-# <b>DDlydDALtchMPBttn class</b></h2>
+<h2><a class="anchor" id="autotoc_md-ddlyddaltchmpbttn-class--"></a>
+# DDlydDALtchMPBttn class</h2>
 <h2><a class="anchor" id="ddlyddaltchmpbttn-models-a-debounced-delayed-double-action-latched-mpb-combo-switch-dd-daldd-mpb"></a>
 DDlydDALtchMPBttn models a Debounced Delayed Double Action Latched MPB combo switch (<b>DD-DALDD-MPB</b>).</h2>
 <p>This is a subclass of the <b>DALDD-MPB</b> whose <b>secondary behavior</b> is that of a <a class="el" href="class_dbncd_dlyd_m_p_bttn.html" title="Models a Debounced Delayed MPB (DD-MPB).">DbncdDlydMPBttn</a> (DD-MPB), that implies that:</p><ul>
@@ -571,7 +575,7 @@ DDlydDALtchMPBttn models a Debounced Delayed Double Action Latched MPB combo swi
 </li>
 </ul>
 <h2><a class="anchor" id="added-or-modified-methods-for-ddlyddaltchmpbttn-class"></a>
-<b>Added or Modified Methods for DDlydDALtchMPBttn class</b></h2>
+Added or Modified Methods for DDlydDALtchMPBttn class</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Method   </th><th class="markdownTableHeadNone">Parameters    </th></tr>
@@ -580,14 +584,14 @@ DDlydDALtchMPBttn models a Debounced Delayed Double Action Latched MPB combo swi
 </table>
 <hr  />
  <h2><a class="anchor" id="methods-definition-and-use-description-8"></a>
-<b>Methods definition and use description</b></h2>
+Methods definition and use description</h2>
 <h1><a class="anchor" id="for-ddlyddaltchmpbttn-members-documentation-click-herehttpsgabygold67githubiobuttontoswitch_avrclass_d_dlyd_d_a_ltch_m_p_bttn-membershtml"></a>
 <a href="https://gabygold67.github.io/ButtonToSwitch_AVR/class_d_dlyd_d_a_ltch_m_p_bttn-members.html">For DDlydDALtchMPBttn Members Documentation Click Here!</a></h1>
 <h2><a class="anchor" id="for-buttontoswitch-library-complete-documentation-click-herehttpsgabygold67githubiobuttontoswitch_avr-8"></a>
 <a href="https://gabygold67.github.io/ButtonToSwitch_AVR/">For ButtonToSwitch Library Complete Documentation Click Here!</a></h2>
 <hr  />
-<h2><a class="anchor" id="autotoc_md-sldrdaltchmpbttn-class"></a>
-# <b>SldrDALtchMPBttn class</b></h2>
+<h2><a class="anchor" id="autotoc_md-sldrdaltchmpbttn-class--"></a>
+# SldrDALtchMPBttn class</h2>
 <h2><a class="anchor" id="sldrdaltchmpbttn-models-a-slider-double-action-ldd-mpb-combo-switch-aka-offondimmer-aka-offonvolume-radio-switchs-daldd-mpb"></a>
 SldrDALtchMPBttn models a Slider Double Action LDD-MPB combo switch, a.k.a. Off/On/Dimmer, a.k.a. Off/On/Volume radio switch)(<b>S-DALDD-MPB</b>)</h2>
 <p>This is a subclass of the <b>DALDD-MPB</b> whose <b>secondary behavior</b> is analog to that of a <b>Digital potentiometer (DigiPot)</b> or a <b>Discreet values increment/decrement register</b>. That means that when in the second mode, while the MPB remains pressed, an attribute set as a register changes its value -the Output Current Value (<b>otptCurVal</b>) register-. <br  />
@@ -607,7 +611,7 @@ SldrDALtchMPBttn models a Slider Double Action LDD-MPB combo switch, a.k.a. Off/
 <li>Revert direction by methods invocation (see setSldrDirDn(), setSldrDirUp(), swapSldrDir()).</li>
 </ul>
 <h2><a class="anchor" id="added-or-modified-methods-for-sldrdaltchmpbttn-class"></a>
-<b>Added or Modified Methods for SldrDALtchMPBttn class</b></h2>
+Added or Modified Methods for SldrDALtchMPBttn class</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Method   </th><th class="markdownTableHeadNone">Parameters    </th></tr>
@@ -652,14 +656,14 @@ SldrDALtchMPBttn models a Slider Double Action LDD-MPB combo switch, a.k.a. Off/
 </table>
 <hr  />
  <h2><a class="anchor" id="methods-definition-and-use-description-9"></a>
-<b>Methods definition and use description</b></h2>
+Methods definition and use description</h2>
 <h1><a class="anchor" id="for-sldrdaltchmpbttn-members-documentation-click-herehttpsgabygold67githubiobuttontoswitch_avrclass_sldr_d_a_ltch_m_p_bttn-membershtml"></a>
 <a href="https://gabygold67.github.io/ButtonToSwitch_AVR/class_sldr_d_a_ltch_m_p_bttn-members.html">For SldrDALtchMPBttn Members Documentation Click Here!</a></h1>
 <h2><a class="anchor" id="for-buttontoswitch-library-complete-documentation-click-herehttpsgabygold67githubiobuttontoswitch_avr-9"></a>
 <a href="https://gabygold67.github.io/ButtonToSwitch_AVR/">For ButtonToSwitch Library Complete Documentation Click Here!</a></h2>
 <hr  />
- <h2><a class="anchor" id="autotoc_md-vdblmpbttn-class"></a>
-# <b>VdblMPBttn class</b></h2>
+ <h2><a class="anchor" id="autotoc_md-vdblmpbttn-class--"></a>
+# VdblMPBttn class</h2>
 <p>This is an <b>Abstract Class</b> meaning that no object can be instantiated from it. The members defined are meant to be available for the <b><a class="el" href="class_vdbl_m_p_bttn.html" title="Abstract class, base to model Voidable DD-MPBs (VDD-MPB).">VdblMPBttn</a> DD-MPB</b> (<b>VDD-MPB</b>) <b>subclasses</b> instantiated objects, and define common behavior for all the "Voidable  Button Subclasses". <br  />
  </p>
 <h2><a class="anchor" id="voidable-dd-mpbs-are-mpbs-whose-distinctive-characteristic-is-that-implement-non-latching-switches-that-while-being-pressed-their-state-might-change-from-on-state-to-a-voided-state-due-to-different-voiding-conditions"></a>
@@ -684,7 +688,7 @@ SldrDALtchMPBttn models a Slider Double Action LDD-MPB combo switch, a.k.a. Off/
 <p>The voiding conditions and the un-voiding mechanisms define the VDD-MPB subclasses. <br  />
 </p>
 <h2><a class="anchor" id="added-or-modified-methods-for-vdblmpbttn-class"></a>
-<b>Added or Modified Methods for VdblMPBttn class</b></h2>
+Added or Modified Methods for VdblMPBttn class</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Method   </th><th class="markdownTableHeadNone">Parameters    </th></tr>
@@ -709,20 +713,20 @@ SldrDALtchMPBttn models a Slider Double Action LDD-MPB combo switch, a.k.a. Off/
 </table>
 <hr  />
  <h2><a class="anchor" id="methods-definition-and-use-description-10"></a>
-<b>Methods definition and use description</b></h2>
+Methods definition and use description</h2>
 <h1><a class="anchor" id="for-vdblmpbttn-subclasses-common-members-documentation-click-herehttpsgabygold67githubiobuttontoswitch_avrclass_vdbl_m_p_bttn-membershtml"></a>
 <a href="https://gabygold67.github.io/ButtonToSwitch_AVR/class_vdbl_m_p_bttn-members.html">For VdblMPBttn Subclasses Common Members Documentation Click Here!</a></h1>
 <h2><a class="anchor" id="for-buttontoswitch-library-complete-documentation-click-herehttpsgabygold67githubiobuttontoswitch_avr-10"></a>
 <a href="https://gabygold67.github.io/ButtonToSwitch_AVR/">For ButtonToSwitch Library Complete Documentation Click Here!</a></h2>
 <hr  />
  <h2><a class="anchor" id="autotoc_md-tmvdblmpbttn-class--"></a>
-# <b>TmVdblMPBttn class</b></h2>
+# TmVdblMPBttn class</h2>
 <h2><a class="anchor" id="the-time-voidable-momentary-button-models-a-switch-that-keeps-the-on-state-since-the-moment-the-signal-is-stable-debouncing-process-plus-a-delay-added-and-until-the-moment-the-push-button-is-released-or-until-a-preset-time-in-the-on-state-is-reached"></a>
 The <b>Time Voidable Momentary Button</b>, models a switch that keeps the ON state since the moment the signal is stable (debouncing process), plus a delay added, and until the moment the push button is released, or until a preset time in the ON state is reached.</h2>
 <p>Then the switch will return to the Off position until the push button is released and pushed back. This kind of switches are used to activate limited resources related management or physical safety devices, and the possibility of a physical blocking of the switch to extend the ON signal artificially beyond designer's plans is highly undesired. Water valves, door unlocking mechanisms, hands-off security mechanisms, high power consuming devices are some of the usual uses for these type of switches. It's implemented in the <b><a class="el" href="class_tm_vdbl_m_p_bttn.html" title="Models a Time Voidable DD-MPB, a.k.a. Anti-tampering switch (TVDD-MPB)">TmVdblMPBttn</a></b> class. <br  />
 </p>
 <h1><a class="anchor" id="added-methods-for-tmvdblmpbttn-class"></a>
-<b>Added Methods for TmVdblMPBttn class</b></h1>
+Added Methods for TmVdblMPBttn class</h1>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Method   </th><th class="markdownTableHeadNone">Parameters    </th></tr>
@@ -734,15 +738,15 @@ The <b>Time Voidable Momentary Button</b>, models a switch that keeps the ON sta
 <td class="markdownTableBodyNone"><b>setVoidTime()</b>   </td><td class="markdownTableBodyNone">None   </td></tr>
 </table>
 <hr  />
- <h2><a class="anchor" id="autotoc_md-methods-definition-and-use-description"></a>
-## <b>Methods definition and use description</b></h2>
+ <h2><a class="anchor" id="autotoc_md-methods-definition-and-use-description--"></a>
+## Methods definition and use description</h2>
 <h1><a class="anchor" id="for-tmvdblmpbttn-members-documentation-click-herehttpsgabygold67githubiobuttontoswitch_avrclass_tm_vdbl_m_p_bttn-membershtml"></a>
 <a href="https://gabygold67.github.io/ButtonToSwitch_AVR/class_tm_vdbl_m_p_bttn-members.html">For TmVdblMPBttn Members Documentation Click Here!</a></h1>
 <h2><a class="anchor" id="for-buttontoswitch-library-complete-documentation-click-herehttpsgabygold67githubiobuttontoswitch_avr-11"></a>
 <a href="https://gabygold67.github.io/ButtonToSwitch_AVR/">For ButtonToSwitch Library Complete Documentation Click Here!</a></h2>
 <hr  />
- <h2><a class="anchor" id="autotoc_md-snglsrvcvdblmpbttn-class"></a>
-# <b>SnglSrvcVdblMPBttn class</b></h2>
+ <h2><a class="anchor" id="autotoc_md-snglsrvcvdblmpbttn-class--"></a>
+# SnglSrvcVdblMPBttn class</h2>
 <p>This class models a Single Service Voidable DD-MPB a.k.a. Trigger switch (<b>SSVDD-MPB</b>) <br  />
 </p>
 <h2><a class="anchor" id="the-single-service-voidable-momentary-push-button-keeps-the-on-state-since-the-moment-the-signal-is-stable-debounce--delay-process-and-until-the-moment-the-provided-mechanisms-implemented-to-be-executed-when-the-switch-enters-the-on-state-are-started-that-means-setting-the-ison-attribute-flag-and-calling-the-fnwhntrnon-function-the-driving-concept-is-to-instantiate-a-mpbttn-that-generates-only-one-possible-ison-attribute-flag-true-readout-and-the-associated-function-execution-just-like-a-single-shot-trigger"></a>
@@ -750,22 +754,24 @@ The <b>Single Service Voidable Momentary Push Button</b> keeps the <b>On state</
 <p>After the attribute flag is set to <b>true</b> (the only mandatory action is the attribute flag setting) and the <b>configured mechanisms</b> are triggered the MPB will enter the <b>Voided State</b>, forcing the MPB into the <b>Off State</b> by design. The <a class="el" href="class_sngl_srvc_vdbl_m_p_bttn.html" title="Models a Single Service Voidable DD-MPB a.k.a. Trigger switch (SSVDD-MPB)">SnglSrvcVdblMPBttn</a> class objects requires the MPB to be released to exit the <b>Voided State</b>, restarting the cycle. <br  />
  This kind of switches are used to handle "Single Shot Trigger" style signals, ensuring <b>one single signal triggered per push</b>. <br  />
 </p>
-<p>&gt;[!CAUTION] The setting of the <b>isOn</b> attribute flag is part of the basic design requirements of the library. Depending on checking the reading trough the <b>getIsOn(**) method will surely fail due to the high risk of missing the short time the flag will be raised before it is again taken down by the voidance of the MPB, although the use of the outputsChange attribute flag is enabled. The use of the non-polling facilities ensures no loss of signals and enough time to execute the code depending on the "trigger activation", i.e. the **fnWhnTrnOn</b> function. <br  />
-</p>
+<blockquote class="doxtable">
+<p>&zwj;[!CAUTION] The setting of the <b>isOn</b> attribute flag is part of the basic design requirements of the library. Depending on checking the reading trough the <b>getIsOn(**) method will surely fail due to the high risk of missing the short time the flag will be raised before it is again taken down by the voidance of the MPB, although the use of the outputsChange attribute flag is enabled. The use of the non-polling facilities ensures no loss of signals and enough time to execute the code depending on the "trigger activation", i.e. the **fnWhnTrnOn</b> function. <br  />
+ </p>
+</blockquote>
 <blockquote class="doxtable">
 <p>&zwj;[!NOTE] Due to the short time the <b>isOn</b> flag will be raised, as described above, the short time between the <b>fnWhnTrnOn</b> function and the <b>fnWhnTrnOff</b> function callings must also need to be carefully evaluated by the user. <br  />
  </p>
 </blockquote>
 <h1><a class="anchor" id="added-methods-for-tmvdblmpbttn-class-1"></a>
-<b>Added Methods for TmVdblMPBttn class</b></h1>
+Added Methods for TmVdblMPBttn class</h1>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Method   </th><th class="markdownTableHeadNone">Parameters    </th></tr>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">**_TmVdblMPBttn_**   </td><td class="markdownTableBodyNone">uint8_t <b>mpbttnPin</b>(, bool <b>pulledUp</b>(, bool <b>typeNO</b>(, unsigned long int <b>dbncTimeOrigSett</b>(, unsigned long int <b>strtDelay</b>))))   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md-methods-definition-and-use-description-1"></a>
-## <b>Methods definition and use description</b></h2>
+<h2><a class="anchor" id="autotoc_md-methods-definition-and-use-description---1"></a>
+## Methods definition and use description</h2>
 <h1><a class="anchor" id="for-snglsrvcvdblmpbttn-members-documentation-click-herehttpsgabygold67githubiobuttontoswitch_avrclass_sngl_srvc_vdbl_m_p_bttn-membershtml"></a>
 <a href="https://gabygold67.github.io/ButtonToSwitch_AVR/class_sngl_srvc_vdbl_m_p_bttn-members.html">For SnglSrvcVdblMPBttn Members Documentation Click Here!</a></h1>
 <h2><a class="anchor" id="for-buttontoswitch-library-complete-documentation-click-herehttpsgabygold67githubiobuttontoswitch_avr-12"></a>

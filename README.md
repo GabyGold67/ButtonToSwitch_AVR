@@ -1,16 +1,18 @@
-# **Buttons to Switches Library** (ButtonToSwitch)
-## **The driving concept is pretty simple: stop checking an input pin voltage, start asking if the switch is On or Off.**  
+# Buttons to Switches Library (ButtonToSwitch)
+## The driving concept is pretty simple:
+# - _Stop checking the input pin voltage._  
+# - _Start asking if the switch is On or Off._  
 
 This Arduino library is a refactoring of my own **ButtonToSwitch_STM32 (RTOS)** and **ButtonToSwitch_ESP32 (RTOS-Arduino)** libraries. For making this possible this library depends on the [TimerOne library](https://github.com/PaulStoffregen/TimerOne) and supports every platform suported by that library. Several forks of the library exist to support different architectures, including ESP32 boards, Arduino Uno-R4, and others.
 
 
-# An Arduino library that builds switch mechanisms replacements out of simple push buttons.  
+## An Arduino library that builds switch mechanisms replacements out of simple push buttons.  
 By using just a push button (a.k.a. momentary switches or momentary buttons, _**MPB**_ for short from here on) the classes implemented in this library will manage, calculate and update different parameters to **generate the behavior of standard electromechanical switches**. Those parameters include presses, releases, timings, counters or secondary input readings as needed.
 
 The instantiated switch state is calculated independently by the use of the timer, that keeps the state of the objects created constantly updated including the ON/OFF condition, without constant polling needed. The timer setup is managed by in-class methods, including the possibility to pause, resume or end the timer of each object independently of the others.  
 Each class offers a wide range of methods to set, read and modify every significant aspect of each switch mechanism simulated, and the signal received from the push button is debounced for a correct behavior of the event processing.  
 
-## The library implements the following switches mechanisms: ###  
+## The library implements the following switches mechanisms:    
 * **Debounced Momentary Push Button** (a.k.a. Momentary switch, a.k.a. **Pushbutton**)  
 * **Debounced Delayed Momentary Push Button** (a.k.a. **Delayed Pushbutton**)  
 * **Toggle Switch Momentary Push Button** (a.k.a. Alternate Pushbutton, a.k.a. **Latched Switch**)  
@@ -115,11 +117,11 @@ Those listed mechanisms are **independent**, so one or more might be simultaneou
 ## [For ButtonToSwitch Library Complete Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_AVR/)  
 
 ---  
-# **DbncdDlydMPBttn class**  
+# DbncdDlydMPBttn class  
 ## The **Debounced Delayed Momentary Button** keeps the ON state since the moment the signal is stable (debouncing process), plus a delay added, and until the moment the push button is released.  
 The reasons to add the delay are design related and are usually used to avoid registering unintentional presses, or to give some equipment that needs time between repeated activations the benefit of the pause. If the push button is released before the delay configured, no press is registered at all. The delay time in this class as in the other classes that implements it, might be zero (0), defined by the developer and/or modified in runtime.  
 
-# **Added or modified Methods for DbncdDlydMPBttn class**  
+# Added or modified Methods for DbncdDlydMPBttn class  
 |Method | Parameters|
 |---|---|
 |**_DbncdDlydMPBttn_** |None|
@@ -128,14 +130,14 @@ The reasons to add the delay are design related and are usually used to avoid re
 |**setStrtDelay()**|(unsigned long int **newStrtDelay**)|
   
 ---  
-## **Methods definition and use description**
+## Methods definition and use description  
 
 # [For DbncdDlydMPBttn class Members Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_AVR/class_dbncd_dlyd_m_p_bttn-members.html)
 
 ## [For ButtonToSwitch Library Complete Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_AVR/)
 
 ---  
-# **LtchMPBttn class**  
+# LtchMPBttn class  
 This is an **Abstract Class** meaning that no object can be instantiated from it. The members defined are meant to be available for the LtchMPBttn **subclasses** instantiated objects, and define common behavior for all the "Latched Button Subclasses".
  ## **Latched DD-MPBs** are MPBs whose distinctive characteristic is that models switches that keep the ON state since the moment the input signal is stable (debouncing + Delay process), and keeps the ON state after the MPB is released and until an event un-latches them, setting them free to go back to the **Off State**.  
  The un-latching mechanisms include but are not limited to: 
@@ -154,7 +156,7 @@ This is an **Abstract Class** meaning that no object can be instantiated from it
  The class provides methods to generate those validated signals independently of the designated signal source to modify the instantiated object behavior if needed by the design requirements, Validated Unlatch signal (see LtchMPBttn::setUnlatchPend(const bool) ), Validated Unlatch Release signal (see LtchMPBttn::setUnlatchRlsPend(const bool) ), or to **set** both flags to generate an unlatch (see LtchMPBttn::unlatch() ).
 
 
-## **Added or Modified Methods for LtchMPBttn class**  
+## Added or Modified Methods for LtchMPBttn class  
 |Method | Parameters|
 |---|---|
 |**getIslatched()**|None|
@@ -167,35 +169,35 @@ This is an **Abstract Class** meaning that no object can be instantiated from it
 |**unlatch()**|None|
   
 ---  
-## **Methods definition and use description**
+## Methods definition and use description  
 
 # [For LtchdMPBttn Subclasses Common Members Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_AVR/class_ltch_m_p_bttn-members.html)
 
 ## [For ButtonToSwitch Library Complete Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_AVR/)
 
 ---  
-# **TgglLtchMPBttn class**  
+# TgglLtchMPBttn class  
 ## The **Toggle switch**  keeps the ON state since the moment the signal is stable (debouncing + Delay process), and keeps the ON state after the push button is released and until it is pressed once again. 
 So this simulates a simple On-Off switch like the ones used to turn on/off a room light, or any electronic device. There's a lot of advantages in software simulated switches: any amount of switches might be set up in a parallel configuration, so that an unlimited number of entrances or easy accessible points can each have a switch to turn on/off the same resource, the switch might be temporarily disabled, either keeping the On State or the Off State, and some more.  
 
-## **Added or Modified Methods for LtchMPBttn class**  
+## Added or Modified Methods for LtchMPBttn class  
 |Method | Parameters|
 |---|---|
 |**_TgglLtchMPBttn_** |uint8_t **mpbttnPin**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**(, unsigned long int **strtDelay**))))|
 
 ---  
-## **Methods definition and use description**
+## Methods definition and use description  
 
 # [For TgglLtchdMPBttn Subclasses Common Members Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_AVR/class_tggl_ltch_m_p_bttn-members.html)
 
 ## [For ButtonToSwitch Library Complete Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_AVR/)
 
 ---  
-# **TmLtchMPBttn class**  
+# TmLtchMPBttn class  
 ## The **Time latched** or **Timer Switch** keeps the ON state **since the moment the signal is debounced and delayed**, and keeps the ON state during a set time.   
 The **Service time** is set at instantiation, and can be modified through the provided methods. The switch implementation gives the option to allow to reset the timer before reaches the time limit if the push button is pressed again.  
   
-## **Added or Modified Methods for TmLtchMPBttn class**  
+## Added or Modified Methods for TmLtchMPBttn class  
 |Method | Parameters|
 |---|---|
 |**_TmLtchMPBttn_** |uint8_t **mpbttnPin**, unsigned long int **actTime**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**(, unsigned long int **strtDelay**))))|
@@ -204,18 +206,18 @@ The **Service time** is set at instantiation, and can be modified through the pr
 |**setTmerRstbl()**|bool **newIsRstbl**|
 
 ---  
-## **Methods definition and use description**
+## Methods definition and use description  
 
 # [For TmLtchdMPBttn Subclasses Common Members Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_AVR/class_tm_ltch_m_p_bttn-members.html)
 
 ## [For ButtonToSwitch Library Complete Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_AVR/)
 
 ---  
-# **HntdTmLtchMPBttn class**
+# HntdTmLtchMPBttn class  
 ## The **Hinted Timer Latched**, or **Staircase Timer Switch**, keeps the ON state since the moment the signal is debounced, and keeps the state during a set time, has the capability to give a warning when the service time is close to the end and the possibility to set a third signal ON while the switch is off.  
 The **Service time** is set at instantiation, and can be modified through the provided methods. The switch implementation gives the option to allow to reset the timer before it gets to the end if the push button is pressed, the option to give a warning when the time is close to the end through a second flag (remaining time is defined as a percentage of the total ON time and it's configurable), and the possibility to set a third signal ON while the switch is off, just like the pilot light (hint) in a staircase timer switch. The warning signal is independent of the pilot hint.  
 
-## **Added or Modified Methods for HntdTmLtchMPBttn class**  
+## Added or Modified Methods for HntdTmLtchMPBttn class  
 
 |Method | Parameters|
 |---|---|
@@ -234,18 +236,18 @@ The **Service time** is set at instantiation, and can be modified through the pr
 |**setWrnngPrctg()**|unsigned int **newWrnngPrctg**|
   
 ---  
-## **Methods definition and use description**
+## Methods definition and use description  
 
 # [For HntdTmLtchMPBttn class Members Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_AVR/class_hntd_tm_ltch_m_p_bttn-members.html)
 
 ## [For ButtonToSwitch Library Complete Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_AVR/)
 
 ---  
-# **XtrnUnLtchMPBttn class**
+# XtrnUnLtchMPBttn class  
 ## The **External released toggle** (a.k.a. Emergency latched), keeps the On state since the moment the signal is debounced & delayed, and until an external signal is received.  
 This kind of switch is used when an "abnormal situation" demands the push of the switch On, but a higher authority is needed to reset it to Off from a different signal source. Smoke, flood, Supervisor callout, intrusion alarms and "last man locks" are some examples of the use of this switch. As the external release signal can be physically or logically generated it can be implemented to be received from a switch or a remote signal of any usual kind.  
   
-## **Added or Modified Methods for XtrnUnltchMPBttn class**    
+## Added or Modified Methods for XtrnUnltchMPBttn class  
 
 |Method | Parameters|
 |---|---|
@@ -253,7 +255,7 @@ This kind of switch is used when an "abnormal situation" demands the push of the
 |**_XtrnUnLtchMPBttn_** |uint8_t **mpbttnPin**, DbncDlydMPBttn* **unltchBttn**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**(, unsigned long int **strtDelay**))))|  
 
 ---  
-## **Methods definition and use description**
+## Methods definition and use description  
 
 # [For XtrnUnltchMPBttn class Members Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_AVR/class_xtrn_unltch_m_p_bttn-members.html)
 
@@ -261,7 +263,7 @@ This kind of switch is used when an "abnormal situation" demands the push of the
 
 ---  
 
-# **DblActnLtchMPBttn class**  
+# DblActnLtchMPBttn class  
 ---  
  This is an **Abstract Class** meaning that no object can be instantiated from it. The members defined are meant to be available for the **Double Action Latched DD-MPB** (DblActnLtchMPBttn) **subclasses** instantiated objects, and define common behavior for all the "Double Action Latched Button Subclasses".  
 
@@ -298,7 +300,7 @@ This kind of switch is used when an "abnormal situation" demands the push of the
 |**setScndModActvDly()**|unsigned long **newVal**|
 
 ---  
-## **Methods definition and use description**
+## Methods definition and use description  
 
 # [For DblActnLtchMPBttn Subclasses Common Members Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_AVR/class_dbl_actn_ltch_m_p_bttn-members.html)
 
@@ -306,7 +308,7 @@ This kind of switch is used when an "abnormal situation" demands the push of the
 
 ---  
 
-# **DDlydDALtchMPBttn class**
+# DDlydDALtchMPBttn class  
 ---  
 ## DDlydDALtchMPBttn models a Debounced Delayed Double Action Latched MPB combo switch (**DD-DALDD-MPB**).  
 This is a subclass of the **DALDD-MPB** whose **secondary behavior** is that of a DbncdDlydMPBttn (DD-MPB), that implies that:
@@ -316,12 +318,12 @@ This is a subclass of the **DALDD-MPB** whose **secondary behavior** is that of 
  - While in the 2. state (On-Off), a short press will set the switch to the 1. state (Off-Off).  
  - While in the 2. state (On-Off), a long press will set the switch to the 3. state (On-On), until the releasing of the MPB, returning the switch to the **main On state** 2. (On-Off).  
 
- ## **Added or Modified Methods for DDlydDALtchMPBttn class**    
+ ## Added or Modified Methods for DDlydDALtchMPBttn class  
 |Method | Parameters|
 |---|---|
 |**DDlydDALtchMPBttn()**|uint8_t **mpbttnPin**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**(, unsigned long int **strtDelay**))))|
 ---  
-## **Methods definition and use description**
+## Methods definition and use description  
 
 # [For DDlydDALtchMPBttn Members Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_AVR/class_d_dlyd_d_a_ltch_m_p_bttn-members.html)
 
@@ -329,7 +331,7 @@ This is a subclass of the **DALDD-MPB** whose **secondary behavior** is that of 
 
 ---  
 
-# **SldrDALtchMPBttn class**
+# SldrDALtchMPBttn class  
 ---  
 ## SldrDALtchMPBttn models a Slider Double Action LDD-MPB combo switch, a.k.a. Off/On/Dimmer, a.k.a. Off/On/Volume radio switch)(**S-DALDD-MPB**)
  
@@ -346,7 +348,7 @@ This is a subclass of the **DALDD-MPB** whose **secondary behavior** is that of 
  - Automatically revert direction when reaching the minimum and maximum values setting.
  - Revert direction by methods invocation (see setSldrDirDn(), setSldrDirUp(), swapSldrDir()).
  
- ## **Added or Modified Methods for SldrDALtchMPBttn class**  
+ ## Added or Modified Methods for SldrDALtchMPBttn class  
 
 |Method | Parameters|
 |---|---|
@@ -371,14 +373,14 @@ This is a subclass of the **DALDD-MPB** whose **secondary behavior** is that of 
 |**swapSldrDir()**|None|
 
 ---  
-## **Methods definition and use description**
+## Methods definition and use description  
 
 # [For SldrDALtchMPBttn Members Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_AVR/class_sldr_d_a_ltch_m_p_bttn-members.html)
 
 ## [For ButtonToSwitch Library Complete Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_AVR/)
 
 ---  
-# **VdblMPBttn class**
+# VdblMPBttn class  
 ---  
  This is an **Abstract Class** meaning that no object can be instantiated from it. The members defined are meant to be available for the **VdblMPBttn DD-MPB** (**VDD-MPB**) **subclasses** instantiated objects, and define common behavior for all the "Voidable  Button Subclasses".  
  ## **Voidable DD-MPBs** are MPBs whose distinctive characteristic is that implement non-latching switches that while being pressed their state might change from **On State** to a **Voided state** due to different voiding conditions.  
@@ -395,7 +397,7 @@ This is a subclass of the **DALDD-MPB** whose **secondary behavior** is that of 
  
  The voiding conditions and the un-voiding mechanisms define the VDD-MPB subclasses.  
 
-## **Added or Modified Methods for VdblMPBttn class**  
+## Added or Modified Methods for VdblMPBttn class  
 |Method | Parameters|
 |---|---|
 |**getFnWhnTrnOffVdd()**|None|
@@ -409,19 +411,19 @@ This is a subclass of the **DALDD-MPB** whose **secondary behavior** is that of 
 |**setIsVoided()**|None|
 
 ---  
-## **Methods definition and use description**
+## Methods definition and use description  
 
 # [For VdblMPBttn Subclasses Common Members Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_AVR/class_vdbl_m_p_bttn-members.html)
 
 ## [For ButtonToSwitch Library Complete Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_AVR/)
 
 ---  
-# **TmVdblMPBttn class**  
+# TmVdblMPBttn class  
 ---  
 ## The **Time Voidable Momentary Button**, models a switch that keeps the ON state since the moment the signal is stable (debouncing process), plus a delay added, and until the moment the push button is released, or until a preset time in the ON state is reached.  
 Then the switch will return to the Off position until the push button is released and pushed back. This kind of switches are used to activate limited resources related management or physical safety devices, and the possibility of a physical blocking of the switch to extend the ON signal artificially beyond designer's plans is highly undesired. Water valves, door unlocking mechanisms, hands-off security mechanisms, high power consuming devices are some of the usual uses for these type of switches. It's implemented in the **TmVdblMPBttn** class.  
 
-# **Added Methods for TmVdblMPBttn class**  
+# Added Methods for TmVdblMPBttn class  
 |Method | Parameters|
 |---|---|
 |**_TmVdblMPBttn_** |uint8_t **mpbttnPin**, unsigned long int **voidTime**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**(, unsigned long int **strtDelay**(, bool **isOnDisabled**)))))|
@@ -429,14 +431,14 @@ Then the switch will return to the Off position until the push button is release
 |**setVoidTime()**|None|
 
 ---  
-## **Methods definition and use description**
+## Methods definition and use description  
 ---  
 # [For TmVdblMPBttn Members Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_AVR/class_tm_vdbl_m_p_bttn-members.html)
 
 ## [For ButtonToSwitch Library Complete Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_AVR/)
 
 ---  
-# **SnglSrvcVdblMPBttn class**
+# SnglSrvcVdblMPBttn class  
 ---  
  This class models a Single Service Voidable DD-MPB a.k.a. Trigger switch (**SSVDD-MPB**)  
  
@@ -445,17 +447,17 @@ Then the switch will return to the Off position until the push button is release
  After the attribute flag is set to **true** (the only mandatory action is the attribute flag setting) and the **configured mechanisms** are triggered the MPB will enter the **Voided State**, forcing the MPB into the **Off State** by design. The SnglSrvcVdblMPBttn class objects requires the MPB to be released to exit the **Voided State**, restarting the cycle.  
  This kind of switches are used to handle "Single Shot Trigger" style signals, ensuring **one single signal triggered per push**.  
  
- >[!CAUTION] The setting of the **isOn** attribute flag is part of the basic design requirements of the library. Depending on checking the reading trough the **getIsOn(**) method will surely fail due to the high risk of missing the short time the flag will be raised before it is again taken down by the voidance of the MPB, although the use of the outputsChange attribute flag is enabled. The use of the non-polling facilities ensures no loss of signals and enough time to execute the code depending on the "trigger activation", i.e. the **fnWhnTrnOn** function.  
+ > [!CAUTION] The setting of the **isOn** attribute flag is part of the basic design requirements of the library. Depending on checking the reading trough the **getIsOn(**) method will surely fail due to the high risk of missing the short time the flag will be raised before it is again taken down by the voidance of the MPB, although the use of the outputsChange attribute flag is enabled. The use of the non-polling facilities ensures no loss of signals and enough time to execute the code depending on the "trigger activation", i.e. the **fnWhnTrnOn** function.  
  
  > [!NOTE] Due to the short time the **isOn** flag will be raised, as described above, the short time between the **fnWhnTrnOn** function and the **fnWhnTrnOff** function callings must also need to be carefully evaluated by the user.  
 
-# **Added Methods for TmVdblMPBttn class**  
+# Added Methods for TmVdblMPBttn class  
 
 |Method | Parameters|
 |---|---|
 |**_TmVdblMPBttn_** |uint8_t **mpbttnPin**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**(, unsigned long int **strtDelay**))))|
 
-## **Methods definition and use description**
+## Methods definition and use description  
 ---  
 # [For SnglSrvcVdblMPBttn Members Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_AVR/class_sngl_srvc_vdbl_m_p_bttn-members.html)
 
