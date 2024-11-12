@@ -68,6 +68,13 @@ const uint8_t dmpbOnOffFnOtpt{10};
 unsigned long int enbldOnOffTm{10000};
 unsigned long int lstEnblSwpTm{0};
 
+//------------------------------> Function when On/Off related variables
+unsigned long int blinkDuration{0};
+unsigned long int blinkLastSwapTime{0};
+uint8_t blinksPending{0};
+bool blinkStateOn{false};
+bool onOffFnPend{false};
+
 //------------------------------> DbncdDlydMPBttn class object instantiation
 DbncdDlydMPBttn myDMPBttn (dmpbMainInpt);
 
@@ -102,17 +109,37 @@ void loop() {
       digitalWrite(dmpbIsEnabledOtpt, (myDMPBttn.getIsEnabled())?LOW:HIGH);    
       myDMPBttn.setOutputsChange(false); //If the OutputChanges attibute flag is used, reset it's value to detect the next need to refresh outputs.
    }
+
+   if(onOffFnPend){
+      if((millis() - blinkLastSwapTime) >= blinkDuration){
+         blinkStateOn = !blinkStateOn;
+         digitalWrite(dmpbOnOffFnOtpt, (blinkStateOn)?HIGH:LOW); 
+         blinkLastSwapTime = millis();
+         if(!blinkStateOn)
+            --blinksPending;
+         if(blinksPending == 0)
+            onOffFnPend = false;
+      }
+   }
 }  
 
 //==========================================>> BEGIN Functions declarations to executed when isOn status is modified
 void fnWhnTrnOn(){
-   digitalWrite(dmpbOnOffFnOtpt, HIGH);    
+   blinkDuration = 100;
+   blinksPending = 1;
+   blinkStateOn = false;
+   blinkLastSwapTime = 0;
+   onOffFnPend = true;
 
    return;
 }
 
 void fnWhnTrnOff(){
-   digitalWrite(dmpbOnOffFnOtpt, LOW);    
+   blinkDuration = 200;
+   blinksPending = 2;
+   blinkStateOn = false;
+   blinkLastSwapTime = 0;
+   onOffFnPend = true;
   
    return;
 }

@@ -78,6 +78,19 @@ const uint8_t dmpbWhnVddFnOtpt{11};
 unsigned long int enbldOnOffTm{10000};
 unsigned long int lstEnblSwpTm{0};
 
+//------------------------------> Function related variables
+unsigned long int blinkDuration{0};
+unsigned long int blinkLastSwapTime{0};
+uint8_t blinksPending{0};
+bool blinkStateOn{false};
+bool onOffFnPend{false};
+
+unsigned long int blinkVddDuration{0};
+unsigned long int blinkVddLastSwapTime{0};
+uint8_t blinksVddPending{0};
+bool blinkVddStateOn{false};
+bool onOffVddFnPend{false};
+
 //------------------------------> TmVdblMPBttn class object instantiation
 TmVdblMPBttn myDMPBttn (dmpbMainInpt, 3000);
 
@@ -119,17 +132,49 @@ void loop() {
       digitalWrite(dmpbIsEnabledOtpt, (myDMPBttn.getIsEnabled())?LOW:HIGH);    
       myDMPBttn.setOutputsChange(false); //If the OutputChanges attibute flag is used, reset it's value to detect the next need to refresh outputs.
    }
+
+   if(onOffFnPend){
+      if((millis() - blinkLastSwapTime) >= blinkDuration){
+         blinkStateOn = !blinkStateOn;
+         digitalWrite(dmpbOnOffFnOtpt, (blinkStateOn)?HIGH:LOW); 
+         blinkLastSwapTime = millis();
+         if(!blinkStateOn)
+            --blinksPending;
+         if(blinksPending == 0)
+            onOffFnPend = false;
+      }
+   }
+
+   if(onOffVddFnPend){
+      if((millis() - blinkVddLastSwapTime) >= blinkVddDuration){
+         blinkVddStateOn = !blinkVddStateOn;
+         digitalWrite(dmpbWhnVddFnOtpt, (blinkVddStateOn)?HIGH:LOW); 
+         blinkVddLastSwapTime = millis();
+         if(!blinkVddStateOn)
+            --blinksVddPending;
+         if(blinksVddPending == 0)
+            onOffVddFnPend = false;
+      }
+   }
 }  
 
 //==========================================>> BEGIN Functions declarations to executed when isOn status is modified
 void fnWhnTrnOn(){
-   digitalWrite(dmpbOnOffFnOtpt, HIGH);    
+   blinkDuration = 100;
+   blinksPending = 1;
+   blinkStateOn = false;
+   blinkLastSwapTime = 0;
+   onOffFnPend = true;
 
    return;
 }
 
 void fnWhnTrnOff(){
-   digitalWrite(dmpbOnOffFnOtpt, LOW);    
+   blinkDuration = 200;
+   blinksPending = 2;
+   blinkStateOn = false;
+   blinkLastSwapTime = 0;
+   onOffFnPend = true;
   
    return;
 }
@@ -137,13 +182,21 @@ void fnWhnTrnOff(){
 
 //==========================================>> BEGIN Functions declarations to executed when isVoided status is modified
 void fnWhnVddOn(){
-   digitalWrite(dmpbWhnVddFnOtpt, HIGH);    
+   blinkVddDuration = 100;
+   blinksVddPending = 1;
+   blinkVddStateOn = false;
+   blinkVddLastSwapTime = 0;
+   onOffVddFnPend = true;
 
    return;
 }
 
 void fnWhnVddOff(){
-   digitalWrite(dmpbWhnVddFnOtpt, LOW);    
+   blinkVddDuration = 200;
+   blinksVddPending = 2;
+   blinkVddStateOn = false;
+   blinkVddLastSwapTime = 0;
+   onOffVddFnPend = true;
 
    return;
 }
