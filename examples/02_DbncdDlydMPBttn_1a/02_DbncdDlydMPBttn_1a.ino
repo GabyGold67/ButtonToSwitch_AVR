@@ -1,6 +1,6 @@
 /**
   ******************************************************************************
-  * @file	: 01_DbncdDlydMPBttn_1a.ino
+  * @file	: 02_DbncdDlydMPBttn_1a.ino
   * @brief  : Example for the ButtonToSwitch library DbncdDlydMPBttn class
   *
   *   Framework: Arduino
@@ -16,6 +16,8 @@
   * When a change in the object's outputs attribute flags values is detected, it
   * manages the loads and resources that the switch turns On and Off, in this
   * example case are the output of some GPIO pins.
+  * 
+  * WOKWI simulation available at: https://wokwi.com/projects/414259642137246721
   *
   * 	@author	: Gabriel D. Goldman
   *

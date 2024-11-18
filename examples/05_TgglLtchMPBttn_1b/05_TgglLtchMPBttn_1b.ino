@@ -24,7 +24,10 @@
   * 
   * Note: The setIsOnDisabled() method affects the behavior of the MPBttn, check
   * the documentation and experiment with it.
-  *
+  * 
+  * WOKWI simulation available at:
+  * https://wokwi.com/projects/414343153052079105
+  * 
   * 	@author	: Gabriel D. Goldman
   *
   * 	@date	: 	01/08/2023 First release

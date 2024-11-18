@@ -16,6 +16,8 @@
   * When a change in the object's outputs attribute flags values is detected, it
   * manages the loads and resources that the switch turns On and Off, in this
   * example case are the output of some GPIO pins.
+  * 
+  * WOKWI simulation available at: https://wokwi.com/projects/414257949865272321
   *
   * 	@author	: Gabriel D. Goldman
   *

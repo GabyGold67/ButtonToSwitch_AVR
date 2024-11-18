@@ -5,7 +5,6 @@
 
 This Arduino library is a refactoring of my own **ButtonToSwitch_STM32 (RTOS)** and **ButtonToSwitch_ESP32 (RTOS-Arduino)** libraries. For making this possible this library depends on the [TimerOne library](https://github.com/PaulStoffregen/TimerOne) and supports every platform suported by that library. Several forks of the library exist to support different architectures, including ESP32 boards, Arduino Uno-R4, and others.
 
-
 ## An Arduino library that builds switch mechanisms replacements out of simple push buttons.  
 By using just a push button (a.k.a. momentary switches or momentary buttons, _**MPB**_ for short from here on) the classes implemented in this library will manage, calculate and update different parameters to **generate the behavior of standard electromechanical switches**. Those parameters include presses, releases, timings, counters or secondary input readings as needed.
 
@@ -23,6 +22,8 @@ Each class offers a wide range of methods to set, read and modify every signific
 * **Single Service Voidable Momentary Push Button**  (a.k.a. **Trigger Switch**) 
 * **Short Press/Long Press Double action On/Off + Slider combo switch**  (a.k.a. **Off/On/Dimmer**, a.k.a. Off/On/Volume Radio Switch)
 * **Short Press/Long Press Double action On/Off + Secondary output MPB combo switch**
+
+## Now includes on-line simulations for the example files (simulator provided by WOKWI.com)
 
 The benefits of the use of those simulated switches mechanisms are not just economic, as push buttons come in a wide range of prices and qualities as the simulated hardware switches come.  
 
@@ -116,6 +117,11 @@ Those listed mechanisms are **independent**, so one or more might be simultaneou
 
 ## [For ButtonToSwitch Library Complete Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_AVR/)  
 
+### On-line simulations
+- [01_DbncdMPBttn_1a](https://wokwi.com/projects/414257949865272321)  
+- [01_DbncdMPBttn_1b](https://wokwi.com/projects/414291211763773441)  
+- [01_DbncdMPBttn_1e](https://wokwi.com/projects/414291715137965057)  
+
 ---  
 # DbncdDlydMPBttn class  
 ## The **Debounced Delayed Momentary Button** keeps the ON state since the moment the signal is stable (debouncing process), plus a delay added, and until the moment the push button is released.  
@@ -135,6 +141,11 @@ The reasons to add the delay are design related and are usually used to avoid re
 # [For DbncdDlydMPBttn class Members Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_AVR/class_dbncd_dlyd_m_p_bttn-members.html)
 
 ## [For ButtonToSwitch Library Complete Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_AVR/)
+
+### On-line simulations  
+- [02_DbncdDlydMPBttn_1a](https://wokwi.com/projects/414259642137246721)
+- [02_DbncdDlydMPBttn_1b](https://wokwi.com/projects/414328357535912961)
+- [02_DbncdDlydMPBttn_1e](https://wokwi.com/projects/414328756881033217)
 
 ---  
 # LtchMPBttn class  
@@ -180,7 +191,7 @@ This is an **Abstract Class** meaning that no object can be instantiated from it
 ## The **Toggle switch**  keeps the ON state since the moment the signal is stable (debouncing + Delay process), and keeps the ON state after the push button is released and until it is pressed once again. 
 So this simulates a simple On-Off switch like the ones used to turn on/off a room light, or any electronic device. There's a lot of advantages in software simulated switches: any amount of switches might be set up in a parallel configuration, so that an unlimited number of entrances or easy accessible points can each have a switch to turn on/off the same resource, the switch might be temporarily disabled, either keeping the On State or the Off State, and some more.  
 
-## Added or Modified Methods for LtchMPBttn class  
+## Added or Modified Methods for TgglLtchMPBttn class  
 |Method | Parameters|
 |---|---|
 |**_TgglLtchMPBttn_** |uint8_t **mpbttnPin**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**(, unsigned long int **strtDelay**))))|
@@ -191,6 +202,11 @@ So this simulates a simple On-Off switch like the ones used to turn on/off a roo
 # [For TgglLtchdMPBttn Subclasses Common Members Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_AVR/class_tggl_ltch_m_p_bttn-members.html)
 
 ## [For ButtonToSwitch Library Complete Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_AVR/)
+
+### On-line simulations
+	- [05_TgglLtchMPBttn_1a](https://wokwi.com/projects/414259855545571329)
+	- [05_TgglLtchMPBttn_1b](https://wokwi.com/projects/414343153052079105)
+	- [05_TgglLtchMPBttn_1e](https://wokwi.com/projects/414343540019123201)
 
 ---  
 # TmLtchMPBttn class  
@@ -211,6 +227,11 @@ The **Service time** is set at instantiation, and can be modified through the pr
 # [For TmLtchdMPBttn Subclasses Common Members Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_AVR/class_tm_ltch_m_p_bttn-members.html)
 
 ## [For ButtonToSwitch Library Complete Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_AVR/)
+
+### On-line simulations
+- [06_TmLtchMPBttn_1a](https://wokwi.com/projects/414259989822038017)
+- [06_TmLtchMPBttn_1b](https://wokwi.com/projects/414344413072353281)
+- [06_TmLtchMPBttn_1e](https://wokwi.com/projects/414344923038850049)
 
 ---  
 # HntdTmLtchMPBttn class  
@@ -235,6 +256,10 @@ The **Service time** is set at instantiation, and can be modified through the pr
 |**setKeepPilot()**|bool **keepPilot**|
 |**setWrnngPrctg()**|unsigned int **newWrnngPrctg**|
   
+### On-line simulations
+- [10_HntdTmLtchMPBttn_1a](https://wokwi.com/projects/414262506522274817)
+- [10_HntdTmLtchMPBttn_1b](https://wokwi.com/projects/414360608120601601)
+
 ---  
 ## Methods definition and use description  
 
@@ -253,6 +278,14 @@ This kind of switch is used when an "abnormal situation" demands the push of the
 |---|---|
 |**_XtrnUnLtchMPBttn_** |uint8_t **mpbttnPin**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**(, unsigned long int **strtDelay**))))|
 |**_XtrnUnLtchMPBttn_** |uint8_t **mpbttnPin**, DbncDlydMPBttn* **unltchBttn**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**(, unsigned long int **strtDelay**))))|  
+
+### On-line simulations
+- [07_XtrnUnltchMPBttn_1a](https://wokwi.com/projects/414260211781489665)
+- [07_XtrnUnltchMPBttn_1b](https://wokwi.com/projects/414346043524007937)
+- [07_XtrnUnltchMPBttn_1e](https://wokwi.com/projects/414347245404808193)
+- [07_XtrnUnltchMPBttn_2a](https://wokwi.com/projects/414261841829819393)
+- [07_XtrnUnltchMPBttn_2b](https://wokwi.com/projects/414346482977632257)
+- [07_XtrnUnltchMPBttn_2e](https://wokwi.com/projects/414347721673168897)
 
 ---  
 ## Methods definition and use description  
@@ -329,6 +362,10 @@ This is a subclass of the **DALDD-MPB** whose **secondary behavior** is that of 
 
 ## [For ButtonToSwitch Library Complete Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_AVR/)
 
+### On-line simulations
+- [12_DDlydDALtchMPBttn_1a](https://wokwi.com/projects/414290468155549697)
+- [12_DDlydDALtchMPBttn_1b](https://wokwi.com/projects/414365839283703809)
+
 ---  
 
 # SldrDALtchMPBttn class  
@@ -378,6 +415,10 @@ This is a subclass of the **DALDD-MPB** whose **secondary behavior** is that of 
 # [For SldrDALtchMPBttn Members Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_AVR/class_sldr_d_a_ltch_m_p_bttn-members.html)
 
 ## [For ButtonToSwitch Library Complete Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_AVR/)
+
+### On-line simulations
+- [11_SldrDALtchMPBttn_1a](https://wokwi.com/projects/414290088909677569)
+- [11_SldrDALtchMPBttn_1b](https://wokwi.com/projects/414362021424667649)
 
 ---  
 # VdblMPBttn class  
@@ -437,6 +478,11 @@ Then the switch will return to the Off position until the push button is release
 
 ## [For ButtonToSwitch Library Complete Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_AVR/)
 
+### On-line simulations
+- [09_TmVdblMPBttn_1a](https://wokwi.com/projects/414261997602105345)
+- [09_TmVdblMPBttn_1b](https://wokwi.com/projects/414349155075989505)
+- [09_TmVdblMPBttn_1e](https://wokwi.com/projects/414350175345182721)
+
 ---  
 # SnglSrvcVdblMPBttn class  
 ---  
@@ -455,7 +501,7 @@ Then the switch will return to the Off position until the push button is release
 
 |Method | Parameters|
 |---|---|
-|**_TmVdblMPBttn_** |uint8_t **mpbttnPin**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**(, unsigned long int **strtDelay**))))|
+|**_SnglSrvcVdblMPBttn_** |uint8_t **mpbttnPin**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**(, unsigned long int **strtDelay**))))|
 
 ## Methods definition and use description  
 ---  
@@ -463,3 +509,6 @@ Then the switch will return to the Off position until the push button is release
 
 ## [For ButtonToSwitch Library Complete Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_AVR/)
 
+### On-line simulations
+- [13_SnglSrvcVdblMPBttn_1b](https://wokwi.com/projects/414366773039338497)
+- [13_SnglSrvcVdblMPBttn_1e](https://wokwi.com/projects/414367173281549313)

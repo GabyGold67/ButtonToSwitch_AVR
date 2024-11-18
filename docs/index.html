@@ -29,7 +29,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="Complex_Switch_Sq_Sm_Color_In.jpg"/></td>
   <td id="projectalign">
-   <div id="projectname">ButtonToSwitch Library for Arduino<span id="projectnumber">&#160;v4.0.0</span>
+   <div id="projectname">ButtonToSwitch Library for Arduino<span id="projectnumber">&#160;v4.0.1</span>
    </div>
    <div id="projectbrief">A library that provides elaborated switch mechanism behavior simulation for digital signals inputs</div>
   </td>
@@ -134,6 +134,8 @@ The library implements the following switches mechanisms:</h2>
 <li><b>Short Press/Long Press Double action On/Off + Slider combo switch</b> (a.k.a. <b>Off/On/Dimmer</b>, a.k.a. Off/On/Volume Radio Switch)</li>
 <li><b>Short Press/Long Press Double action On/Off + Secondary output MPB combo switch</b></li>
 </ul>
+<h2><a class="anchor" id="now-includes-on-line-simulations-for-the-example-files-simulator-provided-by-wokwicom"></a>
+Now includes on-line simulations for the example files (simulator provided by WOKWI.com)</h2>
 <p>The benefits of the use of those simulated switches mechanisms are not just economic, as push buttons come in a wide range of prices and qualities as the simulated hardware switches come. <br  />
 </p>
 <p><em><b>In any device powering on/off project</b></em>, for example, detecting after the implementation, through the daily use, that an installed switch was not the best choice when a physical switch is involved, requires for the correction to a best suited kind of switch a bunch of activities to get the change of the switch unit done:</p><ul>
@@ -283,6 +285,16 @@ The <b>Debounced Momentary Button</b> keeps the ON state since the moment the si
 <a href="https://gabygold67.github.io/ButtonToSwitch_AVR/class_dbncd_m_p_bttn-members.html">For DbncdMPBttn class Members Documentation Click Here!</a></h1>
 <h2><a class="anchor" id="for-buttontoswitch-library-complete-documentation-click-herehttpsgabygold67githubiobuttontoswitch_avr"></a>
 <a href="https://gabygold67.github.io/ButtonToSwitch_AVR/">For ButtonToSwitch Library Complete Documentation Click Here!</a></h2>
+<h3><a class="anchor" id="on-line-simulations"></a>
+On-line simulations</h3>
+<ul>
+<li><a href="https://wokwi.com/projects/414257949865272321">01_DbncdMPBttn_1a</a> <br  />
+</li>
+<li><a href="https://wokwi.com/projects/414291211763773441">01_DbncdMPBttn_1b</a> <br  />
+</li>
+<li><a href="https://wokwi.com/projects/414291715137965057">01_DbncdMPBttn_1e</a> <br  />
+</li>
+</ul>
 <hr  />
  <h1><a class="anchor" id="dbncddlydmpbttn-class"></a>
 DbncdDlydMPBttn class</h1>
@@ -311,6 +323,13 @@ Methods definition and use description</h2>
 <a href="https://gabygold67.github.io/ButtonToSwitch_AVR/class_dbncd_dlyd_m_p_bttn-members.html">For DbncdDlydMPBttn class Members Documentation Click Here!</a></h1>
 <h2><a class="anchor" id="for-buttontoswitch-library-complete-documentation-click-herehttpsgabygold67githubiobuttontoswitch_avr-1"></a>
 <a href="https://gabygold67.github.io/ButtonToSwitch_AVR/">For ButtonToSwitch Library Complete Documentation Click Here!</a></h2>
+<h3><a class="anchor" id="on-line-simulations-1"></a>
+On-line simulations</h3>
+<ul>
+<li><a href="https://wokwi.com/projects/414259642137246721">02_DbncdDlydMPBttn_1a</a></li>
+<li><a href="https://wokwi.com/projects/414328357535912961">02_DbncdDlydMPBttn_1b</a></li>
+<li><a href="https://wokwi.com/projects/414328756881033217">02_DbncdDlydMPBttn_1e</a></li>
+</ul>
 <hr  />
  <h1><a class="anchor" id="ltchmpbttn-class"></a>
 LtchMPBttn class</h1>
@@ -371,8 +390,8 @@ TgglLtchMPBttn class</h1>
 The <b>Toggle switch</b> keeps the ON state since the moment the signal is stable (debouncing + Delay process), and keeps the ON state after the push button is released and until it is pressed once again.</h2>
 <p>So this simulates a simple On-Off switch like the ones used to turn on/off a room light, or any electronic device. There's a lot of advantages in software simulated switches: any amount of switches might be set up in a parallel configuration, so that an unlimited number of entrances or easy accessible points can each have a switch to turn on/off the same resource, the switch might be temporarily disabled, either keeping the On State or the Off State, and some more. <br  />
 </p>
-<h2><a class="anchor" id="added-or-modified-methods-for-ltchmpbttn-class-1"></a>
-Added or Modified Methods for LtchMPBttn class</h2>
+<h2><a class="anchor" id="added-or-modified-methods-for-tgglltchmpbttn-class"></a>
+Added or Modified Methods for TgglLtchMPBttn class</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Method   </th><th class="markdownTableHeadNone">Parameters    </th></tr>
@@ -386,6 +405,13 @@ Methods definition and use description</h2>
 <a href="https://gabygold67.github.io/ButtonToSwitch_AVR/class_tggl_ltch_m_p_bttn-members.html">For TgglLtchdMPBttn Subclasses Common Members Documentation Click Here!</a></h1>
 <h2><a class="anchor" id="for-buttontoswitch-library-complete-documentation-click-herehttpsgabygold67githubiobuttontoswitch_avr-3"></a>
 <a href="https://gabygold67.github.io/ButtonToSwitch_AVR/">For ButtonToSwitch Library Complete Documentation Click Here!</a></h2>
+<h3><a class="anchor" id="on-line-simulations-2"></a>
+On-line simulations</h3>
+<ul>
+<li><a href="https://wokwi.com/projects/414259855545571329">05_TgglLtchMPBttn_1a</a></li>
+<li><a href="https://wokwi.com/projects/414343153052079105">05_TgglLtchMPBttn_1b</a></li>
+<li><a href="https://wokwi.com/projects/414343540019123201">05_TgglLtchMPBttn_1e</a></li>
+</ul>
 <hr  />
  <h1><a class="anchor" id="tmltchmpbttn-class"></a>
 TmLtchMPBttn class</h1>
@@ -414,6 +440,13 @@ Methods definition and use description</h2>
 <a href="https://gabygold67.github.io/ButtonToSwitch_AVR/class_tm_ltch_m_p_bttn-members.html">For TmLtchdMPBttn Subclasses Common Members Documentation Click Here!</a></h1>
 <h2><a class="anchor" id="for-buttontoswitch-library-complete-documentation-click-herehttpsgabygold67githubiobuttontoswitch_avr-4"></a>
 <a href="https://gabygold67.github.io/ButtonToSwitch_AVR/">For ButtonToSwitch Library Complete Documentation Click Here!</a></h2>
+<h3><a class="anchor" id="on-line-simulations-3"></a>
+On-line simulations</h3>
+<ul>
+<li><a href="https://wokwi.com/projects/414259989822038017">06_TmLtchMPBttn_1a</a></li>
+<li><a href="https://wokwi.com/projects/414344413072353281">06_TmLtchMPBttn_1b</a></li>
+<li><a href="https://wokwi.com/projects/414344923038850049">06_TmLtchMPBttn_1e</a></li>
+</ul>
 <hr  />
  <h1><a class="anchor" id="hntdtmltchmpbttn-class"></a>
 HntdTmLtchMPBttn class</h1>
@@ -453,6 +486,12 @@ Added or Modified Methods for HntdTmLtchMPBttn class</h2>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><b>setWrnngPrctg()</b>   </td><td class="markdownTableBodyNone">unsigned int <b>newWrnngPrctg</b>   </td></tr>
 </table>
+<h3><a class="anchor" id="on-line-simulations-4"></a>
+On-line simulations</h3>
+<ul>
+<li><a href="https://wokwi.com/projects/414262506522274817">10_HntdTmLtchMPBttn_1a</a></li>
+<li><a href="https://wokwi.com/projects/414360608120601601">10_HntdTmLtchMPBttn_1b</a></li>
+</ul>
 <hr  />
  <h2><a class="anchor" id="methods-definition-and-use-description-5"></a>
 Methods definition and use description</h2>
@@ -477,6 +516,16 @@ Added or Modified Methods for XtrnUnltchMPBttn class</h2>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">**_XtrnUnLtchMPBttn_**   </td><td class="markdownTableBodyNone">uint8_t <b>mpbttnPin</b>, DbncDlydMPBttn* <b>unltchBttn</b>(, bool <b>pulledUp</b>(, bool <b>typeNO</b>(, unsigned long int <b>dbncTimeOrigSett</b>(, unsigned long int <b>strtDelay</b>))))   </td></tr>
 </table>
+<h3><a class="anchor" id="on-line-simulations-5"></a>
+On-line simulations</h3>
+<ul>
+<li><a href="https://wokwi.com/projects/414260211781489665">07_XtrnUnltchMPBttn_1a</a></li>
+<li><a href="https://wokwi.com/projects/414346043524007937">07_XtrnUnltchMPBttn_1b</a></li>
+<li><a href="https://wokwi.com/projects/414347245404808193">07_XtrnUnltchMPBttn_1e</a></li>
+<li><a href="https://wokwi.com/projects/414261841829819393">07_XtrnUnltchMPBttn_2a</a></li>
+<li><a href="https://wokwi.com/projects/414346482977632257">07_XtrnUnltchMPBttn_2b</a></li>
+<li><a href="https://wokwi.com/projects/414347721673168897">07_XtrnUnltchMPBttn_2e</a></li>
+</ul>
 <hr  />
  <h2><a class="anchor" id="methods-definition-and-use-description-6"></a>
 Methods definition and use description</h2>
@@ -589,6 +638,12 @@ Methods definition and use description</h2>
 <a href="https://gabygold67.github.io/ButtonToSwitch_AVR/class_d_dlyd_d_a_ltch_m_p_bttn-members.html">For DDlydDALtchMPBttn Members Documentation Click Here!</a></h1>
 <h2><a class="anchor" id="for-buttontoswitch-library-complete-documentation-click-herehttpsgabygold67githubiobuttontoswitch_avr-8"></a>
 <a href="https://gabygold67.github.io/ButtonToSwitch_AVR/">For ButtonToSwitch Library Complete Documentation Click Here!</a></h2>
+<h3><a class="anchor" id="on-line-simulations-6"></a>
+On-line simulations</h3>
+<ul>
+<li><a href="https://wokwi.com/projects/414290468155549697">12_DDlydDALtchMPBttn_1a</a></li>
+<li><a href="https://wokwi.com/projects/414365839283703809">12_DDlydDALtchMPBttn_1b</a></li>
+</ul>
 <hr  />
 <h2><a class="anchor" id="autotoc_md-sldrdaltchmpbttn-class--"></a>
 # SldrDALtchMPBttn class</h2>
@@ -661,6 +716,12 @@ Methods definition and use description</h2>
 <a href="https://gabygold67.github.io/ButtonToSwitch_AVR/class_sldr_d_a_ltch_m_p_bttn-members.html">For SldrDALtchMPBttn Members Documentation Click Here!</a></h1>
 <h2><a class="anchor" id="for-buttontoswitch-library-complete-documentation-click-herehttpsgabygold67githubiobuttontoswitch_avr-9"></a>
 <a href="https://gabygold67.github.io/ButtonToSwitch_AVR/">For ButtonToSwitch Library Complete Documentation Click Here!</a></h2>
+<h3><a class="anchor" id="on-line-simulations-7"></a>
+On-line simulations</h3>
+<ul>
+<li><a href="https://wokwi.com/projects/414290088909677569">11_SldrDALtchMPBttn_1a</a></li>
+<li><a href="https://wokwi.com/projects/414362021424667649">11_SldrDALtchMPBttn_1b</a></li>
+</ul>
 <hr  />
  <h2><a class="anchor" id="autotoc_md-vdblmpbttn-class--"></a>
 # VdblMPBttn class</h2>
@@ -744,6 +805,13 @@ Added Methods for TmVdblMPBttn class</h1>
 <a href="https://gabygold67.github.io/ButtonToSwitch_AVR/class_tm_vdbl_m_p_bttn-members.html">For TmVdblMPBttn Members Documentation Click Here!</a></h1>
 <h2><a class="anchor" id="for-buttontoswitch-library-complete-documentation-click-herehttpsgabygold67githubiobuttontoswitch_avr-11"></a>
 <a href="https://gabygold67.github.io/ButtonToSwitch_AVR/">For ButtonToSwitch Library Complete Documentation Click Here!</a></h2>
+<h3><a class="anchor" id="on-line-simulations-8"></a>
+On-line simulations</h3>
+<ul>
+<li><a href="https://wokwi.com/projects/414261997602105345">09_TmVdblMPBttn_1a</a></li>
+<li><a href="https://wokwi.com/projects/414349155075989505">09_TmVdblMPBttn_1b</a></li>
+<li><a href="https://wokwi.com/projects/414350175345182721">09_TmVdblMPBttn_1e</a></li>
+</ul>
 <hr  />
  <h2><a class="anchor" id="autotoc_md-snglsrvcvdblmpbttn-class--"></a>
 # SnglSrvcVdblMPBttn class</h2>
@@ -768,7 +836,7 @@ Added Methods for TmVdblMPBttn class</h1>
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Method   </th><th class="markdownTableHeadNone">Parameters    </th></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">**_TmVdblMPBttn_**   </td><td class="markdownTableBodyNone">uint8_t <b>mpbttnPin</b>(, bool <b>pulledUp</b>(, bool <b>typeNO</b>(, unsigned long int <b>dbncTimeOrigSett</b>(, unsigned long int <b>strtDelay</b>))))   </td></tr>
+<td class="markdownTableBodyNone">**_SnglSrvcVdblMPBttn_**   </td><td class="markdownTableBodyNone">uint8_t <b>mpbttnPin</b>(, bool <b>pulledUp</b>(, bool <b>typeNO</b>(, unsigned long int <b>dbncTimeOrigSett</b>(, unsigned long int <b>strtDelay</b>))))   </td></tr>
 </table>
 <h2><a class="anchor" id="autotoc_md-methods-definition-and-use-description---1"></a>
 ## Methods definition and use description</h2>
@@ -776,6 +844,12 @@ Added Methods for TmVdblMPBttn class</h1>
 <a href="https://gabygold67.github.io/ButtonToSwitch_AVR/class_sngl_srvc_vdbl_m_p_bttn-members.html">For SnglSrvcVdblMPBttn Members Documentation Click Here!</a></h1>
 <h2><a class="anchor" id="for-buttontoswitch-library-complete-documentation-click-herehttpsgabygold67githubiobuttontoswitch_avr-12"></a>
 <a href="https://gabygold67.github.io/ButtonToSwitch_AVR/">For ButtonToSwitch Library Complete Documentation Click Here!</a></h2>
+<h3><a class="anchor" id="on-line-simulations-9"></a>
+On-line simulations</h3>
+<ul>
+<li><a href="https://wokwi.com/projects/414366773039338497">13_SnglSrvcVdblMPBttn_1b</a></li>
+<li><a href="https://wokwi.com/projects/414367173281549313">13_SnglSrvcVdblMPBttn_1e</a> </li>
+</ul>
 </div></div><!-- PageDoc -->
 <a href="doxygen_crawl.html"></a>
 </div><!-- contents -->
