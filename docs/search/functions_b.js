@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['tgglltchmpbttn_0',['TgglLtchMPBttn',['../class_tggl_ltch_m_p_bttn.html#a39a522dde1b7631efc2863756a1c5d19',1,'TgglLtchMPBttn']]],
-  ['tmltchmpbttn_1',['TmLtchMPBttn',['../class_tm_ltch_m_p_bttn.html#ad402e1d30668a1ec776d5e69d1066485',1,'TmLtchMPBttn']]],
-  ['tmvdblmpbttn_2',['TmVdblMPBttn',['../class_tm_vdbl_m_p_bttn.html#a745c894d7758f60b5f6261f558758f05',1,'TmVdblMPBttn']]]
+  ['tgglltchmpbttn_0',['TgglLtchMPBttn',['../class_tggl_ltch_m_p_bttn.html#a032e5f4f4d8fb1be3c46bb78c1729a30',1,'TgglLtchMPBttn::TgglLtchMPBttn()'],['../class_tggl_ltch_m_p_bttn.html#a39a522dde1b7631efc2863756a1c5d19',1,'TgglLtchMPBttn::TgglLtchMPBttn(const uint8_t &amp;mpbttnPin, const bool &amp;pulledUp=true, const bool &amp;typeNO=true, const unsigned long int &amp;dbncTimeOrigSett=0, const unsigned long int &amp;strtDelay=0)']]],
+  ['tmltchmpbttn_1',['TmLtchMPBttn',['../class_tm_ltch_m_p_bttn.html#a246985e9366d3a2e16805d0b5565c543',1,'TmLtchMPBttn::TmLtchMPBttn()'],['../class_tm_ltch_m_p_bttn.html#ad402e1d30668a1ec776d5e69d1066485',1,'TmLtchMPBttn::TmLtchMPBttn(const uint8_t &amp;mpbttnPin, const unsigned long int &amp;svcTime, const bool &amp;pulledUp=true, const bool &amp;typeNO=true, const unsigned long int &amp;dbncTimeOrigSett=0, const unsigned long int &amp;strtDelay=0)']]],
+  ['tmvdblmpbttn_2',['TmVdblMPBttn',['../class_tm_vdbl_m_p_bttn.html#a2dfea26c785c12567c671145224008d2',1,'TmVdblMPBttn::TmVdblMPBttn()'],['../class_tm_vdbl_m_p_bttn.html#a745c894d7758f60b5f6261f558758f05',1,'TmVdblMPBttn::TmVdblMPBttn(const uint8_t &amp;mpbttnPin, unsigned long int voidTime, const bool &amp;pulledUp=true, const bool &amp;typeNO=true, const unsigned long int &amp;dbncTimeOrigSett=0, const unsigned long int &amp;strtDelay=0, const bool &amp;isOnDisabled=false)']]]
 ];
