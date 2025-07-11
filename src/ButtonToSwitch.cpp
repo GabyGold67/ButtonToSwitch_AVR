@@ -110,7 +110,6 @@ DbncdMPBttn::DbncdMPBttn(const uint8_t &mpbttnPin, const bool &pulledUp, const b
 		if(_dbncTimeOrigSett < _stdMinDbncTime) //Best practice would impose failing the constructor (throwing an exception or building a "zombie" object)
 			_dbncTimeOrigSett = _stdMinDbncTime;    //this tolerant approach taken for developers benefit, but object will be no faithful to the instantiation parameters
 		_dbncTimeTempSett = _dbncTimeOrigSett;
-		pinMode(mpbttnPin, (pulledUp == true)?INPUT_PULLUP:INPUT);
 		_mpbInstnc = this;
 
 	}
@@ -121,6 +120,38 @@ DbncdMPBttn::DbncdMPBttn(const uint8_t &mpbttnPin, const bool &pulledUp, const b
 	}
 }
 
+DbncdMPBttn::DbncdMPBttn(const DbncdMPBttn &other)
+: _mpbttnPin{other._mpbttnPin}, _pulledUp{other._pulledUp},	_typeNO{other._typeNO},	_dbncTimeOrigSett{other._dbncTimeOrigSett}
+{
+	_mpbInstnc = this;
+	_dbncTimeTempSett = other._dbncTimeTempSett;
+	_pollPeriodMs = other._pollPeriodMs;
+	_lstPollTime = other._lstPollTime;
+	_isEnabled = other._isEnabled;
+	_isOn = other._isOn;
+	_isOnDisabled = other._isOnDisabled;
+	_isPressed = other._isPressed;
+	_updTmrAttchd = other._updTmrAttchd;
+	_outputsChange = other._outputsChange;
+	_fnWhnTrnOn = other._fnWhnTrnOn;
+	_fnWhnTrnOff = other._fnWhnTrnOff;
+	_fnVdPtrPrmWhnTrnOn = other._fnVdPtrPrmWhnTrnOn;
+	_fnVdPtrPrmWhnTrnOff = other._fnVdPtrPrmWhnTrnOff;
+	_fnVdPtrPrmWhnTrnOnArgPtr = other._fnVdPtrPrmWhnTrnOnArgPtr;
+	_fnVdPtrPrmWhnTrnOffArgPtr = other._fnVdPtrPrmWhnTrnOffArgPtr;
+	_dbncRlsTimeTempSett = other._dbncRlsTimeTempSett;
+	_dbncTimerStrt = other._dbncTimerStrt;
+	_dbncRlsTimerStrt = other._dbncRlsTimerStrt;
+	_prssRlsCcl = other._prssRlsCcl;
+	_validPressPend = other._validPressPend;
+	_validReleasePend = other._validReleasePend;
+	_validEnablePend = other._validEnablePend;
+	_validDisablePend = other._validDisablePend;
+	_beginDisabled = other._beginDisabled;
+	_sttChng = other._sttChng;
+	_mpbFdaState = other._mpbFdaState;
+}
+
 DbncdMPBttn::~DbncdMPBttn(){
     
 	end();  // Stops the software timer associated to the object, deletes it's entry and nullyfies the handle to it before destructing the object
@@ -128,6 +159,12 @@ DbncdMPBttn::~DbncdMPBttn(){
 
 bool DbncdMPBttn::begin(const unsigned long int &pollDelayMs) {
 	bool result {false};
+
+	pinMode(_mpbttnPin, (_pulledUp == true)?INPUT_PULLUP:INPUT);
+	if(_beginDisabled){
+		_isEnabled = false;
+		_validDisablePend = true;
+	}
 
 	if (pollDelayMs > 0){
 		_pollPeriodMs = pollDelayMs;	// Set this MPB's PollPeriodMs to the provided argument
@@ -217,6 +254,26 @@ fncPtrType DbncdMPBttn::getFnWhnTrnOn(){
 	return _fnWhnTrnOn;
 }
 
+fncVdPtrPrmPtrType DbncdMPBttn::getFVPPWhnTrnOff(){
+   
+	return _fnVdPtrPrmWhnTrnOff;
+}
+
+void* DbncdMPBttn::getFVPPWhnTrnOffArgPtr(){
+
+   return _fnVdPtrPrmWhnTrnOffArgPtr;
+}
+
+fncVdPtrPrmPtrType DbncdMPBttn::getFVPPWhnTrnOn(){
+
+   return _fnVdPtrPrmWhnTrnOn;
+}
+
+void* DbncdMPBttn::getFVPPWhnTrnOnArgPtr(){
+
+	return _fnVdPtrPrmWhnTrnOnArgPtr;
+}
+
 const bool DbncdMPBttn::getIsEnabled() const{
 
 	return _isEnabled;
@@ -302,6 +359,19 @@ void DbncdMPBttn::mpbPollCallback(){
 	_mpbInstnc->updFdaState();
 
 	return;
+}
+
+uint32_t DbncdMPBttn::_otptsSttsPkg(uint32_t prevVal){
+	if(_isOn)
+		prevVal |= ((uint32_t)1) << IsOnBitPos;
+	else
+		prevVal &= ~(((uint32_t)1) << IsOnBitPos);
+	if(_isEnabled)
+		prevVal |= ((uint32_t)1) << IsEnabledBitPos;
+	else
+		prevVal &= ~(((uint32_t)1) << IsEnabledBitPos);
+
+	return prevVal;
 }
 
 bool DbncdMPBttn::pause(){
@@ -409,23 +479,6 @@ void DbncdMPBttn::_pushMpb(DbncdMPBttn** &DMpbTmrUpdLst, DbncdMPBttn* mpbToPush)
 	return;
 }
 
-uint32_t DbncdMPBttn::_otptsSttsPkg(uint32_t prevVal){
-	if(_isOn){
-		prevVal |= ((uint32_t)1) << IsOnBitPos;
-	}
-	else{
-		prevVal &= ~(((uint32_t)1) << IsOnBitPos);
-	}
-	if(_isEnabled){
-		prevVal |= ((uint32_t)1) << IsEnabledBitPos;
-	}
-	else{
-		prevVal &= ~(((uint32_t)1) << IsEnabledBitPos);
-	}
-
-	return prevVal;
-}
-
 void DbncdMPBttn::resetDbncTime(){
    setDbncTime(_dbncTimeOrigSett);
 
@@ -433,7 +486,7 @@ void DbncdMPBttn::resetDbncTime(){
 }
 
 void DbncdMPBttn::resetFda(){
-	clrStatus();
+	clrStatus(true);
 	setSttChng();
 	_mpbFdaState = stOffNotVPP;
 
@@ -459,6 +512,7 @@ bool DbncdMPBttn::resume(){
 		if(mpbFnd){	// This MPBttn was found in the "MPBs to be updated list"
 			if (_updTmrAttchd == false){	// And it was not attached to the update timer: attach and calculate updTimerPeriod
 				if(_pollPeriodMs > 0){	// The periodic polling time is a non-zero value, it can be resumed, else it fails
+				   resetFda();	// To restart in a safe situation the FDA is resetted to have all flags and timers cleaned up
 					_updTmrAttchd = true;
 					tmpUpdTmrPrd = _updTmrsMCDCalc();
 					if(_updTimerPeriod != tmpUpdTmrPrd){
@@ -480,6 +534,13 @@ bool DbncdMPBttn::resume(){
    return result;
 }
 
+void DbncdMPBttn::setBeginDisabled(const bool &newBeginDisabled){
+	if(_beginDisabled != newBeginDisabled)
+		_beginDisabled = newBeginDisabled;
+
+	return;
+}
+
 bool DbncdMPBttn::setDbncTime(const unsigned long int &newDbncTime){
 	bool result {true};
 
@@ -496,18 +557,47 @@ bool DbncdMPBttn::setDbncTime(const unsigned long int &newDbncTime){
 }
 
 void DbncdMPBttn::setFnWhnTrnOffPtr(void (*newFnWhnTrnOff)()){
-
-	if (_fnWhnTrnOff != newFnWhnTrnOff){
+	if (_fnWhnTrnOff != newFnWhnTrnOff)
 		_fnWhnTrnOff = newFnWhnTrnOff;
-	}
 
 	return;
 }
 
 void DbncdMPBttn::setFnWhnTrnOnPtr(void (*newFnWhnTrnOn)()){
-	if (_fnWhnTrnOn != newFnWhnTrnOn){
+	if (_fnWhnTrnOn != newFnWhnTrnOn)
 		_fnWhnTrnOn = newFnWhnTrnOn;
+
+	return;
+}
+
+void DbncdMPBttn::setFVPPWhnTrnOff(fncVdPtrPrmPtrType newFVPPWhnTrnOff, void *argPtr){
+	if (_fnVdPtrPrmWhnTrnOff != newFVPPWhnTrnOff){
+		_fnVdPtrPrmWhnTrnOff = newFVPPWhnTrnOff;
+		_fnVdPtrPrmWhnTrnOffArgPtr = argPtr;
 	}
+
+	return;
+}
+
+void DbncdMPBttn::setFVPPWhnTrnOffArgPtr(void* newFVPPWhnTrnOffArgPtr){
+	if (_fnVdPtrPrmWhnTrnOffArgPtr != newFVPPWhnTrnOffArgPtr)
+		_fnVdPtrPrmWhnTrnOffArgPtr = newFVPPWhnTrnOffArgPtr;	
+
+	return;
+}
+
+void DbncdMPBttn::setFVPPWhnTrnOn(fncVdPtrPrmPtrType newFVPPWhnTrnOn, void *argPtr){
+	if (_fnVdPtrPrmWhnTrnOn != newFVPPWhnTrnOn){
+		_fnVdPtrPrmWhnTrnOn = newFVPPWhnTrnOn;
+		_fnVdPtrPrmWhnTrnOnArgPtr = argPtr;	
+	}
+
+	return;
+}
+
+void DbncdMPBttn::setFVPPWhnTrnOnArgPtr(void* newFVPPWhnTrnOnArgPtr){
+	if (_fnVdPtrPrmWhnTrnOnArgPtr != newFVPPWhnTrnOnArgPtr)
+		_fnVdPtrPrmWhnTrnOnArgPtr = newFVPPWhnTrnOnArgPtr;	
 
 	return;
 }
@@ -528,7 +618,7 @@ void DbncdMPBttn::_setIsEnabled(const bool &newEnabledValue){
 
 	return;
 }
-
+//FFDR Start code checking from here
 void DbncdMPBttn::setIsOnDisabled(const bool &newIsOnDisabled){
 	if(_isOnDisabled != newIsOnDisabled){
 		_isOnDisabled = newIsOnDisabled;
@@ -572,8 +662,9 @@ void DbncdMPBttn::_turnOff(){
 		if(_fnWhnTrnOff != nullptr){
 			_fnWhnTrnOff();
 		}
-	// }
-	// if(_isOn){
+		if(_fnVdPtrPrmWhnTrnOff != nullptr){
+			_fnVdPtrPrmWhnTrnOff(_fnVdPtrPrmWhnTrnOffArgPtr);
+		}
 		//---------------->> Flags related actions
 		_isOn = false;
 		_outputsChange = true;
@@ -589,8 +680,9 @@ void DbncdMPBttn::_turnOn(){
 		if(_fnWhnTrnOn != nullptr){
 			_fnWhnTrnOn();
 		}
-	// }
-	// if(!_isOn){
+			if(_fnVdPtrPrmWhnTrnOn != nullptr){
+				_fnVdPtrPrmWhnTrnOn(_fnVdPtrPrmWhnTrnOnArgPtr);
+			}
 		//---------------->> Flags related actions
 		_isOn = true;
 		_outputsChange = true;
@@ -1686,6 +1778,16 @@ void DblActnLtchMPBttn::mpbPollCallback(){
 	return;
 }
 
+uint32_t DblActnLtchMPBttn::_otptsSttsPkg(uint32_t prevVal){
+	prevVal = DbncdMPBttn::_otptsSttsPkg(prevVal);
+	if(_isOnScndry)
+		prevVal |= ((uint32_t)1) << IsOnScndryBitPos;
+	else
+		prevVal &= ~(((uint32_t)1) << IsOnScndryBitPos);
+
+	return prevVal;
+}
+
 void DblActnLtchMPBttn::setFnWhnTrnOffScndryPtr(void (*newFnWhnTrnOff)()){
 	if (_fnWhnTrnOffScndry != newFnWhnTrnOff){
 		_fnWhnTrnOffScndry = newFnWhnTrnOff;
@@ -1976,16 +2078,6 @@ void DDlydDALtchMPBttn::clrStatus(bool clrIsOn){
 	return;
 }
 
-uint32_t DDlydDALtchMPBttn::_otptsSttsPkg(uint32_t prevVal){
-	prevVal = DbncdMPBttn::_otptsSttsPkg(prevVal);
-	if(_isOnScndry)
-		prevVal |= ((uint32_t)1) << IsOnScndryBitPos;
-	else
-		prevVal &= ~(((uint32_t)1) << IsOnScndryBitPos);
-
-	return prevVal;
-}
-
 /*void DDlydDALtchMPBttn::stDisabled_In(){	
 	if(_isOnScndry != _isOnDisabled){
 		if(_isOnDisabled)
@@ -2080,7 +2172,7 @@ bool SldrDALtchMPBttn::getSldrDirUp(){
 }
 
 uint32_t SldrDALtchMPBttn::_otptsSttsPkg(uint32_t prevVal){
-	prevVal = DbncdMPBttn::_otptsSttsPkg(prevVal);
+	prevVal = DblActnLtchMPBttn::_otptsSttsPkg(prevVal);
 	prevVal |= (((uint32_t)_otptCurVal) << OtptCurValBitPos);
 
 	return prevVal;
