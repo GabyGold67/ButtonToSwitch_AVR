@@ -1,11 +1,11 @@
 <map id="DbncdMPBttn::clrStatus" name="DbncdMPBttn::clrStatus">
-<area shape="rect" id="Node000001" title="Clears and resets flags, timers and counters modified through the object&#39;s signals processing." alt="" coords="696,215,860,241"/>
+<area shape="rect" id="Node000001" title="Clears and resets flags, timers and counters modified through the object&#39;s signals processing." alt="" coords="696,228,860,255"/>
 <area shape="rect" id="Node000002" href="$class_ltch_m_p_bttn.html#aa52047bd930afc19d8c1f9026f7605ef" title="See DbncdMPBttn::clrStatus(bool)" alt="" coords="492,152,642,179"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="715,212,614,182,616,177,717,207"/>
-<area shape="rect" id="Node000009" href="$class_vdbl_m_p_bttn.html#a7ea82534da6a8f39d9715a3126387d30" title="See DbncdMPBttn::clrStatus(bool)" alt="" coords="492,215,643,241"/>
-<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="681,231,643,231,643,225,681,225"/>
-<area shape="rect" id="Node000011" href="$class_dbncd_m_p_bttn.html#a2df98cfb822df05bc232143f883e5c32" title="Resets the MPB behavior automaton to it&#39;s Initial or Start State" alt="" coords="486,265,648,292"/>
-<area shape="poly" id="edge10_Node000001_Node000011" title=" " alt="" coords="705,248,626,267,625,262,704,243"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="723,225,606,182,608,177,725,220"/>
+<area shape="rect" id="Node000009" href="$class_vdbl_m_p_bttn.html#a7ea82534da6a8f39d9715a3126387d30" title="See DbncdMPBttn::clrStatus(bool)" alt="" coords="492,228,643,255"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="681,244,643,244,643,239,681,239"/>
+<area shape="rect" id="Node000011" href="$class_dbncd_m_p_bttn.html#a2df98cfb822df05bc232143f883e5c32" title="Resets the MPB behavior automaton to it&#39;s Initial or Start State" alt="" coords="486,279,648,305"/>
+<area shape="poly" id="edge10_Node000001_Node000011" title=" " alt="" coords="705,261,626,281,625,275,704,256"/>
 <area shape="rect" id="Node000003" href="$class_dbl_actn_ltch_m_p_bttn.html#a7454fc41a95d7bb028831a66781dffb3" title="See DbncddMPBttn::clrStatus(bool)" alt="" coords="272,60,417,103"/>
 <area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="517,148,437,117,406,106,408,101,439,112,519,143"/>
 <area shape="rect" id="Node000006" href="$class_tm_ltch_m_p_bttn.html#a8c27b3a6f642a4c7bb4d27b56cc3abaf" title="see DbncdMPBttn::clrStatus(bool)" alt="" coords="260,127,429,153"/>
@@ -19,5 +19,7 @@
 <area shape="rect" id="Node000007" href="$class_hntd_tm_ltch_m_p_bttn.html#aa87d5a52555a45bc3c2f1276cfe8a446" title="see DbncdMPBttn::clrStatus(bool)" alt="" coords="5,127,203,153"/>
 <area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="244,143,203,143,203,137,244,137"/>
 <area shape="rect" id="Node000010" href="$class_tm_vdbl_m_p_bttn.html#a33bb7f6a78ea9c912a6d2c906ef756e5" title="See DbncdMPBttn::clrStatus(bool)" alt="" coords="259,228,430,255"/>
-<area shape="poly" id="edge9_Node000009_Node000010" title=" " alt="" coords="476,236,430,239,430,234,476,231"/>
+<area shape="poly" id="edge9_Node000009_Node000010" title=" " alt="" coords="476,244,430,244,430,239,476,239"/>
+<area shape="rect" id="Node000012" href="$class_dbncd_m_p_bttn.html#a9540a12554008a6705056b02fbafed38" title="Restarts the software timer updating the calculation of the object internal flags." alt="" coords="267,279,422,305"/>
+<area shape="poly" id="edge11_Node000011_Node000012" title=" " alt="" coords="470,295,422,295,422,289,470,289"/>
 </map>

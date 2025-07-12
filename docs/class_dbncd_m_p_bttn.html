@@ -169,6 +169,14 @@ virtual&#160;</td><td class="memItemRight" valign="bottom"><b>~DbncdMPBttn</b> (
 <tr class="memdesc:ae90de3a636c2e9b4ae0939bdb06cc5b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the function that is set to execute every time the object <b>enters</b> the <b>Off State</b>.  <br /></td></tr>
 <tr class="memitem:a1ac46dbf91e0a8ef1bb753e48d3f25c7" id="r_a1ac46dbf91e0a8ef1bb753e48d3f25c7"><td class="memItemLeft" align="right" valign="top">fncPtrType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1ac46dbf91e0a8ef1bb753e48d3f25c7">getFnWhnTrnOn</a> ()</td></tr>
 <tr class="memdesc:a1ac46dbf91e0a8ef1bb753e48d3f25c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the function that is set to execute every time the object <b>enters</b> the <b>On State</b>.  <br /></td></tr>
+<tr class="memitem:a535d3c56365f6c3de035bfbc35937987" id="r_a535d3c56365f6c3de035bfbc35937987"><td class="memItemLeft" align="right" valign="top">fncVdPtrPrmPtrType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a535d3c56365f6c3de035bfbc35937987">getFVPPWhnTrnOff</a> ()</td></tr>
+<tr class="memdesc:a535d3c56365f6c3de035bfbc35937987"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a pointer to a function that is set to execute every time the object <b>enters</b> the <b>Off State</b>.  <br /></td></tr>
+<tr class="memitem:ab3f18456d8f75dbdeaaca463fec8ee9a" id="r_ab3f18456d8f75dbdeaaca463fec8ee9a"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab3f18456d8f75dbdeaaca463fec8ee9a">getFVPPWhnTrnOffArgPtr</a> ()</td></tr>
+<tr class="memdesc:ab3f18456d8f75dbdeaaca463fec8ee9a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a pointer to the argument to be passed to the function set to execute every time the object <b>enters</b> the <b>Off State</b>.  <br /></td></tr>
+<tr class="memitem:a5ef5459cb174f58cb508b8e06dd92cea" id="r_a5ef5459cb174f58cb508b8e06dd92cea"><td class="memItemLeft" align="right" valign="top">fncVdPtrPrmPtrType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5ef5459cb174f58cb508b8e06dd92cea">getFVPPWhnTrnOn</a> ()</td></tr>
+<tr class="memdesc:a5ef5459cb174f58cb508b8e06dd92cea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a pointer to a function that is set to execute every time the object <b>enters</b> the <b>On State</b>.  <br /></td></tr>
+<tr class="memitem:a9d9a6762255010266632d1e6582bce78" id="r_a9d9a6762255010266632d1e6582bce78"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9d9a6762255010266632d1e6582bce78">getFVPPWhnTrnOnArgPtr</a> ()</td></tr>
+<tr class="memdesc:a9d9a6762255010266632d1e6582bce78"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a pointer to the argument to be passed to the function set to execute every time the object <b>enters</b> the <b>On State</b>.  <br /></td></tr>
 <tr class="memitem:a96e20616b21b135293f8e5b0a2c0ab28" id="r_a96e20616b21b135293f8e5b0a2c0ab28"><td class="memItemLeft" align="right" valign="top">const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a96e20616b21b135293f8e5b0a2c0ab28">getIsEnabled</a> () const</td></tr>
 <tr class="memdesc:a96e20616b21b135293f8e5b0a2c0ab28"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the value of the isEnabled attribute flag, indicating the <b>Enabled</b> or <b>Disabled</b> status of the object.  <br /></td></tr>
 <tr class="memitem:ac78bb12cb1d9bdb43b4e4e593812b300" id="r_ac78bb12cb1d9bdb43b4e4e593812b300"><td class="memItemLeft" align="right" valign="top">const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac78bb12cb1d9bdb43b4e4e593812b300">getIsOn</a> () const</td></tr>
@@ -205,18 +213,6 @@ virtual&#160;</td><td class="memItemRight" valign="bottom"><b>~DbncdMPBttn</b> (
 <tr class="memdesc:abbd65b9ad37a2de7d8108789178e73e5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the function that will be called to execute every time the object <b>enters</b> the <b>Off State</b>.  <br /></td></tr>
 <tr class="memitem:ad1e5decc11a29c7ac2417cde9b43fc4e" id="r_ad1e5decc11a29c7ac2417cde9b43fc4e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad1e5decc11a29c7ac2417cde9b43fc4e">setFnWhnTrnOnPtr</a> (void(*newFnWhnTrnOn)())</td></tr>
 <tr class="memdesc:ad1e5decc11a29c7ac2417cde9b43fc4e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the function that will be called to execute every time the object <b>enters</b> the <b>On State</b>.  <br /></td></tr>
-<tr class="memitem:a55644500cc3b52282c439ca4541a2351" id="r_a55644500cc3b52282c439ca4541a2351"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a55644500cc3b52282c439ca4541a2351">setIsOnDisabled</a> (const bool &amp;newIsOnDisabled)</td></tr>
-<tr class="memdesc:a55644500cc3b52282c439ca4541a2351"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the value of the <b>isOnDisabled</b> attribute.  <br /></td></tr>
-<tr class="memitem:af79e9d677c23bc8e387f7161b3294c30" id="r_af79e9d677c23bc8e387f7161b3294c30"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af79e9d677c23bc8e387f7161b3294c30">setOutputsChange</a> (bool newOutputsChange)</td></tr>
-<tr class="memdesc:af79e9d677c23bc8e387f7161b3294c30"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the value of the attribute flag indicating if a change took place in any of the output attribute flags (IsOn included).  <br /></td></tr>
-<tr class="memitem:a535d3c56365f6c3de035bfbc35937987" id="r_a535d3c56365f6c3de035bfbc35937987"><td class="memItemLeft" align="right" valign="top">fncVdPtrPrmPtrType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a535d3c56365f6c3de035bfbc35937987">getFVPPWhnTrnOff</a> ()</td></tr>
-<tr class="memdesc:a535d3c56365f6c3de035bfbc35937987"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a pointer to a function that is set to execute every time the object <b>enters</b> the <b>Off State</b>.  <br /></td></tr>
-<tr class="memitem:ab3f18456d8f75dbdeaaca463fec8ee9a" id="r_ab3f18456d8f75dbdeaaca463fec8ee9a"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab3f18456d8f75dbdeaaca463fec8ee9a">getFVPPWhnTrnOffArgPtr</a> ()</td></tr>
-<tr class="memdesc:ab3f18456d8f75dbdeaaca463fec8ee9a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a pointer to the argument to be passed to the function set to execute every time the object <b>enters</b> the <b>Off State</b>.  <br /></td></tr>
-<tr class="memitem:a5ef5459cb174f58cb508b8e06dd92cea" id="r_a5ef5459cb174f58cb508b8e06dd92cea"><td class="memItemLeft" align="right" valign="top">fncVdPtrPrmPtrType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5ef5459cb174f58cb508b8e06dd92cea">getFVPPWhnTrnOn</a> ()</td></tr>
-<tr class="memdesc:a5ef5459cb174f58cb508b8e06dd92cea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a pointer to a function that is set to execute every time the object <b>enters</b> the <b>On State</b>.  <br /></td></tr>
-<tr class="memitem:a9d9a6762255010266632d1e6582bce78" id="r_a9d9a6762255010266632d1e6582bce78"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9d9a6762255010266632d1e6582bce78">getFVPPWhnTrnOnArgPtr</a> ()</td></tr>
-<tr class="memdesc:a9d9a6762255010266632d1e6582bce78"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a pointer to the argument to be passed to the function set to execute every time the object <b>enters</b> the <b>On State</b>.  <br /></td></tr>
 <tr class="memitem:a1b3fdd885524b23af0c3c84fdf9ba23c" id="r_a1b3fdd885524b23af0c3c84fdf9ba23c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1b3fdd885524b23af0c3c84fdf9ba23c">setFVPPWhnTrnOff</a> (fncVdPtrPrmPtrType newFVPPWhnTrnOff, void *argPtr=nullptr)</td></tr>
 <tr class="memdesc:a1b3fdd885524b23af0c3c84fdf9ba23c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a function to be executed every time the object <b>enters</b> the <b>Off State</b>.  <br /></td></tr>
 <tr class="memitem:acce842400fa2b9e312154418b31cc9e0" id="r_acce842400fa2b9e312154418b31cc9e0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acce842400fa2b9e312154418b31cc9e0">setFVPPWhnTrnOffArgPtr</a> (void *newFVPPWhnTrnOffArgPtr)</td></tr>
@@ -225,6 +221,10 @@ virtual&#160;</td><td class="memItemRight" valign="bottom"><b>~DbncdMPBttn</b> (
 <tr class="memdesc:a5dec3ff8e7087a0da67a28e7a575e4a7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a function to be executed every time the object <b>enters</b> the <b>On State</b>.  <br /></td></tr>
 <tr class="memitem:aa96302d0b96c6346455613ccd5c16096" id="r_aa96302d0b96c6346455613ccd5c16096"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa96302d0b96c6346455613ccd5c16096">setFVPPWhnTrnOnArgPtr</a> (void *newFVPPWhnTrnOnArgPtr)</td></tr>
 <tr class="memdesc:aa96302d0b96c6346455613ccd5c16096"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a pointer to an argument to be passed to the function set to execute every time the object <b>enters</b> the <b>On State</b>.  <br /></td></tr>
+<tr class="memitem:a55644500cc3b52282c439ca4541a2351" id="r_a55644500cc3b52282c439ca4541a2351"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a55644500cc3b52282c439ca4541a2351">setIsOnDisabled</a> (const bool &amp;newIsOnDisabled)</td></tr>
+<tr class="memdesc:a55644500cc3b52282c439ca4541a2351"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the value of the <b>isOnDisabled</b> attribute.  <br /></td></tr>
+<tr class="memitem:af79e9d677c23bc8e387f7161b3294c30" id="r_af79e9d677c23bc8e387f7161b3294c30"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af79e9d677c23bc8e387f7161b3294c30">setOutputsChange</a> (bool newOutputsChange)</td></tr>
+<tr class="memdesc:af79e9d677c23bc8e387f7161b3294c30"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the value of the attribute flag indicating if a change took place in any of the output attribute flags (IsOn included).  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Base class, models a Debounced Momentary Push Button (<b>D-MPB</b>). </p>
@@ -435,13 +435,13 @@ Here is the caller graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="class_dbncd_m_p_bttn_a3009725646aeb160884b8109d180b530_icgraph.png" border="0" usemap="#aclass_dbncd_m_p_bttn_a3009725646aeb160884b8109d180b530_icgraph" loading="lazy" alt=""/></div>
 <map name="aclass_dbncd_m_p_bttn_a3009725646aeb160884b8109d180b530_icgraph" id="aclass_dbncd_m_p_bttn_a3009725646aeb160884b8109d180b530_icgraph">
-<area shape="rect" title="Clears and resets flags, timers and counters modified through the object&#39;s signals processing." alt="" coords="696,215,860,241"/>
+<area shape="rect" title="Clears and resets flags, timers and counters modified through the object&#39;s signals processing." alt="" coords="696,228,860,255"/>
 <area shape="rect" href="class_ltch_m_p_bttn.html#aa52047bd930afc19d8c1f9026f7605ef" title="See DbncdMPBttn::clrStatus(bool)" alt="" coords="492,152,642,179"/>
-<area shape="poly" title=" " alt="" coords="715,212,614,182,616,177,717,207"/>
-<area shape="rect" href="class_vdbl_m_p_bttn.html#a7ea82534da6a8f39d9715a3126387d30" title="See DbncdMPBttn::clrStatus(bool)" alt="" coords="492,215,643,241"/>
-<area shape="poly" title=" " alt="" coords="681,231,643,231,643,225,681,225"/>
-<area shape="rect" href="class_dbncd_m_p_bttn.html#a2df98cfb822df05bc232143f883e5c32" title="Resets the MPB behavior automaton to it&#39;s Initial or Start State" alt="" coords="486,265,648,292"/>
-<area shape="poly" title=" " alt="" coords="705,248,626,267,625,262,704,243"/>
+<area shape="poly" title=" " alt="" coords="723,225,606,182,608,177,725,220"/>
+<area shape="rect" href="class_vdbl_m_p_bttn.html#a7ea82534da6a8f39d9715a3126387d30" title="See DbncdMPBttn::clrStatus(bool)" alt="" coords="492,228,643,255"/>
+<area shape="poly" title=" " alt="" coords="681,244,643,244,643,239,681,239"/>
+<area shape="rect" href="class_dbncd_m_p_bttn.html#a2df98cfb822df05bc232143f883e5c32" title="Resets the MPB behavior automaton to it&#39;s Initial or Start State" alt="" coords="486,279,648,305"/>
+<area shape="poly" title=" " alt="" coords="705,261,626,281,625,275,704,256"/>
 <area shape="rect" href="class_dbl_actn_ltch_m_p_bttn.html#a7454fc41a95d7bb028831a66781dffb3" title="See DbncddMPBttn::clrStatus(bool)" alt="" coords="272,60,417,103"/>
 <area shape="poly" title=" " alt="" coords="517,148,437,117,406,106,408,101,439,112,519,143"/>
 <area shape="rect" href="class_tm_ltch_m_p_bttn.html#a8c27b3a6f642a4c7bb4d27b56cc3abaf" title="see DbncdMPBttn::clrStatus(bool)" alt="" coords="260,127,429,153"/>
@@ -455,7 +455,9 @@ Here is the caller graph for this function:</div>
 <area shape="rect" href="class_hntd_tm_ltch_m_p_bttn.html#aa87d5a52555a45bc3c2f1276cfe8a446" title="see DbncdMPBttn::clrStatus(bool)" alt="" coords="5,127,203,153"/>
 <area shape="poly" title=" " alt="" coords="244,143,203,143,203,137,244,137"/>
 <area shape="rect" href="class_tm_vdbl_m_p_bttn.html#a33bb7f6a78ea9c912a6d2c906ef756e5" title="See DbncdMPBttn::clrStatus(bool)" alt="" coords="259,228,430,255"/>
-<area shape="poly" title=" " alt="" coords="476,236,430,239,430,234,476,231"/>
+<area shape="poly" title=" " alt="" coords="476,244,430,244,430,239,476,239"/>
+<area shape="rect" href="class_dbncd_m_p_bttn.html#a9540a12554008a6705056b02fbafed38" title="Restarts the software timer updating the calculation of the object internal flags." alt="" coords="267,279,422,305"/>
+<area shape="poly" title=" " alt="" coords="470,295,422,295,422,289,470,289"/>
 </map>
 </div>
 
@@ -1101,6 +1103,16 @@ Here is the call graph for this function:</div>
 <area shape="poly" title=" " alt="" coords="168,16,200,16,200,21,168,21"/>
 </map>
 </div>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="class_dbncd_m_p_bttn_a2df98cfb822df05bc232143f883e5c32_icgraph.png" border="0" usemap="#aclass_dbncd_m_p_bttn_a2df98cfb822df05bc232143f883e5c32_icgraph" loading="lazy" alt=""/></div>
+<map name="aclass_dbncd_m_p_bttn_a2df98cfb822df05bc232143f883e5c32_icgraph" id="aclass_dbncd_m_p_bttn_a2df98cfb822df05bc232143f883e5c32_icgraph">
+<area shape="rect" title="Resets the MPB behavior automaton to it&#39;s Initial or Start State" alt="" coords="208,5,370,32"/>
+<area shape="rect" href="class_dbncd_m_p_bttn.html#a9540a12554008a6705056b02fbafed38" title="Restarts the software timer updating the calculation of the object internal flags." alt="" coords="5,5,160,32"/>
+<area shape="poly" title=" " alt="" coords="192,21,160,21,160,16,192,16"/>
+</map>
+</div>
 
 </div>
 </div>
@@ -1129,6 +1141,18 @@ Here is the call graph for this function:</div>
   </dd>
 </dl>
 <dl class="section warning"><dt>Warning</dt><dd>This method will restart the inactive timer after a <b><a class="el" href="#a3cf51be801e6024cc3ca6b984deb52c6" title="Pauses the software timer updating the computation of the object&#39;s internal flags value (object&#39;s sta...">pause()</a></b> method. If the object's timer was modified by an <b><a class="el" href="#a58c55f2713734a81ef7ac01249973731" title="Detaches the object from the timer that monitors the input pins, compute and updates the object&#39;s sta...">end()</a>* method then a **begin()</b> method will be needed to restart it's timer. </dd></dl>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="class_dbncd_m_p_bttn_a9540a12554008a6705056b02fbafed38_cgraph.png" border="0" usemap="#aclass_dbncd_m_p_bttn_a9540a12554008a6705056b02fbafed38_cgraph" loading="lazy" alt=""/></div>
+<map name="aclass_dbncd_m_p_bttn_a9540a12554008a6705056b02fbafed38_cgraph" id="aclass_dbncd_m_p_bttn_a9540a12554008a6705056b02fbafed38_cgraph">
+<area shape="rect" title="Restarts the software timer updating the calculation of the object internal flags." alt="" coords="5,5,160,32"/>
+<area shape="rect" href="class_dbncd_m_p_bttn.html#a2df98cfb822df05bc232143f883e5c32" title="Resets the MPB behavior automaton to it&#39;s Initial or Start State" alt="" coords="208,5,370,32"/>
+<area shape="poly" title=" " alt="" coords="160,16,192,16,192,21,160,21"/>
+<area shape="rect" href="class_dbncd_m_p_bttn.html#a3009725646aeb160884b8109d180b530" title="Clears and resets flags, timers and counters modified through the object&#39;s signals processing." alt="" coords="418,5,581,32"/>
+<area shape="poly" title=" " alt="" coords="371,16,402,16,402,21,371,21"/>
+</map>
+</div>
 
 </div>
 </div>

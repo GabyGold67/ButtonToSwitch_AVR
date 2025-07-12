@@ -1,9 +1,5 @@
 <map id="TgglLtchMPBttn::TgglLtchMPBttn" name="TgglLtchMPBttn::TgglLtchMPBttn">
 <area shape="rect" id="Node000001" title="Class constructor." alt="" coords="5,5,179,48"/>
-<area shape="rect" id="Node000002" href="$class_ltch_m_p_bttn.html#a41dc99aca78d412ec91c9be451e2dac3" title="Class constructor." alt="" coords="227,13,394,40"/>
+<area shape="rect" id="Node000002" href="$class_ltch_m_p_bttn.html#ab1856959f1318126a6370a04b2cd9782" title="Default constructor." alt="" coords="227,13,394,40"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="179,24,211,24,211,29,179,29"/>
-<area shape="rect" id="Node000003" href="$class_dbncd_dlyd_m_p_bttn.html#a6b28f4f72471deb4a48b4dee9083e884" title="Default constructor." alt="" coords="442,5,645,48"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="394,24,426,24,426,29,394,29"/>
-<area shape="rect" id="Node000004" href="$class_dbncd_m_p_bttn.html#a6b610f28298f925ce4672bf5891e843b" title="Default class constructor." alt="" coords="693,13,887,40"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="646,24,678,24,678,29,646,29"/>
 </map>

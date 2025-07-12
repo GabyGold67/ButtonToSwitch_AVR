@@ -1,6 +1,9 @@
 var class_ltch_m_p_bttn =
 [
+    [ "LtchMPBttn", "class_ltch_m_p_bttn.html#ab1856959f1318126a6370a04b2cd9782", null ],
     [ "LtchMPBttn", "class_ltch_m_p_bttn.html#a41dc99aca78d412ec91c9be451e2dac3", null ],
+    [ "LtchMPBttn", "class_ltch_m_p_bttn.html#a41e826688b0cd221275ed14f90c19bb4", null ],
+    [ "~LtchMPBttn", "class_ltch_m_p_bttn.html#a504174fb6c928c040ffbc05ba1ef7da0", null ],
     [ "begin", "class_ltch_m_p_bttn.html#aa15f59d4fa5b3d57d6884914399bfa4d", null ],
     [ "clrStatus", "class_ltch_m_p_bttn.html#aa52047bd930afc19d8c1f9026f7605ef", null ],
     [ "getIsLatched", "class_ltch_m_p_bttn.html#a00dfc51bc5d19ed9edaf8f97b0df34c9", null ],
