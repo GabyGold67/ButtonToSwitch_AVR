@@ -1361,7 +1361,7 @@ protected:
 	void (*_fnWhnTrnOnScndry)() {nullptr};
 
 	virtual void mpbPollCallback();
-	virtual uint32_t _otptsSttsPkg(uint32_t prevVal = 0);	//TODO <<==================================
+	virtual uint32_t _otptsSttsPkg(uint32_t prevVal = 0);
 	virtual void stDisabled_In(){};
    virtual void stOnEndScndMod_Out(){};
    virtual void stOnScndMod_Do() = 0;
@@ -1484,7 +1484,7 @@ public:
 	 * @param newFVPPWhnTrnOff Function pointer to the function intended to be called when the object **enters** the **Secondary Mode Off State**. Passing **nullptr** as parameter deactivates the function execution mechanism.
 	 * @param argPtr void pointer to an argument to be passed to the function when it is called.
 	 */
-	void setFVPPWhnTrnOffScndry(fncVdPtrPrmPtrType newFVPPWhnTrnOff, void* argPtr = nullptr);	//TODO <<==================================
+	void setFVPPWhnTrnOffScndry(fncVdPtrPrmPtrType newFVPPWhnTrnOff, void* argPtr = nullptr);
 	/**
 	 * @brief Sets a pointer to an argument to be passed to the function set to execute every time the object **enters** the **Secondary Mode Off State**.
 	 *
@@ -1492,7 +1492,7 @@ public:
 	 *
 	 * @param newFVPPWhnTrnOffArgPtr Pointer to an argument to be passed to the function set to execute every time the object enters the **Secondary Mode Off State**.
 	 */
-	void setFVPPWhnTrnOffScndryArgPtr(void* newFVPPWhnTrnOffArgPtr);	//TODO <<==================================
+	void setFVPPWhnTrnOffScndryArgPtr(void* newFVPPWhnTrnOffArgPtr);
 	/**
 	 * @brief Sets a function to be executed every time the object **enters** the **Secondary Mode On State**.
 	 *
@@ -1501,7 +1501,7 @@ public:
 	 * @param newFVPPWhnTrnOn Function pointer to the function intended to be called when the object **enters** the **Secondary Mode On State**. Passing **nullptr** as parameter deactivates the function execution mechanism.
 	 * @param argPtr void pointer to an argument to be passed to the function when it is called.
 	 */
-	void setFVPPWhnTrnOnScndry(fncVdPtrPrmPtrType newFVPPWhnTrnOn, void* argPtr = nullptr);	//TODO <<==================================
+	void setFVPPWhnTrnOnScndry(fncVdPtrPrmPtrType newFVPPWhnTrnOn, void* argPtr = nullptr);
 	/**
 	 * @brief Sets a pointer to an argument to be passed to the function set to execute every time the object **enters** the **Secondary Mode On State**.
 	 *
@@ -1509,7 +1509,7 @@ public:
 	 *
 	 * @param newFVPPWhnTrnOnArgPtr Pointer to an argument to be passed to the function set to execute every time the object enters the **Secondary Mode On State**.
 	 */
-	void setFVPPWhnTrnOnScndryArgPtr(void* newFVPPWhnTrnOnArgPtr);	//TODO <<==================================
+	void setFVPPWhnTrnOnScndryArgPtr(void* newFVPPWhnTrnOnArgPtr);
 	/**
 	 * @brief Sets a new value for the scndModActvDly class attribute
 	 *
