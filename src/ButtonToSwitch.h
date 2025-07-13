@@ -20,10 +20,10 @@
   * mail <gdgoldman67@hotmail.com>  
   * Github <https://github.com/GabyGold67>  
   * 
-  * @version v4.5.0
+  * @version v4.6.0
   * 
   * @date First release: 10/09/2024  
-  *       Last update:   10/07/2025 15:30 (GMT+0200) DST  
+  *       Last update:   13/07/2025 12:10 (GMT+0200) DST  
   * 
   * @copyright Copyright (c) 2025  GPL-3.0 license  
   *******************************************************************************
@@ -173,10 +173,10 @@ protected:
 	unsigned long int _dbncRlsTimeTempSett{0};
 	unsigned long int _dbncTimerStrt{0};
 	unsigned long int _dbncTimeTempSett{0};
-	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOff{nullptr};	// _fVPPWhnTrnOff	//TODO <<==================================
-	void* _fnVdPtrPrmWhnTrnOffArgPtr{nullptr};	// _fVPPWhnTrnOffArgPtr	//TODO <<==================================
-	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOn{nullptr};	// _fVPPWhnTrnOn	//TODO <<==================================
-	void* _fnVdPtrPrmWhnTrnOnArgPtr{nullptr};	// _fVPPWhnTrnOnArgPtr	//TODO <<==================================
+	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOff{nullptr};	// _fVPPWhnTrnOff
+	void* _fnVdPtrPrmWhnTrnOffArgPtr{nullptr};	// _fVPPWhnTrnOffArgPtr
+	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOn{nullptr};	// _fVPPWhnTrnOn
+	void* _fnVdPtrPrmWhnTrnOnArgPtr{nullptr};	// _fVPPWhnTrnOnArgPtr
 	void (*_fnWhnTrnOff)() {nullptr};
 	void (*_fnWhnTrnOn)() {nullptr};
 
@@ -1589,6 +1589,8 @@ protected:
 	bool _curSldrDirUp{true};
 	uint16_t _initOtptCurVal{};
 	uint16_t _otptCurVal{};
+	bool _otptCurValIsMax{false};
+	bool _otptCurValIsMin{false};
 	unsigned long _otptSldrSpd{1};
 	uint16_t _otptSldrStpSize{0x01};
 	uint16_t _otptValMax{0xFFFF};
@@ -1599,12 +1601,16 @@ protected:
 	void stOnEndScndMod_Out();
    virtual void stOnScndMod_Do();
 	virtual void stOnStrtScndMod_In();
+	void _turnOffSldrMax();
+	void _turnOnSldrMax();
+	void _turnOffSldrMin();
+	void _turnOnSldrMin();
 
 public:
 	/**
 	 * @brief Default constructor
 	 */
-	SldrDALtchMPBttn();	//TODO <<==================================
+	SldrDALtchMPBttn();	
    /**
 	 * @brief Class constructor
     *
@@ -1866,10 +1872,10 @@ protected:
  	};
  	fdaVmpbStts _mpbFdaState {stOffNotVPP};
 
-	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOffVdd{nullptr};	// _fVPPWhnTrnOffVdd	//TODO <<==================================
-	void* _fnVdPtrPrmWhnTrnOffVddArgPtr{nullptr};	// _fVPPWhnTrnOffVddArgPtr	//TODO <<==================================
-	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOnVdd{nullptr};	// _fVPPWhnTrnOnVdd	//TODO <<==================================
-	void* _fnVdPtrPrmWhnTrnOnVddArgPtr{nullptr};	// _fVPPWhnTrnOnVddArgPtr	//TODO <<==================================	
+	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOffVdd{nullptr};	// _fVPPWhnTrnOffVdd
+	void* _fnVdPtrPrmWhnTrnOffVddArgPtr{nullptr};	// _fVPPWhnTrnOffVddArgPtr
+	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOnVdd{nullptr};	// _fVPPWhnTrnOnVdd
+	void* _fnVdPtrPrmWhnTrnOnVddArgPtr{nullptr};	// _fVPPWhnTrnOnVddArgPtr
 	void (*_fnWhnTrnOffVdd)() {nullptr};
 	void (*_fnWhnTrnOnVdd)() {nullptr};
 	bool _frcOtptLvlWhnVdd {true};
@@ -1895,7 +1901,7 @@ public:
 	/**
 	 * @brief Default constructor
 	 */
-	VdblMPBttn();	//TODO <<==================================
+	VdblMPBttn();
     /**
      * @brief Class constructor
      *
@@ -1948,13 +1954,13 @@ public:
 	 * @return fncVdPtrPrmPtrType The pointer to the function set to execute every time the object enters the **Voided Off State** a.k.a. **Not Voided State**.
 	 * @retval nullptr if there is no function with the described signature set to execute when the object enters the **Voided Off State** a.k.a. **Not Voided State**.
 	 */
-	fncVdPtrPrmPtrType getFVPPWhnTrnOffVdd();		//TODO <<==================================
+	fncVdPtrPrmPtrType getFVPPWhnTrnOffVdd();
 	/**
 	 * @brief Returns a pointer to the argument to be passed to the function set to execute every time the object **enters** the **Voided Off State** a.k.a. **Not Voided State**.
 	 * 
 	 * @return void* Pointer to the argument to be passed to the function set to execute every time the object enters the **Voided Off State** a.k.a. **Not Voided State**.
 	 */
-	void* getFVPPWhnTrnOffVddArgPtr();	//TODO <<==================================
+	void* getFVPPWhnTrnOffVddArgPtr();
 	/**
 	 * @brief Returns a pointer to a function that is set to execute every time the object **enters** the **Voided On State** a.k.a. **Voided State**.
 	 * 
@@ -1963,13 +1969,13 @@ public:
 	 * @return fncVdPtrPrmPtrType The pointer to the function set to execute every time the object enters the **Voided On State** a.k.a. **Voided State**.
 	 * @retval nullptr if there is no function with the described signature set to execute when the object enters the **Voided On State** a.k.a. **Voided State**.
 	 */
-	fncVdPtrPrmPtrType getFVPPWhnTrnOnVdd();	//TODO <<==================================
+	fncVdPtrPrmPtrType getFVPPWhnTrnOnVdd();
 	/**
 	 * @brief Returns a pointer to the argument to be passed to the function set to execute every time the object **enters** the **Voided On State** a.k.a. **Voided State**.
 	 * 
 	 * @return void* Pointer to the argument to be passed to the function set to execute every time the object enters the **Voided On State** a.k.a. **Voided State**.
 	 */
-	void* getFVPPWhnTrnOnVddArgPtr();	//TODO <<==================================
+	void* getFVPPWhnTrnOnVddArgPtr();
 	 /**
      * @brief Returns the current value of the isVoided attribute flag
      *
@@ -2014,7 +2020,7 @@ public:
 	 * @param newFVPPWhnTrnOff Function pointer to the function intended to be called when the object **enters** the **Voided Off State** a.k.a. **Not Voided State**. Passing **nullptr** as parameter deactivates the function execution mechanism.
 	 * @param argPtr void pointer to an argument to be passed to the function when it is called.
 	 */
-	void setFVPPWhnTrnOffVdd(fncVdPtrPrmPtrType newFVPPWhnTrnOff, void* argPtr = nullptr);	//TODO <<==================================
+	void setFVPPWhnTrnOffVdd(fncVdPtrPrmPtrType newFVPPWhnTrnOff, void* argPtr = nullptr);
 	/**
 	 * @brief Sets a pointer to an argument to be passed to the function set to execute every time the object **enters** the **Voided Off State** a.k.a. **Not Voided State**.
 	 *
@@ -2022,7 +2028,7 @@ public:
 	 *
 	 * @param newFVPPWhnTrnOffArgPtr Pointer to an argument to be passed to the function set to execute every time the object enters the **Voided Off State** a.k.a. **Not Voided State**.
 	 */
-	void setFVPPWhnTrnOffVddArgPtr(void* newFVPPWhnTrnOffArgPtr);	//TODO <<==================================
+	void setFVPPWhnTrnOffVddArgPtr(void* newFVPPWhnTrnOffArgPtr);
 	/**
 	 * @brief Sets a function to be executed every time the object **enters** the **Voided On State** a.k.a. **Voided State**.
 	 *
@@ -2031,7 +2037,7 @@ public:
 	 * @param newFVPPWhnTrnOn Function pointer to the function intended to be called when the object **enters** the **Voided On State** a.k.a. **Voided State**. Passing **nullptr** as parameter deactivates the function execution mechanism.
 	 * @param argPtr void pointer to an argument to be passed to the function when it is called.
 	 */
-	void setFVPPWhnTrnOnVdd(fncVdPtrPrmPtrType newFVPPWhnTrnOn, void* argPtr = nullptr);	//TODO <<==================================
+	void setFVPPWhnTrnOnVdd(fncVdPtrPrmPtrType newFVPPWhnTrnOn, void* argPtr = nullptr);
 	/**
 	 * @brief Sets a pointer to an argument to be passed to the function set to execute every time the object **enters** the **Voided On State** a.k.a. **Voided State**.
 	 *
@@ -2039,7 +2045,7 @@ public:
 	 *
 	 * @param newFVPPWhnTrnOnArgPtr Pointer to an argument to be passed to the function set to execute every time the object enters the **Voided On State** a.k.a. **Voided State**.
 	 */
-	void setFVPPWhnTrnOnVddArgPtr(void* newFVPPWhnTrnOnArgPtr);	//TODO <<==================================
+	void setFVPPWhnTrnOnVddArgPtr(void* newFVPPWhnTrnOnArgPtr);
 	/**
      * @brief Sets the value of the isVoided attribute flag to false
      *
@@ -2086,7 +2092,7 @@ public:
 	/**
 	 * @brief Default constructor 
 	 */
-	TmVdblMPBttn();	//TODO <<==================================
+	TmVdblMPBttn();
     /**
      * @brief Class constructor
      *

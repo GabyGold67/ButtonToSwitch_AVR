@@ -20,10 +20,10 @@
   * mail <gdgoldman67@hotmail.com>  
   * Github <https://github.com/GabyGold67>  
   * 
-  * @version v4.5.0
+  * @version v4.6.0
   * 
   * @date First release: 10/09/2024  
-  *       Last update:   10/07/2025 15:30 (GMT+0200) DST  
+  *       Last update:   13/07/2025 12:10 (GMT+0200) DST  
   * 
   * @copyright Copyright (c) 2025  GPL-3.0 license  
   *******************************************************************************
@@ -1441,26 +1441,6 @@ fncPtrType HntdTmLtchMPBttn::getFnWhnTrnOnWrnng(){
 	return _fnWhnTrnOnWrnng;
 }
 
-fncPtrType HntdTmLtchMPBttn::getFnWhnTrnOffPilot(){
-
-	return _fnWhnTrnOffPilot;
-}
-
-fncPtrType HntdTmLtchMPBttn::getFnWhnTrnOffWrnng(){
-
-	return _fnWhnTrnOffWrnng;
-}
-
-fncPtrType HntdTmLtchMPBttn::getFnWhnTrnOnPilot(){
-
-	return _fnWhnTrnOnPilot;
-}
-
-fncPtrType HntdTmLtchMPBttn::getFnWhnTrnOnWrnng(){
-	
-	return _fnWhnTrnOnWrnng;
-}
-
 fncVdPtrPrmPtrType HntdTmLtchMPBttn::getFVPPWhnTrnOffPilot(){
 	
    return _fnVdPtrPrmWhnTrnOffPilot;
@@ -2256,16 +2236,18 @@ void DblActnLtchMPBttn::updFdaState(){
 			//In: >>---------------------------------->>
 			if(_sttChng){
 				stDisabled_In();
-				if(_isOn != _isOnDisabled)
+				if(_isOn != _isOnDisabled){
 					if(_isOn)
 						_turnOff();
 					else
 						_turnOn();
-				if(_isOnScndry != _isOnDisabled)
+				}
+				if(_isOnScndry != _isOnDisabled){
 					if(_isOnScndry)
 						_turnOffScndry();
 					else
 						_turnOnScndry();
+				}
 				clrStatus(false);	//Clears all flags and timers, _isOn value will not be affected
 				_isEnabled = false;
 				_validDisablePend = false;
@@ -2346,7 +2328,11 @@ void DblActnLtchMPBttn::updValidUnlatchStatus(){
 }
 
 //=========================================================================> Class methods delimiter
-//FFDR Continue code checking from this point. Gaby
+
+DDlydDALtchMPBttn::DDlydDALtchMPBttn()
+{	
+}
+
 DDlydDALtchMPBttn::DDlydDALtchMPBttn(const uint8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
 :DblActnLtchMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay)
 {
@@ -2377,9 +2363,8 @@ void DDlydDALtchMPBttn::clrStatus(bool clrIsOn){
 }*/
 
 void DDlydDALtchMPBttn::stOnEndScndMod_Out(){
-	if(_isOnScndry){
+	if(_isOnScndry)
 		_turnOffScndry();
-	}
 
 	return;
 }
@@ -2390,14 +2375,17 @@ void DDlydDALtchMPBttn::stOnScndMod_Do(){
 }
 
 void DDlydDALtchMPBttn::stOnStrtScndMod_In(){
-	if(!_isOnScndry){
+	if(!_isOnScndry)
 		_turnOnScndry();
-	}
 
 	return;
 }
 
 //=========================================================================> Class methods delimiter
+
+SldrDALtchMPBttn::SldrDALtchMPBttn()
+{	
+}
 
 SldrDALtchMPBttn::SldrDALtchMPBttn(const uint8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay, const uint16_t initVal)
 :DblActnLtchMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay), _initOtptCurVal{initVal}
@@ -2616,42 +2604,44 @@ void SldrDALtchMPBttn::stOnScndMod_Do(){
 	_sldrTmrNxtStrt -= _sldrTmrRemains;
 	_scndModTmrStrt = _sldrTmrNxtStrt;	//This ends the time management section of the state, calculating the time
 
-	if(_curSldrDirUp){
-		// The slider is moving up
+	if(_curSldrDirUp){	// The slider is moving up		
 		if(_otptCurVal != _otptValMax){
-			if((_otptValMax - _otptCurVal) >= (_otpStpsChng * _otptSldrStpSize)){
-				//The value change is in range
+			if((_otptValMax - _otptCurVal) >= (_otpStpsChng * _otptSldrStpSize)){	//The value change is in range				
 				_otptCurVal += (_otpStpsChng * _otptSldrStpSize);
 			}
-			else{
-				//The value change goes out of range
+			else{	//The value change goes out of range				
 				_otptCurVal = _otptValMax;
 			}
 			setOutputsChange(true);
 		}
 		if(getOutputsChange()){
+			if(_otptCurValIsMin){
+				_turnOffSldrMin();
+			}
 			if(_otptCurVal == _otptValMax){
+				_turnOnSldrMax();
 				if(_autoSwpDirOnEnd == true){
 					_curSldrDirUp = false;
 				}
 			}
 		}
 	}
-	else{
-		// The slider is moving down
+	else{	// The slider is moving down		
 		if(_otptCurVal != _otptValMin){
-			if((_otptCurVal - _otptValMin) >= (_otpStpsChng * _otptSldrStpSize)){
-				//The value change is in range
+			if((_otptCurVal - _otptValMin) >= (_otpStpsChng * _otptSldrStpSize)){	//The value change is in range				
 				_otptCurVal -= (_otpStpsChng * _otptSldrStpSize);
 			}
-			else{
-				//The value change goes out of range
+			else{	//The value change goes out of range				
 				_otptCurVal = _otptValMin;
 			}
 			setOutputsChange(true);
 		}
 		if(getOutputsChange()){
+			if(_otptCurValIsMax){
+				_turnOffSldrMax();
+			}
 			if(_otptCurVal == _otptValMin){
+				_turnOnSldrMin();
 				if(_autoSwpDirOnEnd == true){
 					_curSldrDirUp = true;
 				}
@@ -2676,7 +2666,87 @@ bool SldrDALtchMPBttn::swapSldrDir(){
 	return _setSldrDir(!_curSldrDirUp);
 }
 
+void SldrDALtchMPBttn::_turnOffSldrMax(){
+	/*if(_otptCurValIsMax){
+		//---------------->> Functions related actions
+		if(_fnWhnTrnOffSldrMax != nullptr){
+			_fnWhnTrnOffSldrMax();
+		}
+		if(_fnVdPtrPrmWhnTrnOffSldrMax != nullptr){
+			_fnVdPtrPrmWhnTrnOffSldrMax(_fnVdPtrPrmWhnTrnOffSldrMaxArgPtr);
+		}
+		//---------------->> Flags related actions
+		_otptCurValIsMax = false;
+		setOutputsChange(true);
+	}*/	//TODO Activate the previous code segment
+
+	_otptCurValIsMax = false;
+
+	return;
+}
+
+void SldrDALtchMPBttn::_turnOnSldrMax(){
+	/*if(!_otptCurValIsMax){
+		//---------------->> Functions related actions
+		if(_fnWhnTrnOnSldrMax != nullptr){
+			_fnWhnTrnOnSldrMax();
+		}
+		if(_fnVdPtrPrmWhnTrnOnSldrMax != nullptr){
+			_fnVdPtrPrmWhnTrnOnSldrMax(_fnVdPtrPrmWhnTrnOnSldrMaxArgPtr);
+		}
+		//---------------->> Flags related actions
+		_otptCurValIsMax = true;
+		setOutputsChange(true);
+	}*/	//TODO Activate the previous code segment
+
+	_otptCurValIsMax = true;
+
+	return;
+}
+
+void SldrDALtchMPBttn::_turnOffSldrMin(){
+	/*if(_otptCurValIsMin){
+		//---------------->> Functions related actions
+		if(_fnWhnTrnOffSldrMin != nullptr){
+			_fnWhnTrnOffSldrMin();
+		}
+		if(_fnVdPtrPrmWhnTrnOffSldrMin != nullptr){
+			_fnVdPtrPrmWhnTrnOffSldrMin(_fnVdPtrPrmWhnTrnOffSldrMinArgPtr);
+		}
+		//---------------->> Flags related actions
+		_otptCurValIsMin = false;
+		setOutputsChange(true);
+	}*/	//TODO Activate the previous code segment
+
+	_otptCurValIsMin = false;
+
+	return;
+}
+
+void SldrDALtchMPBttn::_turnOnSldrMin(){
+	/*if(!_otptCurValIsMin){
+		//---------------->> Functions related actions
+		if(_fnWhnTrnOnSldrMin != nullptr){
+			_fnWhnTrnOnSldrMin();
+		}
+		if(_fnVdPtrPrmWhnTrnOnSldrMin != nullptr){
+			_fnVdPtrPrmWhnTrnOnSldrMin(_fnVdPtrPrmWhnTrnOnSldrMinArgPtr);
+		}
+		//---------------->> Flags related actions
+		_otptCurValIsMin = true;
+		setOutputsChange(true);
+	}*/	//TODO Activate the previous code segment
+
+	_otptCurValIsMin = true;
+
+	return;
+}
+
 //=========================================================================> Class methods delimiter
+
+VdblMPBttn::VdblMPBttn()
+{
+}
 
 VdblMPBttn::VdblMPBttn(const uint8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay, const bool &isOnDisabled)
 :DbncdDlydMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay)
@@ -2710,6 +2780,26 @@ fncPtrType VdblMPBttn::getFnWhnTrnOnVdd(){
 bool VdblMPBttn::getFrcOtptLvlWhnVdd(){
 
 	return _frcOtptLvlWhnVdd;
+}
+
+fncVdPtrPrmPtrType VdblMPBttn::getFVPPWhnTrnOffVdd(){
+	
+	return _fnVdPtrPrmWhnTrnOffVdd;
+}
+
+void* VdblMPBttn::getFVPPWhnTrnOffVddArgPtr(){
+	
+	return _fnVdPtrPrmWhnTrnOffVddArgPtr;
+}
+
+fncVdPtrPrmPtrType VdblMPBttn::getFVPPWhnTrnOnVdd(){
+	
+	return _fnVdPtrPrmWhnTrnOnVdd;
+}
+
+void* VdblMPBttn::getFVPPWhnTrnOnVddArgPtr(){
+	
+	return _fnVdPtrPrmWhnTrnOnVddArgPtr;
 }
 
 const bool VdblMPBttn::getIsVoided() const{
@@ -2748,9 +2838,8 @@ uint32_t VdblMPBttn::_otptsSttsPkg(uint32_t prevVal){
 }
 
 void VdblMPBttn::setFnWhnTrnOffVddPtr(void(*newFnWhnTrnOff)()){
-	if (_fnWhnTrnOffVdd != newFnWhnTrnOff){
+	if (_fnWhnTrnOffVdd != newFnWhnTrnOff)
 		_fnWhnTrnOffVdd = newFnWhnTrnOff;
-	}
 
 	return;
 }
@@ -2765,6 +2854,38 @@ void VdblMPBttn::setFnWhnTrnOnVddPtr(void(*newFnWhnTrnOn)()){
 void VdblMPBttn::setFrcdOtptWhnVdd(const bool &newVal){
 	if(_frcOtptLvlWhnVdd != newVal)
 		_frcOtptLvlWhnVdd = newVal;
+
+	return;
+}
+
+void VdblMPBttn::setFVPPWhnTrnOffVdd(fncVdPtrPrmPtrType newFVPPWhnTrnOff, void* argPtr){
+	if (_fnVdPtrPrmWhnTrnOffVdd != newFVPPWhnTrnOff){
+		_fnVdPtrPrmWhnTrnOffVdd = newFVPPWhnTrnOff;
+		_fnVdPtrPrmWhnTrnOffVddArgPtr = argPtr;
+	}
+
+	return;	
+}
+
+void VdblMPBttn::setFVPPWhnTrnOffVddArgPtr(void* newFVPPWhnTrnOffArgPtr){
+	if (_fnVdPtrPrmWhnTrnOffVddArgPtr != newFVPPWhnTrnOffArgPtr)
+		_fnVdPtrPrmWhnTrnOffVddArgPtr = newFVPPWhnTrnOffArgPtr;
+
+	return;
+}
+
+void VdblMPBttn::setFVPPWhnTrnOnVdd(fncVdPtrPrmPtrType newFVPPWhnTrnOn, void* argPtr){
+	if (_fnVdPtrPrmWhnTrnOnVdd != newFVPPWhnTrnOn){
+		_fnVdPtrPrmWhnTrnOnVdd = newFVPPWhnTrnOn;
+		_fnVdPtrPrmWhnTrnOnVddArgPtr = argPtr;
+	}
+
+	return;
+}
+
+void VdblMPBttn::setFVPPWhnTrnOnVddArgPtr(void* newFVPPWhnTrnOnArgPtr){
+	if (_fnVdPtrPrmWhnTrnOnVddArgPtr != newFVPPWhnTrnOnArgPtr)
+		_fnVdPtrPrmWhnTrnOnVddArgPtr = newFVPPWhnTrnOnArgPtr;
 
 	return;
 }
@@ -2821,6 +2942,8 @@ void VdblMPBttn::_turnOffVdd(){
 		//---------------->> Functions related actions
 		if(_fnWhnTrnOffVdd != nullptr)
 			_fnWhnTrnOffVdd();
+		if(_fnVdPtrPrmWhnTrnOffVdd != nullptr)
+			_fnVdPtrPrmWhnTrnOffVdd(_fnVdPtrPrmWhnTrnOffVddArgPtr);
 		//---------------->> Flags related actions
 		_isVoided = false;
 		setOutputsChange(true);
@@ -2835,6 +2958,8 @@ void VdblMPBttn::_turnOnVdd(){
 		//---------------->> Functions related actions
 		if(_fnWhnTrnOnVdd != nullptr)
 			_fnWhnTrnOnVdd();
+		if(_fnVdPtrPrmWhnTrnOnVdd != nullptr)
+			_fnVdPtrPrmWhnTrnOnVdd(_fnVdPtrPrmWhnTrnOnVddArgPtr);
 		//---------------->> Flags related actions
 		_isVoided = true;
 		setOutputsChange(true);
@@ -2869,9 +2994,8 @@ void VdblMPBttn::updFdaState(){
 			//In: >>---------------------------------->>
 			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
 			//Do: >>---------------------------------->>
-			if(!_isOn){
+			if(!_isOn)
 				_turnOn();
-			}
 			_validPressPend = false;
 			stOffVPP_Do();	// This provides a setting point for the voiding mechanism to be started
 			_mpbFdaState = stOnNVRP;
@@ -2904,7 +3028,8 @@ void VdblMPBttn::updFdaState(){
 			if(_sttChng){
 				_turnOnVdd();
 				_validVoidPend = false;
-				clrSttChng();}	// Execute this code only ONCE, when entering this state
+				clrSttChng();
+			}	// Execute this code only ONCE, when entering this state
 			//Do: >>---------------------------------->>
 			_mpbFdaState = stOnVddNVUP;
 			setSttChng();
@@ -3029,6 +3154,10 @@ void VdblMPBttn::updFdaState(){
 
 //=========================================================================> Class methods delimiter
 
+TmVdblMPBttn::TmVdblMPBttn()
+{
+}
+
 TmVdblMPBttn::TmVdblMPBttn(const uint8_t &mpbttnPin, unsigned long int voidTime, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay, const bool &isOnDisabled)
 :VdblMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay, isOnDisabled), _voidTime{voidTime}
 {
@@ -3112,6 +3241,10 @@ bool TmVdblMPBttn::updVoidStatus(){
 
 //=========================================================================> Class methods delimiter
 
+SnglSrvcVdblMPBttn::SnglSrvcVdblMPBttn()
+{
+}
+
 SnglSrvcVdblMPBttn::SnglSrvcVdblMPBttn(const uint8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
 :VdblMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay, false)
 {
@@ -3179,7 +3312,21 @@ unsigned long int findMCD(unsigned long int a, unsigned long int b) {
  * @param pkgOtpts A 32-bit value holding a DbncdMPBttn status encoded
  * @return A MpbOtpts_t type element containing the information decoded
  */
-MpbOtpts_t otptsSttsUnpkg(uint32_t pkgOtpts){
+/*
++--+--+--+--+--+--+--+--++--+--+--+--+--+--+--+--++--+--+--+--+--+--+--+--++--+--+--+--+--+--+--+--+
+|31|30|29|28|27|26|25|24||23|22|21|20|19|18|17|16||15|14|13|12|11|10|09|08||07|06|05|04|03|02|01|00|
+ ------------------------------------------------                       ------ -- -- -- -- -- -- --
+                                                |                          |    |  |  |  |  |  |  |
+                                                |                          |    |  |  |  |  |  |  isOn
+                                                |                          |    |  |  |  |  |  isEnabled
+                                                |                          |    |  |  |  |  pilotOn
+                                                |                          |    |  |  |   wrnngOn
+                                                |                          |    |  |  isVoided
+                                                |                          |    |  isOnScndry
+                                                otptCurVal (16 bits)
+*/
+
+ MpbOtpts_t otptsSttsUnpkg(uint32_t pkgOtpts){
 	MpbOtpts_t mpbCurSttsDcdd {0};
 
 	if(pkgOtpts & (((uint32_t)1) << IsOnBitPos))
