@@ -2413,12 +2413,14 @@ uint16_t SldrDALtchMPBttn::getOtptCurVal(){
 
 bool SldrDALtchMPBttn::getOtptCurValIsMax(){
 
-	return (_otptCurVal == _otptValMax);
+	// return (_otptCurVal == _otptValMax);
+	return _otptCurValIsMax;
 }
 
 bool SldrDALtchMPBttn::getOtptCurValIsMin(){
 
-	return (_otptCurVal == _otptValMin);
+	// return (_otptCurVal == _otptValMin);
+	return _otptCurValIsMin;
 }
 
 unsigned long SldrDALtchMPBttn::getOtptSldrSpd(){
