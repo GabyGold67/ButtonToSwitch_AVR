@@ -3,10 +3,13 @@
   * @file	: 07_XtrnUnltchMPBttn_1b.ino
   * @brief  : Example for the ButtonToSwitch library XtrnUnltchMPBttn class
   *
-  *   Framework: Arduino
-  *   Platform: AVR
+  * Repository: https://github.com/GabyGold67/ButtonToSwitch_AVR
+  * WOKWI simulation URL: https://wokwi.com/projects/414346043524007937
   * 
-  * The example instantiates a XtrnUnltchMPBttn object using:
+  *   Framework: Arduino
+  *   Platform: *
+  * 
+  * @details The example instantiates a XtrnUnltchMPBttn object using:
   * 	- 1 push button between GND and dmpbMainInpt
   * 	- 1 push button between GND and dmpbAuxInpt
   * 	- 1 led with it's corresponding resistor between GND and dmpbIsOnOtpt
@@ -26,27 +29,29 @@
   * Note: The setIsOnDisabled() method affects the behavior of the MPBttn, check
   * the documentation and experiment with it.
   * 
-  * WOKWI simulation available at:
-  * https://wokwi.com/projects/414346043524007937
+  * @author	: Gabriel D. Goldman
+  * mail <gdgoldman67@hotmail.com>
+  * Github <https://github.com/GabyGold67>
   *
-  * 	@author	: Gabriel D. Goldman
-  *
-  * 	@date	: 	01/08/2023 First release
-  * 				    07/10/2024 Last update
-  *
+  * @date First release: 01/08/2023 
+  *       Last update:   07/10/2024 14:20 GMT+0200 DST
   ******************************************************************************
-  * @attention	This file is part of the examples folder for the ButtonToSwitch
-  * library. All files needed are provided as part of the source code for the library.
+  * @warning **Use of this library is under your own responsibility**
+  * 
+  * @warning The use of this library falls in the category described by The Alan 
+  * Parsons Project (c) 1980 "Games People play" disclaimer:  
+  * Games people play, you take it or you leave it  
+  * Things that they say aren't alright  
+  * If I promised you the moon and the stars, would you believe it?  
   * 
   * Released into the public domain in accordance with "GPL-3.0-or-later" license terms.
-  *
   ******************************************************************************
-  */
+*/
 #include <Arduino.h>
 #include <ButtonToSwitch.h>
 
-const uint8_t dmpbMainInpt{6};
-const uint8_t dmpbAuxInpt{2};
+const uint8_t dmpbMainInpt{A0};
+const uint8_t dmpbAuxInpt{A1};
 
 const uint8_t dmpbIsOnOtpt{3};
 const uint8_t dmpbIsEnabledOtpt{4};
