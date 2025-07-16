@@ -2669,7 +2669,7 @@ bool SldrDALtchMPBttn::swapSldrDir(){
 }
 
 void SldrDALtchMPBttn::_turnOffSldrMax(){
-	/*if(_otptCurValIsMax){
+	if(_otptCurValIsMax){
 		//---------------->> Functions related actions
 		if(_fnWhnTrnOffSldrMax != nullptr){
 			_fnWhnTrnOffSldrMax();
@@ -2680,7 +2680,7 @@ void SldrDALtchMPBttn::_turnOffSldrMax(){
 		//---------------->> Flags related actions
 		_otptCurValIsMax = false;
 		setOutputsChange(true);
-	}*/	//TODO Activate the previous code segment
+	}	//TODO Generate getters and setters for previous functions and arguments
 
 	_otptCurValIsMax = false;
 
@@ -2688,7 +2688,7 @@ void SldrDALtchMPBttn::_turnOffSldrMax(){
 }
 
 void SldrDALtchMPBttn::_turnOnSldrMax(){
-	/*if(!_otptCurValIsMax){
+	if(!_otptCurValIsMax){
 		//---------------->> Functions related actions
 		if(_fnWhnTrnOnSldrMax != nullptr){
 			_fnWhnTrnOnSldrMax();
@@ -2699,7 +2699,7 @@ void SldrDALtchMPBttn::_turnOnSldrMax(){
 		//---------------->> Flags related actions
 		_otptCurValIsMax = true;
 		setOutputsChange(true);
-	}*/	//TODO Activate the previous code segment
+	}	//TODO Generate getters and setters for previous functions and arguments
 
 	_otptCurValIsMax = true;
 
@@ -2707,7 +2707,7 @@ void SldrDALtchMPBttn::_turnOnSldrMax(){
 }
 
 void SldrDALtchMPBttn::_turnOffSldrMin(){
-	/*if(_otptCurValIsMin){
+	if(_otptCurValIsMin){
 		//---------------->> Functions related actions
 		if(_fnWhnTrnOffSldrMin != nullptr){
 			_fnWhnTrnOffSldrMin();
@@ -2718,7 +2718,7 @@ void SldrDALtchMPBttn::_turnOffSldrMin(){
 		//---------------->> Flags related actions
 		_otptCurValIsMin = false;
 		setOutputsChange(true);
-	}*/	//TODO Activate the previous code segment
+	}	//TODO Generate getters and setters for previous functions and arguments
 
 	_otptCurValIsMin = false;
 
@@ -2726,7 +2726,7 @@ void SldrDALtchMPBttn::_turnOffSldrMin(){
 }
 
 void SldrDALtchMPBttn::_turnOnSldrMin(){
-	/*if(!_otptCurValIsMin){
+	if(!_otptCurValIsMin){
 		//---------------->> Functions related actions
 		if(_fnWhnTrnOnSldrMin != nullptr){
 			_fnWhnTrnOnSldrMin();
@@ -2737,7 +2737,7 @@ void SldrDALtchMPBttn::_turnOnSldrMin(){
 		//---------------->> Flags related actions
 		_otptCurValIsMin = true;
 		setOutputsChange(true);
-	}*/	//TODO Activate the previous code segment
+	}	//TODO Generate getters and setters for previous functions and arguments
 
 	_otptCurValIsMin = true;
 

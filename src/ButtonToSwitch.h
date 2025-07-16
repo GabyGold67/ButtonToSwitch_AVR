@@ -1596,6 +1596,24 @@ protected:
 	uint16_t _otptValMax{0xFFFF};
 	uint16_t _otptValMin{0x0000};
 
+
+
+	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOffSldrMax{nullptr};	// _fVPPWhnTrnOffSldrMax
+	void* _fnVdPtrPrmWhnTrnOffSldrMaxArgPtr{nullptr};	// _fVPPWhnTrnOffSldrMaxArgPtr
+	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOnSldrMax{nullptr};	// _fVPPWhnTrnOnSldrMax
+	void* _fnVdPtrPrmWhnTrnOnSldrMaxArgPtr{nullptr};	// _fVPPWhnTrnOnSldrMaxArgPtr
+	void (*_fnWhnTrnOffSldrMax)() {nullptr};
+	void (*_fnWhnTrnOnSldrMax)() {nullptr};
+
+	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOffSldrMin{nullptr};	// _fVPPWhnTrnOffSldrMin
+	void* _fnVdPtrPrmWhnTrnOffSldrMinArgPtr{nullptr};	// _fVPPWhnTrnOffSldrMinArgPtr
+	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOnSldrMin{nullptr};	// _fVPPWhnTrnOnSldrMin
+	void* _fnVdPtrPrmWhnTrnOnSldrMinArgPtr{nullptr};	// _fVPPWhnTrnOnSldrMinArgPtr
+	void (*_fnWhnTrnOffSldrMin)() {nullptr};
+	void (*_fnWhnTrnOnSldrMin)() {nullptr};
+
+
+
 	virtual uint32_t _otptsSttsPkg(uint32_t prevVal = 0);
 	bool _setSldrDir(const bool &newVal);
 	void stOnEndScndMod_Out();
