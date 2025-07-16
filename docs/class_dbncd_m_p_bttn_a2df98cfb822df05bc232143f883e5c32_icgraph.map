@@ -1,0 +1,5 @@
+<map id="DbncdMPBttn::resetFda" name="DbncdMPBttn::resetFda">
+<area shape="rect" id="Node000001" title="Resets the MPB behavior automaton to it&#39;s Initial or Start State" alt="" coords="208,5,370,32"/>
+<area shape="rect" id="Node000002" href="$class_dbncd_m_p_bttn.html#a9540a12554008a6705056b02fbafed38" title="Restarts the software timer updating the calculation of the object internal flags." alt="" coords="5,5,160,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="192,21,160,21,160,16,192,16"/>
+</map>

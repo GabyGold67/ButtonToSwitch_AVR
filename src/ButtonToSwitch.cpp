@@ -11,25 +11,40 @@
   * manage, calculate and update several parameters to **generate the embedded 
   * behavior of standard electromechanical switches**.
   *
-  * @author	: Gabriel D. Goldman
-  * @version v1.0.0
-  * @date	: Created on: 10/09/2024
-  * 		: Last modification: 30/09/2024
-  * @copyright GPL-3.0 license
-  *
-  ******************************************************************************
-  * @attention	This library was developed as part of the refactoring process for
-  * an industrial machines security enforcement and productivity control
+  * Repository: https://github.com/GabyGold67/ButtonToSwitch_AVR
+  * 
+  * Framework: Arduino  
+  * Platform: *
+  * 
+  * @author Gabriel D. Goldman  
+  * mail <gdgoldman67@hotmail.com>  
+  * Github <https://github.com/GabyGold67>  
+  * 
+  * @version v4.6.0
+  * 
+  * @date First release: 10/09/2024  
+  *       Last update:   13/07/2025 12:10 (GMT+0200) DST  
+  * 
+  * @copyright Copyright (c) 2025  GPL-3.0 license  
+  *******************************************************************************
+  * @attention	This library was originally developed as part of the refactoring
+  * process for an industrial machines security enforcement and productivity control
   * (hardware & firmware update). As such every class included complies **AT LEAST**
   * with the provision of the attributes and methods to make the hardware & firmware
-  * replacement transparent to the controlled machines. Generic use attribute and
+  * replacement transparent to the controlled machines. Generic use attributes and
   * methods were added to extend the usability to other projects and application
   * environments, but no fitness nor completeness of those are given but for the
-  * intended refactoring project.
+  * intended refactoring project, and for the author's projects requirements.  
   * 
   * @warning **Use of this library is under your own responsibility**
-  ******************************************************************************
-  */
+  * 
+  * @warning The use of this library falls in the category described by The Alan 
+  * Parsons Project (c) 1980 Games People play disclaimer:   
+  * Games people play, you take it or you leave it  
+  * Things that they say aren't alright  
+  * If I promised you the moon and the stars, would you believe it?  
+ *******************************************************************************
+ */
 #include <Arduino.h>
 #include <ButtonToSwitch.h>
 #include <TimerOne.h>
@@ -95,7 +110,6 @@ DbncdMPBttn::DbncdMPBttn(const uint8_t &mpbttnPin, const bool &pulledUp, const b
 		if(_dbncTimeOrigSett < _stdMinDbncTime) //Best practice would impose failing the constructor (throwing an exception or building a "zombie" object)
 			_dbncTimeOrigSett = _stdMinDbncTime;    //this tolerant approach taken for developers benefit, but object will be no faithful to the instantiation parameters
 		_dbncTimeTempSett = _dbncTimeOrigSett;
-		pinMode(mpbttnPin, (pulledUp == true)?INPUT_PULLUP:INPUT);
 		_mpbInstnc = this;
 
 	}
@@ -106,6 +120,38 @@ DbncdMPBttn::DbncdMPBttn(const uint8_t &mpbttnPin, const bool &pulledUp, const b
 	}
 }
 
+DbncdMPBttn::DbncdMPBttn(const DbncdMPBttn &other)
+: _mpbttnPin{other._mpbttnPin}, _pulledUp{other._pulledUp},	_typeNO{other._typeNO},	_dbncTimeOrigSett{other._dbncTimeOrigSett}
+{
+	_mpbInstnc = this;
+	_dbncTimeTempSett = other._dbncTimeTempSett;
+	_pollPeriodMs = other._pollPeriodMs;
+	_lstPollTime = other._lstPollTime;
+	_isEnabled = other._isEnabled;
+	_isOn = other._isOn;
+	_isOnDisabled = other._isOnDisabled;
+	_isPressed = other._isPressed;
+	_updTmrAttchd = other._updTmrAttchd;
+	_outputsChange = other._outputsChange;
+	_fnWhnTrnOn = other._fnWhnTrnOn;
+	_fnWhnTrnOff = other._fnWhnTrnOff;
+	_fnVdPtrPrmWhnTrnOn = other._fnVdPtrPrmWhnTrnOn;
+	_fnVdPtrPrmWhnTrnOff = other._fnVdPtrPrmWhnTrnOff;
+	_fnVdPtrPrmWhnTrnOnArgPtr = other._fnVdPtrPrmWhnTrnOnArgPtr;
+	_fnVdPtrPrmWhnTrnOffArgPtr = other._fnVdPtrPrmWhnTrnOffArgPtr;
+	_dbncRlsTimeTempSett = other._dbncRlsTimeTempSett;
+	_dbncTimerStrt = other._dbncTimerStrt;
+	_dbncRlsTimerStrt = other._dbncRlsTimerStrt;
+	_prssRlsCcl = other._prssRlsCcl;
+	_validPressPend = other._validPressPend;
+	_validReleasePend = other._validReleasePend;
+	_validEnablePend = other._validEnablePend;
+	_validDisablePend = other._validDisablePend;
+	_beginDisabled = other._beginDisabled;
+	_sttChng = other._sttChng;
+	_mpbFdaState = other._mpbFdaState;
+}
+
 DbncdMPBttn::~DbncdMPBttn(){
     
 	end();  // Stops the software timer associated to the object, deletes it's entry and nullyfies the handle to it before destructing the object
@@ -113,6 +159,12 @@ DbncdMPBttn::~DbncdMPBttn(){
 
 bool DbncdMPBttn::begin(const unsigned long int &pollDelayMs) {
 	bool result {false};
+
+	pinMode(_mpbttnPin, (_pulledUp == true)?INPUT_PULLUP:INPUT);
+	if(_beginDisabled){
+		_isEnabled = false;
+		_validDisablePend = true;
+	}
 
 	if (pollDelayMs > 0){
 		_pollPeriodMs = pollDelayMs;	// Set this MPB's PollPeriodMs to the provided argument
@@ -202,6 +254,26 @@ fncPtrType DbncdMPBttn::getFnWhnTrnOn(){
 	return _fnWhnTrnOn;
 }
 
+fncVdPtrPrmPtrType DbncdMPBttn::getFVPPWhnTrnOff(){
+   
+	return _fnVdPtrPrmWhnTrnOff;
+}
+
+void* DbncdMPBttn::getFVPPWhnTrnOffArgPtr(){
+
+   return _fnVdPtrPrmWhnTrnOffArgPtr;
+}
+
+fncVdPtrPrmPtrType DbncdMPBttn::getFVPPWhnTrnOn(){
+
+   return _fnVdPtrPrmWhnTrnOn;
+}
+
+void* DbncdMPBttn::getFVPPWhnTrnOnArgPtr(){
+
+	return _fnVdPtrPrmWhnTrnOnArgPtr;
+}
+
 const bool DbncdMPBttn::getIsEnabled() const{
 
 	return _isEnabled;
@@ -287,6 +359,19 @@ void DbncdMPBttn::mpbPollCallback(){
 	_mpbInstnc->updFdaState();
 
 	return;
+}
+
+uint32_t DbncdMPBttn::_otptsSttsPkg(uint32_t prevVal){
+	if(_isOn)
+		prevVal |= ((uint32_t)1) << IsOnBitPos;
+	else
+		prevVal &= ~(((uint32_t)1) << IsOnBitPos);
+	if(_isEnabled)
+		prevVal |= ((uint32_t)1) << IsEnabledBitPos;
+	else
+		prevVal &= ~(((uint32_t)1) << IsEnabledBitPos);
+
+	return prevVal;
 }
 
 bool DbncdMPBttn::pause(){
@@ -394,23 +479,6 @@ void DbncdMPBttn::_pushMpb(DbncdMPBttn** &DMpbTmrUpdLst, DbncdMPBttn* mpbToPush)
 	return;
 }
 
-uint32_t DbncdMPBttn::_otptsSttsPkg(uint32_t prevVal){
-	if(_isOn){
-		prevVal |= ((uint32_t)1) << IsOnBitPos;
-	}
-	else{
-		prevVal &= ~(((uint32_t)1) << IsOnBitPos);
-	}
-	if(_isEnabled){
-		prevVal |= ((uint32_t)1) << IsEnabledBitPos;
-	}
-	else{
-		prevVal &= ~(((uint32_t)1) << IsEnabledBitPos);
-	}
-
-	return prevVal;
-}
-
 void DbncdMPBttn::resetDbncTime(){
    setDbncTime(_dbncTimeOrigSett);
 
@@ -418,7 +486,7 @@ void DbncdMPBttn::resetDbncTime(){
 }
 
 void DbncdMPBttn::resetFda(){
-	clrStatus();
+	clrStatus(true);
 	setSttChng();
 	_mpbFdaState = stOffNotVPP;
 
@@ -444,6 +512,7 @@ bool DbncdMPBttn::resume(){
 		if(mpbFnd){	// This MPBttn was found in the "MPBs to be updated list"
 			if (_updTmrAttchd == false){	// And it was not attached to the update timer: attach and calculate updTimerPeriod
 				if(_pollPeriodMs > 0){	// The periodic polling time is a non-zero value, it can be resumed, else it fails
+				   resetFda();	// To restart in a safe situation the FDA is resetted to have all flags and timers cleaned up
 					_updTmrAttchd = true;
 					tmpUpdTmrPrd = _updTmrsMCDCalc();
 					if(_updTimerPeriod != tmpUpdTmrPrd){
@@ -465,6 +534,13 @@ bool DbncdMPBttn::resume(){
    return result;
 }
 
+void DbncdMPBttn::setBeginDisabled(const bool &newBeginDisabled){
+	if(_beginDisabled != newBeginDisabled)
+		_beginDisabled = newBeginDisabled;
+
+	return;
+}
+
 bool DbncdMPBttn::setDbncTime(const unsigned long int &newDbncTime){
 	bool result {true};
 
@@ -481,18 +557,47 @@ bool DbncdMPBttn::setDbncTime(const unsigned long int &newDbncTime){
 }
 
 void DbncdMPBttn::setFnWhnTrnOffPtr(void (*newFnWhnTrnOff)()){
-
-	if (_fnWhnTrnOff != newFnWhnTrnOff){
+	if (_fnWhnTrnOff != newFnWhnTrnOff)
 		_fnWhnTrnOff = newFnWhnTrnOff;
-	}
 
 	return;
 }
 
 void DbncdMPBttn::setFnWhnTrnOnPtr(void (*newFnWhnTrnOn)()){
-	if (_fnWhnTrnOn != newFnWhnTrnOn){
+	if (_fnWhnTrnOn != newFnWhnTrnOn)
 		_fnWhnTrnOn = newFnWhnTrnOn;
+
+	return;
+}
+
+void DbncdMPBttn::setFVPPWhnTrnOff(fncVdPtrPrmPtrType newFVPPWhnTrnOff, void *argPtr){
+	if (_fnVdPtrPrmWhnTrnOff != newFVPPWhnTrnOff){
+		_fnVdPtrPrmWhnTrnOff = newFVPPWhnTrnOff;
+		_fnVdPtrPrmWhnTrnOffArgPtr = argPtr;
 	}
+
+	return;
+}
+
+void DbncdMPBttn::setFVPPWhnTrnOffArgPtr(void* newFVPPWhnTrnOffArgPtr){
+	if (_fnVdPtrPrmWhnTrnOffArgPtr != newFVPPWhnTrnOffArgPtr)
+		_fnVdPtrPrmWhnTrnOffArgPtr = newFVPPWhnTrnOffArgPtr;	
+
+	return;
+}
+
+void DbncdMPBttn::setFVPPWhnTrnOn(fncVdPtrPrmPtrType newFVPPWhnTrnOn, void *argPtr){
+	if (_fnVdPtrPrmWhnTrnOn != newFVPPWhnTrnOn){
+		_fnVdPtrPrmWhnTrnOn = newFVPPWhnTrnOn;
+		_fnVdPtrPrmWhnTrnOnArgPtr = argPtr;	
+	}
+
+	return;
+}
+
+void DbncdMPBttn::setFVPPWhnTrnOnArgPtr(void* newFVPPWhnTrnOnArgPtr){
+	if (_fnVdPtrPrmWhnTrnOnArgPtr != newFVPPWhnTrnOnArgPtr)
+		_fnVdPtrPrmWhnTrnOnArgPtr = newFVPPWhnTrnOnArgPtr;	
 
 	return;
 }
@@ -557,8 +662,9 @@ void DbncdMPBttn::_turnOff(){
 		if(_fnWhnTrnOff != nullptr){
 			_fnWhnTrnOff();
 		}
-	// }
-	// if(_isOn){
+		if(_fnVdPtrPrmWhnTrnOff != nullptr){
+			_fnVdPtrPrmWhnTrnOff(_fnVdPtrPrmWhnTrnOffArgPtr);
+		}
 		//---------------->> Flags related actions
 		_isOn = false;
 		_outputsChange = true;
@@ -574,8 +680,9 @@ void DbncdMPBttn::_turnOn(){
 		if(_fnWhnTrnOn != nullptr){
 			_fnWhnTrnOn();
 		}
-	// }
-	// if(!_isOn){
+			if(_fnVdPtrPrmWhnTrnOn != nullptr){
+				_fnVdPtrPrmWhnTrnOn(_fnVdPtrPrmWhnTrnOnArgPtr);
+			}
 		//---------------->> Flags related actions
 		_isOn = true;
 		_outputsChange = true;
@@ -678,7 +785,7 @@ void DbncdMPBttn::updFdaState(){
 			}
 			//Out: >>---------------------------------->>
 			if(_sttChng){	// Execute this code only ONCE, when exiting this state
-//				clrStatus(true);	//Uneeded as is the first function executed in the next state (stOffNotVPP)
+				clrStatus(true);	//Uneeded as is the first function executed in the next state (stOffNotVPP), but this ensures that state can be modified without affecting this one
 			}
 			break;
 
@@ -802,6 +909,16 @@ DbncdDlydMPBttn::DbncdDlydMPBttn(const uint8_t &mpbttnPin, const bool &pulledUp,
 	_strtDelay = strtDelay;
 }
 
+DbncdDlydMPBttn::DbncdDlydMPBttn(const DbncdDlydMPBttn& other)
+: DbncdMPBttn(other) // Call base class copy constructor
+{
+	this->_strtDelay = other._strtDelay;		// Copy the strtDelay attribute
+}
+
+DbncdDlydMPBttn::~DbncdDlydMPBttn()
+{
+}
+
 bool DbncdDlydMPBttn::init(const uint8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay){
 	bool result {false};
 
@@ -821,12 +938,28 @@ void DbncdDlydMPBttn::setStrtDelay(const unsigned long int &newStrtDelay){
 
 //=========================================================================> Class methods delimiter
 
+LtchMPBttn::LtchMPBttn()
+{
+}
+
 LtchMPBttn::LtchMPBttn(const uint8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
 :DbncdDlydMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay)
 {
 }
 
-bool LtchMPBttn::begin(const unsigned long int &pollDelayMs){	//! Refactoring pending
+LtchMPBttn::LtchMPBttn(const LtchMPBttn& other)	
+: DbncdDlydMPBttn(other) // Call base class copy constructor
+{
+	_isLatched = other._isLatched;
+	_trnOffASAP = other._trnOffASAP;
+	_validUnlatchPend = other._validUnlatchPend;
+	_validUnlatchRlsPend = other._validUnlatchRlsPend;
+}
+
+LtchMPBttn::~LtchMPBttn(){	
+}
+
+bool LtchMPBttn::begin(const unsigned long int &pollDelayMs){
    bool result {false};
 
 	result = DbncdMPBttn::begin(pollDelayMs);
@@ -1074,9 +1207,8 @@ void LtchMPBttn::updFdaState(){
 			}	// Execute this code only ONCE, when entering this state
 			//Do: >>---------------------------------->>
 			if(_validEnablePend){
-				if(_isOn){
+				if(_isOn)
 					_turnOff();
-				}
 				_isEnabled = true;
 				_validEnablePend = false;
 				setOutputsChange(true);
@@ -1101,9 +1233,22 @@ void LtchMPBttn::updFdaState(){
 
 //=========================================================================> Class methods delimiter
 
+TgglLtchMPBttn::TgglLtchMPBttn()
+{
+}
+
 TgglLtchMPBttn::TgglLtchMPBttn(const uint8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
 :LtchMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay)
 {
+}
+
+TgglLtchMPBttn::TgglLtchMPBttn(const TgglLtchMPBttn& other)
+: LtchMPBttn(other)
+{
+	// No additional members to initialize beyond base class constructor parameters
+}
+
+TgglLtchMPBttn::~TgglLtchMPBttn(){	
 }
 
 void TgglLtchMPBttn::stOffNVURP_Do(){
@@ -1135,12 +1280,27 @@ void TgglLtchMPBttn::updValidUnlatchStatus(){
 
 //=========================================================================> Class methods delimiter
 
+TmLtchMPBttn::TmLtchMPBttn()
+{
+}
+
 TmLtchMPBttn::TmLtchMPBttn(const uint8_t &mpbttnPin, const unsigned long int &actTime, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
 :LtchMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay), _srvcTime{actTime}
 {
 	if(_srvcTime < _MinSrvcTime)    //Best practice would impose failing the constructor (throwing an exception or building a "zombie" object)
 		_srvcTime = _MinSrvcTime;    //this tolerant approach taken for developers benefit, but object will be no faithful to the instantiation parameters
 
+}
+
+TmLtchMPBttn::TmLtchMPBttn(const TmLtchMPBttn &other)
+: LtchMPBttn(other), _srvcTime{other._srvcTime}
+{
+	this->_srvcTimerStrt = other._srvcTimerStrt;
+	this->_tmRstbl = other._tmRstbl;
+}
+
+TmLtchMPBttn::~TmLtchMPBttn()
+{	
 }
 
 void TmLtchMPBttn::clrStatus(bool clrIsOn){
@@ -1157,6 +1317,7 @@ const unsigned long int TmLtchMPBttn::getSrvcTime() const{
 
 bool TmLtchMPBttn::setSrvcTime(const unsigned long int &newSrvcTime){
 	bool result {true};
+
 	if (_srvcTime != newSrvcTime){
 		if (newSrvcTime >= _MinSrvcTime)  //The minimum activation time is _minActTime milliseconds
 			_srvcTime = newSrvcTime;
@@ -1204,10 +1365,35 @@ void TmLtchMPBttn::updValidUnlatchStatus(){
 
 //=========================================================================> Class methods delimiter
 
+HntdTmLtchMPBttn::HntdTmLtchMPBttn()
+{
+}
+
 HntdTmLtchMPBttn::HntdTmLtchMPBttn(const uint8_t &mpbttnPin, const unsigned long int &actTime, const unsigned int &wrnngPrctg, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
 :TmLtchMPBttn(mpbttnPin, actTime, pulledUp, typeNO, dbncTimeOrigSett, strtDelay), _wrnngPrctg{wrnngPrctg}
 {
 	_wrnngMs = (_srvcTime * _wrnngPrctg) / 100;   
+}
+
+HntdTmLtchMPBttn::HntdTmLtchMPBttn(const HntdTmLtchMPBttn &other)
+: TmLtchMPBttn(other), _wrnngPrctg{other._wrnngPrctg}
+{
+	_wrnngMs = (_srvcTime * _wrnngPrctg) / 100;
+	_fnWhnTrnOffPilot = other._fnWhnTrnOffPilot;
+	_fnWhnTrnOffWrnng = other._fnWhnTrnOffWrnng;
+	_fnWhnTrnOnPilot = other._fnWhnTrnOnPilot;
+	_fnWhnTrnOnWrnng = other._fnWhnTrnOnWrnng;
+	_keepPilot = other._keepPilot;
+	_pilotOn = other._pilotOn;
+	_wrnngOn = other._wrnngOn;
+	_validWrnngSetPend = other._validWrnngSetPend;
+	_validWrnngResetPend = other._validWrnngResetPend;
+	_validPilotSetPend = other._validPilotSetPend;
+	_validPilotResetPend = other._validPilotResetPend;
+}
+
+HntdTmLtchMPBttn::~HntdTmLtchMPBttn()
+{	
 }
 
 bool HntdTmLtchMPBttn::begin(const unsigned long int &pollDelayMs){
@@ -1253,6 +1439,46 @@ fncPtrType HntdTmLtchMPBttn::getFnWhnTrnOnPilot(){
 fncPtrType HntdTmLtchMPBttn::getFnWhnTrnOnWrnng(){
 	
 	return _fnWhnTrnOnWrnng;
+}
+
+fncVdPtrPrmPtrType HntdTmLtchMPBttn::getFVPPWhnTrnOffPilot(){
+	
+   return _fnVdPtrPrmWhnTrnOffPilot;
+}
+
+void* HntdTmLtchMPBttn::getFVPPWhnTrnOffPilotArgPtr(){
+	
+	return _fnVdPtrPrmWhnTrnOffPilotArgPtr;
+}
+
+fncVdPtrPrmPtrType HntdTmLtchMPBttn::getFVPPWhnTrnOnPilot(){
+	
+	return _fnVdPtrPrmWhnTrnOnPilot;
+}
+
+void* HntdTmLtchMPBttn::getFVPPWhnTrnOnPilotArgPtr(){
+	
+	return _fnVdPtrPrmWhnTrnOnPilotArgPtr;
+}
+
+fncVdPtrPrmPtrType HntdTmLtchMPBttn::getFVPPWhnTrnOffWrnng(){
+	
+	return _fnVdPtrPrmWhnTrnOffWrnng;
+}
+
+void* HntdTmLtchMPBttn::getFVPPWhnTrnOffWrnngArgPtr(){
+	
+	return _fnVdPtrPrmWhnTrnOffWrnngArgPtr;
+}
+
+fncVdPtrPrmPtrType HntdTmLtchMPBttn::getFVPPWhnTrnOnWrnng(){
+	
+	return _fnVdPtrPrmWhnTrnOnWrnng;
+}
+
+void* HntdTmLtchMPBttn::getFVPPWhnTrnOnWrnngArgPtr(){
+	
+	return _fnVdPtrPrmWhnTrnOnWrnngArgPtr;
 }
 
 const bool HntdTmLtchMPBttn::getPilotOn() const{
@@ -1325,6 +1551,74 @@ void HntdTmLtchMPBttn::setFnWhnTrnOnWrnngPtr(void(*newFnWhnTrnOn)()){
 		_fnWhnTrnOnWrnng = newFnWhnTrnOn;
 
 	return;
+}
+
+void HntdTmLtchMPBttn::setFVPPWhnTrnOffPilot(fncVdPtrPrmPtrType newFVPPWhnTrnOff, void *argPtr){
+	if (_fnVdPtrPrmWhnTrnOffPilot != newFVPPWhnTrnOff){
+		_fnVdPtrPrmWhnTrnOffPilot = newFVPPWhnTrnOff;
+		_fnVdPtrPrmWhnTrnOffPilotArgPtr = argPtr;
+	}
+
+	return;	
+}
+
+void HntdTmLtchMPBttn::setFVPPWhnTrnOffPilotArgPtr(void *argPtr){
+	if (_fnVdPtrPrmWhnTrnOffPilotArgPtr != argPtr){
+		_fnVdPtrPrmWhnTrnOffPilotArgPtr = argPtr;
+	}
+
+	return;	
+}
+
+void HntdTmLtchMPBttn::setFVPPWhnTrnOnPilot(fncVdPtrPrmPtrType newFVPPWhnTrnOn, void *argPtr){
+	if (_fnVdPtrPrmWhnTrnOnPilot != newFVPPWhnTrnOn){
+		_fnVdPtrPrmWhnTrnOnPilot = newFVPPWhnTrnOn;
+		_fnVdPtrPrmWhnTrnOnPilotArgPtr = argPtr;
+	}
+
+	return;	
+}
+
+void HntdTmLtchMPBttn::setFVPPWhnTrnOnPilotArgPtr(void *argPtr){
+	if (_fnVdPtrPrmWhnTrnOnPilotArgPtr != argPtr){
+		_fnVdPtrPrmWhnTrnOnPilotArgPtr = argPtr;
+	}
+
+	return;	
+}
+
+void HntdTmLtchMPBttn::setFVPPWhnTrnOffWrnng(fncVdPtrPrmPtrType newFVPPWhnTrnOff, void *argPtr){
+	if (_fnVdPtrPrmWhnTrnOffWrnng != newFVPPWhnTrnOff){
+		_fnVdPtrPrmWhnTrnOffWrnng = newFVPPWhnTrnOff;
+		_fnVdPtrPrmWhnTrnOffWrnngArgPtr = argPtr;
+	}
+
+	return;	
+}
+
+void HntdTmLtchMPBttn::setFVPPWhnTrnOffWrnngArgPtr(void *argPtr){
+	if (_fnVdPtrPrmWhnTrnOffWrnngArgPtr != argPtr){
+		_fnVdPtrPrmWhnTrnOffWrnngArgPtr = argPtr;
+	}
+
+	return;	
+}
+
+void HntdTmLtchMPBttn::setFVPPWhnTrnOnWrnng(fncVdPtrPrmPtrType newFVPPWhnTrnOn, void *argPtr){
+	if (_fnVdPtrPrmWhnTrnOnWrnng != newFVPPWhnTrnOn){
+		_fnVdPtrPrmWhnTrnOnWrnng = newFVPPWhnTrnOn;
+		_fnVdPtrPrmWhnTrnOnWrnngArgPtr = argPtr;
+	}
+
+	return;	
+}
+
+void HntdTmLtchMPBttn::setFVPPWhnTrnOnWrnngArgPtr(void *argPtr){
+	if (_fnVdPtrPrmWhnTrnOnWrnngArgPtr != argPtr){
+		_fnVdPtrPrmWhnTrnOnWrnngArgPtr = argPtr;
+	}
+
+	return;	
 }
 
 void HntdTmLtchMPBttn::setKeepPilot(const bool &newKeepPilot){
@@ -1436,11 +1730,13 @@ void HntdTmLtchMPBttn::stOnNVRP_Do(){
 }
 	
 void HntdTmLtchMPBttn::_turnOffPilot(){
-
 	if(_pilotOn){
 		//---------------->> Functions related actions
 		if(_fnWhnTrnOffPilot != nullptr){
 			_fnWhnTrnOffPilot();
+		}
+		if(_fnVdPtrPrmWhnTrnOffPilot != nullptr){
+			_fnVdPtrPrmWhnTrnOffPilot(_fnVdPtrPrmWhnTrnOffPilotArgPtr);
 		}
 		//---------------->> Flags related actions
 		_pilotOn = false;
@@ -1456,6 +1752,9 @@ void HntdTmLtchMPBttn::_turnOffWrnng(){
 		if(_fnWhnTrnOffWrnng != nullptr){
 			_fnWhnTrnOffWrnng();
 		}
+		if(_fnVdPtrPrmWhnTrnOffWrnng != nullptr){
+			_fnVdPtrPrmWhnTrnOffWrnng(_fnVdPtrPrmWhnTrnOffWrnngArgPtr);
+		}
 		//---------------->> Flags related actions
 		_wrnngOn = false;
 		setOutputsChange(true);
@@ -1465,11 +1764,13 @@ void HntdTmLtchMPBttn::_turnOffWrnng(){
 }
 
 void HntdTmLtchMPBttn::_turnOnPilot(){
-
 	if(!_pilotOn){
 		//---------------->> Functions related actions
 		if(_fnWhnTrnOnPilot != nullptr){
 			_fnWhnTrnOnPilot();
+		}
+		if(_fnVdPtrPrmWhnTrnOnPilot != nullptr){
+			_fnVdPtrPrmWhnTrnOnPilot(_fnVdPtrPrmWhnTrnOnPilotArgPtr);
 		}
 		//---------------->> Flags related actions
 		_pilotOn = true;
@@ -1480,11 +1781,13 @@ void HntdTmLtchMPBttn::_turnOnPilot(){
 }
 
 void HntdTmLtchMPBttn::_turnOnWrnng(){
-
 	if(!_wrnngOn){
 		//---------------->> Functions related actions
 		if(_fnWhnTrnOnWrnng != nullptr){
 			_fnWhnTrnOnWrnng();
+		}
+		if(_fnVdPtrPrmWhnTrnOnWrnng != nullptr){
+			_fnVdPtrPrmWhnTrnOnWrnng(_fnVdPtrPrmWhnTrnOnWrnngArgPtr);
 		}
 		//---------------->> Flags related actions
 		_wrnngOn = true;
@@ -1539,6 +1842,10 @@ bool HntdTmLtchMPBttn::updWrnngOn(){
 }
 
 //=========================================================================> Class methods delimiter
+
+XtrnUnltchMPBttn::XtrnUnltchMPBttn()
+{	
+}
 
 XtrnUnltchMPBttn::XtrnUnltchMPBttn(const uint8_t &mpbttnPin,  DbncdDlydMPBttn* unLtchBttn,
         const bool &pulledUp,  const bool &typeNO,  const unsigned long int &dbncTimeOrigSett,  const unsigned long int &strtDelay)
@@ -1611,6 +1918,10 @@ void XtrnUnltchMPBttn::updValidUnlatchStatus(){
 
 //=========================================================================> Class methods delimiter
 
+DblActnLtchMPBttn::DblActnLtchMPBttn()
+{
+}
+
 DblActnLtchMPBttn::DblActnLtchMPBttn(const uint8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
 :LtchMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay)
 {
@@ -1648,6 +1959,26 @@ fncPtrType DblActnLtchMPBttn::getFnWhnTrnOnScndry(){
 	return _fnWhnTrnOnScndry;
 }
 
+fncVdPtrPrmPtrType DblActnLtchMPBttn::getFVPPWhnTrnOffScndry(){
+	
+	return _fnVdPtrPrmWhnTrnOffScndry;
+}
+
+void* DblActnLtchMPBttn::getFVPPWhnTrnOffScndryArgPtr(){
+	
+	return _fnVdPtrPrmWhnTrnOffScndryArgPtr;
+}
+
+fncVdPtrPrmPtrType DblActnLtchMPBttn::getFVPPWhnTrnOnScndry(){
+	
+	return _fnVdPtrPrmWhnTrnOnScndry;
+}
+
+void* DblActnLtchMPBttn::getFVPPWhnTrnOnScndryArgPtr(){
+	
+	return _fnVdPtrPrmWhnTrnOnScndryArgPtr;
+}
+
 bool DblActnLtchMPBttn::getIsOnScndry(){
 
 	return _isOnScndry;
@@ -1671,6 +2002,16 @@ void DblActnLtchMPBttn::mpbPollCallback(){
 	return;
 }
 
+uint32_t DblActnLtchMPBttn::_otptsSttsPkg(uint32_t prevVal){
+	prevVal = DbncdMPBttn::_otptsSttsPkg(prevVal);
+	if(_isOnScndry)
+		prevVal |= ((uint32_t)1) << IsOnScndryBitPos;
+	else
+		prevVal &= ~(((uint32_t)1) << IsOnScndryBitPos);
+
+	return prevVal;
+}
+
 void DblActnLtchMPBttn::setFnWhnTrnOffScndryPtr(void (*newFnWhnTrnOff)()){
 	if (_fnWhnTrnOffScndry != newFnWhnTrnOff){
 		_fnWhnTrnOffScndry = newFnWhnTrnOff;
@@ -1684,6 +2025,40 @@ void DblActnLtchMPBttn::setFnWhnTrnOnScndryPtr(void (*newFnWhnTrnOn)()){
 		_fnWhnTrnOnScndry = newFnWhnTrnOn;
 
 	return;
+}
+
+void DblActnLtchMPBttn::setFVPPWhnTrnOffScndry(fncVdPtrPrmPtrType newFVPPWhnTrnOff, void* argPtr){
+	if (_fnVdPtrPrmWhnTrnOffScndry != newFVPPWhnTrnOff){
+		_fnVdPtrPrmWhnTrnOffScndry = newFVPPWhnTrnOff;
+		_fnVdPtrPrmWhnTrnOffScndryArgPtr = argPtr;
+	}
+
+	return;	
+}
+
+void DblActnLtchMPBttn::setFVPPWhnTrnOffScndryArgPtr(void* argPtr){
+	if (_fnVdPtrPrmWhnTrnOffScndryArgPtr != argPtr){
+		_fnVdPtrPrmWhnTrnOffScndryArgPtr = argPtr;
+	}
+
+	return;	
+}
+
+void DblActnLtchMPBttn::setFVPPWhnTrnOnScndry(fncVdPtrPrmPtrType newFVPPWhnTrnOn, void* argPtr){
+	if (_fnVdPtrPrmWhnTrnOnScndry != newFVPPWhnTrnOn){
+		_fnVdPtrPrmWhnTrnOnScndry = newFVPPWhnTrnOn;
+		_fnVdPtrPrmWhnTrnOnScndryArgPtr = argPtr;
+	}
+
+	return;	
+}
+
+void DblActnLtchMPBttn::setFVPPWhnTrnOnScndryArgPtr(void* argPtr){
+	if (_fnVdPtrPrmWhnTrnOnScndryArgPtr != argPtr){
+		_fnVdPtrPrmWhnTrnOnScndryArgPtr = argPtr;
+	}
+
+	return;	
 }
 
 bool DblActnLtchMPBttn::setScndModActvDly(const unsigned long &newVal){
@@ -1707,6 +2082,9 @@ void DblActnLtchMPBttn::_turnOffScndry(){
 		//---------------->> Functions related actions
 		if(_fnWhnTrnOffScndry != nullptr)
 			_fnWhnTrnOffScndry();
+		if(_fnVdPtrPrmWhnTrnOffScndry != nullptr){
+			_fnVdPtrPrmWhnTrnOffScndry(_fnVdPtrPrmWhnTrnOffScndryArgPtr);
+		}
 		//---------------->> Flags related actions
 		_isOnScndry = false;
 		setOutputsChange(true);
@@ -1721,6 +2099,9 @@ void DblActnLtchMPBttn::_turnOnScndry(){
 		//---------------->> Functions related actions
 		if(_fnWhnTrnOnScndry != nullptr)
 			_fnWhnTrnOnScndry();
+		if(_fnVdPtrPrmWhnTrnOnScndry != nullptr){
+			_fnVdPtrPrmWhnTrnOnScndry(_fnVdPtrPrmWhnTrnOnScndryArgPtr);
+		}
 		//---------------->> Flags related actions
 		_isOnScndry = true;
 		setOutputsChange(true);
@@ -1875,6 +2256,10 @@ void DblActnLtchMPBttn::updFdaState(){
 			}	// Execute this code only ONCE, when entering this state
 			//Do: >>---------------------------------->>
 			if(_validEnablePend){
+				if(_isOnScndry)
+					_turnOffScndry();
+				if(_isOn)
+					_turnOff();
 				_isEnabled = true;
 				_validEnablePend = false;
 				setOutputsChange(true);
@@ -1889,8 +2274,9 @@ void DblActnLtchMPBttn::updFdaState(){
 				clrStatus(true);
 			}	// Execute this code only ONCE, when exiting this state
 			break;
-	default:
-		break;
+
+		default:
+			break;
 	}
 
 	return;
@@ -1943,6 +2329,10 @@ void DblActnLtchMPBttn::updValidUnlatchStatus(){
 
 //=========================================================================> Class methods delimiter
 
+DDlydDALtchMPBttn::DDlydDALtchMPBttn()
+{	
+}
+
 DDlydDALtchMPBttn::DDlydDALtchMPBttn(const uint8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
 :DblActnLtchMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay)
 {
@@ -1961,16 +2351,6 @@ void DDlydDALtchMPBttn::clrStatus(bool clrIsOn){
 	return;
 }
 
-uint32_t DDlydDALtchMPBttn::_otptsSttsPkg(uint32_t prevVal){
-	prevVal = DbncdMPBttn::_otptsSttsPkg(prevVal);
-	if(_isOnScndry)
-		prevVal |= ((uint32_t)1) << IsOnScndryBitPos;
-	else
-		prevVal &= ~(((uint32_t)1) << IsOnScndryBitPos);
-
-	return prevVal;
-}
-
 /*void DDlydDALtchMPBttn::stDisabled_In(){	
 	if(_isOnScndry != _isOnDisabled){
 		if(_isOnDisabled)
@@ -1983,9 +2363,8 @@ uint32_t DDlydDALtchMPBttn::_otptsSttsPkg(uint32_t prevVal){
 }*/
 
 void DDlydDALtchMPBttn::stOnEndScndMod_Out(){
-	if(_isOnScndry){
+	if(_isOnScndry)
 		_turnOffScndry();
-	}
 
 	return;
 }
@@ -1996,14 +2375,17 @@ void DDlydDALtchMPBttn::stOnScndMod_Do(){
 }
 
 void DDlydDALtchMPBttn::stOnStrtScndMod_In(){
-	if(!_isOnScndry){
+	if(!_isOnScndry)
 		_turnOnScndry();
-	}
 
 	return;
 }
 
 //=========================================================================> Class methods delimiter
+
+SldrDALtchMPBttn::SldrDALtchMPBttn()
+{	
+}
 
 SldrDALtchMPBttn::SldrDALtchMPBttn(const uint8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay, const uint16_t initVal)
 :DblActnLtchMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay), _initOtptCurVal{initVal}
@@ -2031,12 +2413,14 @@ uint16_t SldrDALtchMPBttn::getOtptCurVal(){
 
 bool SldrDALtchMPBttn::getOtptCurValIsMax(){
 
-	return (_otptCurVal == _otptValMax);
+	// return (_otptCurVal == _otptValMax);
+	return _otptCurValIsMax;
 }
 
 bool SldrDALtchMPBttn::getOtptCurValIsMin(){
 
-	return (_otptCurVal == _otptValMin);
+	// return (_otptCurVal == _otptValMin);
+	return _otptCurValIsMin;
 }
 
 unsigned long SldrDALtchMPBttn::getOtptSldrSpd(){
@@ -2065,7 +2449,7 @@ bool SldrDALtchMPBttn::getSldrDirUp(){
 }
 
 uint32_t SldrDALtchMPBttn::_otptsSttsPkg(uint32_t prevVal){
-	prevVal = DbncdMPBttn::_otptsSttsPkg(prevVal);
+	prevVal = DblActnLtchMPBttn::_otptsSttsPkg(prevVal);
 	prevVal |= (((uint32_t)_otptCurVal) << OtptCurValBitPos);
 
 	return prevVal;
@@ -2222,42 +2606,44 @@ void SldrDALtchMPBttn::stOnScndMod_Do(){
 	_sldrTmrNxtStrt -= _sldrTmrRemains;
 	_scndModTmrStrt = _sldrTmrNxtStrt;	//This ends the time management section of the state, calculating the time
 
-	if(_curSldrDirUp){
-		// The slider is moving up
+	if(_curSldrDirUp){	// The slider is moving up		
 		if(_otptCurVal != _otptValMax){
-			if((_otptValMax - _otptCurVal) >= (_otpStpsChng * _otptSldrStpSize)){
-				//The value change is in range
+			if((_otptValMax - _otptCurVal) >= (_otpStpsChng * _otptSldrStpSize)){	//The value change is in range				
 				_otptCurVal += (_otpStpsChng * _otptSldrStpSize);
 			}
-			else{
-				//The value change goes out of range
+			else{	//The value change goes out of range				
 				_otptCurVal = _otptValMax;
 			}
 			setOutputsChange(true);
 		}
 		if(getOutputsChange()){
+			if(_otptCurValIsMin){
+				_turnOffSldrMin();
+			}
 			if(_otptCurVal == _otptValMax){
+				_turnOnSldrMax();
 				if(_autoSwpDirOnEnd == true){
 					_curSldrDirUp = false;
 				}
 			}
 		}
 	}
-	else{
-		// The slider is moving down
+	else{	// The slider is moving down		
 		if(_otptCurVal != _otptValMin){
-			if((_otptCurVal - _otptValMin) >= (_otpStpsChng * _otptSldrStpSize)){
-				//The value change is in range
+			if((_otptCurVal - _otptValMin) >= (_otpStpsChng * _otptSldrStpSize)){	//The value change is in range				
 				_otptCurVal -= (_otpStpsChng * _otptSldrStpSize);
 			}
-			else{
-				//The value change goes out of range
+			else{	//The value change goes out of range				
 				_otptCurVal = _otptValMin;
 			}
 			setOutputsChange(true);
 		}
 		if(getOutputsChange()){
+			if(_otptCurValIsMax){
+				_turnOffSldrMax();
+			}
 			if(_otptCurVal == _otptValMin){
+				_turnOnSldrMin();
 				if(_autoSwpDirOnEnd == true){
 					_curSldrDirUp = true;
 				}
@@ -2282,7 +2668,87 @@ bool SldrDALtchMPBttn::swapSldrDir(){
 	return _setSldrDir(!_curSldrDirUp);
 }
 
+void SldrDALtchMPBttn::_turnOffSldrMax(){
+	if(_otptCurValIsMax){
+		//---------------->> Functions related actions
+		if(_fnWhnTrnOffSldrMax != nullptr){
+			_fnWhnTrnOffSldrMax();
+		}
+		if(_fnVdPtrPrmWhnTrnOffSldrMax != nullptr){
+			_fnVdPtrPrmWhnTrnOffSldrMax(_fnVdPtrPrmWhnTrnOffSldrMaxArgPtr);
+		}
+		//---------------->> Flags related actions
+		_otptCurValIsMax = false;
+		setOutputsChange(true);
+	}	//TODO Generate getters and setters for previous functions and arguments
+
+	_otptCurValIsMax = false;
+
+	return;
+}
+
+void SldrDALtchMPBttn::_turnOnSldrMax(){
+	if(!_otptCurValIsMax){
+		//---------------->> Functions related actions
+		if(_fnWhnTrnOnSldrMax != nullptr){
+			_fnWhnTrnOnSldrMax();
+		}
+		if(_fnVdPtrPrmWhnTrnOnSldrMax != nullptr){
+			_fnVdPtrPrmWhnTrnOnSldrMax(_fnVdPtrPrmWhnTrnOnSldrMaxArgPtr);
+		}
+		//---------------->> Flags related actions
+		_otptCurValIsMax = true;
+		setOutputsChange(true);
+	}	//TODO Generate getters and setters for previous functions and arguments
+
+	_otptCurValIsMax = true;
+
+	return;
+}
+
+void SldrDALtchMPBttn::_turnOffSldrMin(){
+	if(_otptCurValIsMin){
+		//---------------->> Functions related actions
+		if(_fnWhnTrnOffSldrMin != nullptr){
+			_fnWhnTrnOffSldrMin();
+		}
+		if(_fnVdPtrPrmWhnTrnOffSldrMin != nullptr){
+			_fnVdPtrPrmWhnTrnOffSldrMin(_fnVdPtrPrmWhnTrnOffSldrMinArgPtr);
+		}
+		//---------------->> Flags related actions
+		_otptCurValIsMin = false;
+		setOutputsChange(true);
+	}	//TODO Generate getters and setters for previous functions and arguments
+
+	_otptCurValIsMin = false;
+
+	return;
+}
+
+void SldrDALtchMPBttn::_turnOnSldrMin(){
+	if(!_otptCurValIsMin){
+		//---------------->> Functions related actions
+		if(_fnWhnTrnOnSldrMin != nullptr){
+			_fnWhnTrnOnSldrMin();
+		}
+		if(_fnVdPtrPrmWhnTrnOnSldrMin != nullptr){
+			_fnVdPtrPrmWhnTrnOnSldrMin(_fnVdPtrPrmWhnTrnOnSldrMinArgPtr);
+		}
+		//---------------->> Flags related actions
+		_otptCurValIsMin = true;
+		setOutputsChange(true);
+	}	//TODO Generate getters and setters for previous functions and arguments
+
+	_otptCurValIsMin = true;
+
+	return;
+}
+
 //=========================================================================> Class methods delimiter
+
+VdblMPBttn::VdblMPBttn()
+{
+}
 
 VdblMPBttn::VdblMPBttn(const uint8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay, const bool &isOnDisabled)
 :DbncdDlydMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay)
@@ -2316,6 +2782,26 @@ fncPtrType VdblMPBttn::getFnWhnTrnOnVdd(){
 bool VdblMPBttn::getFrcOtptLvlWhnVdd(){
 
 	return _frcOtptLvlWhnVdd;
+}
+
+fncVdPtrPrmPtrType VdblMPBttn::getFVPPWhnTrnOffVdd(){
+	
+	return _fnVdPtrPrmWhnTrnOffVdd;
+}
+
+void* VdblMPBttn::getFVPPWhnTrnOffVddArgPtr(){
+	
+	return _fnVdPtrPrmWhnTrnOffVddArgPtr;
+}
+
+fncVdPtrPrmPtrType VdblMPBttn::getFVPPWhnTrnOnVdd(){
+	
+	return _fnVdPtrPrmWhnTrnOnVdd;
+}
+
+void* VdblMPBttn::getFVPPWhnTrnOnVddArgPtr(){
+	
+	return _fnVdPtrPrmWhnTrnOnVddArgPtr;
 }
 
 const bool VdblMPBttn::getIsVoided() const{
@@ -2354,9 +2840,8 @@ uint32_t VdblMPBttn::_otptsSttsPkg(uint32_t prevVal){
 }
 
 void VdblMPBttn::setFnWhnTrnOffVddPtr(void(*newFnWhnTrnOff)()){
-	if (_fnWhnTrnOffVdd != newFnWhnTrnOff){
+	if (_fnWhnTrnOffVdd != newFnWhnTrnOff)
 		_fnWhnTrnOffVdd = newFnWhnTrnOff;
-	}
 
 	return;
 }
@@ -2371,6 +2856,38 @@ void VdblMPBttn::setFnWhnTrnOnVddPtr(void(*newFnWhnTrnOn)()){
 void VdblMPBttn::setFrcdOtptWhnVdd(const bool &newVal){
 	if(_frcOtptLvlWhnVdd != newVal)
 		_frcOtptLvlWhnVdd = newVal;
+
+	return;
+}
+
+void VdblMPBttn::setFVPPWhnTrnOffVdd(fncVdPtrPrmPtrType newFVPPWhnTrnOff, void* argPtr){
+	if (_fnVdPtrPrmWhnTrnOffVdd != newFVPPWhnTrnOff){
+		_fnVdPtrPrmWhnTrnOffVdd = newFVPPWhnTrnOff;
+		_fnVdPtrPrmWhnTrnOffVddArgPtr = argPtr;
+	}
+
+	return;	
+}
+
+void VdblMPBttn::setFVPPWhnTrnOffVddArgPtr(void* newFVPPWhnTrnOffArgPtr){
+	if (_fnVdPtrPrmWhnTrnOffVddArgPtr != newFVPPWhnTrnOffArgPtr)
+		_fnVdPtrPrmWhnTrnOffVddArgPtr = newFVPPWhnTrnOffArgPtr;
+
+	return;
+}
+
+void VdblMPBttn::setFVPPWhnTrnOnVdd(fncVdPtrPrmPtrType newFVPPWhnTrnOn, void* argPtr){
+	if (_fnVdPtrPrmWhnTrnOnVdd != newFVPPWhnTrnOn){
+		_fnVdPtrPrmWhnTrnOnVdd = newFVPPWhnTrnOn;
+		_fnVdPtrPrmWhnTrnOnVddArgPtr = argPtr;
+	}
+
+	return;
+}
+
+void VdblMPBttn::setFVPPWhnTrnOnVddArgPtr(void* newFVPPWhnTrnOnArgPtr){
+	if (_fnVdPtrPrmWhnTrnOnVddArgPtr != newFVPPWhnTrnOnArgPtr)
+		_fnVdPtrPrmWhnTrnOnVddArgPtr = newFVPPWhnTrnOnArgPtr;
 
 	return;
 }
@@ -2427,6 +2944,8 @@ void VdblMPBttn::_turnOffVdd(){
 		//---------------->> Functions related actions
 		if(_fnWhnTrnOffVdd != nullptr)
 			_fnWhnTrnOffVdd();
+		if(_fnVdPtrPrmWhnTrnOffVdd != nullptr)
+			_fnVdPtrPrmWhnTrnOffVdd(_fnVdPtrPrmWhnTrnOffVddArgPtr);
 		//---------------->> Flags related actions
 		_isVoided = false;
 		setOutputsChange(true);
@@ -2441,6 +2960,8 @@ void VdblMPBttn::_turnOnVdd(){
 		//---------------->> Functions related actions
 		if(_fnWhnTrnOnVdd != nullptr)
 			_fnWhnTrnOnVdd();
+		if(_fnVdPtrPrmWhnTrnOnVdd != nullptr)
+			_fnVdPtrPrmWhnTrnOnVdd(_fnVdPtrPrmWhnTrnOnVddArgPtr);
 		//---------------->> Flags related actions
 		_isVoided = true;
 		setOutputsChange(true);
@@ -2475,9 +2996,8 @@ void VdblMPBttn::updFdaState(){
 			//In: >>---------------------------------->>
 			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
 			//Do: >>---------------------------------->>
-			if(!_isOn){
+			if(!_isOn)
 				_turnOn();
-			}
 			_validPressPend = false;
 			stOffVPP_Do();	// This provides a setting point for the voiding mechanism to be started
 			_mpbFdaState = stOnNVRP;
@@ -2510,7 +3030,8 @@ void VdblMPBttn::updFdaState(){
 			if(_sttChng){
 				_turnOnVdd();
 				_validVoidPend = false;
-				clrSttChng();}	// Execute this code only ONCE, when entering this state
+				clrSttChng();
+			}	// Execute this code only ONCE, when entering this state
 			//Do: >>---------------------------------->>
 			_mpbFdaState = stOnVddNVUP;
 			setSttChng();
@@ -2635,6 +3156,10 @@ void VdblMPBttn::updFdaState(){
 
 //=========================================================================> Class methods delimiter
 
+TmVdblMPBttn::TmVdblMPBttn()
+{
+}
+
 TmVdblMPBttn::TmVdblMPBttn(const uint8_t &mpbttnPin, unsigned long int voidTime, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay, const bool &isOnDisabled)
 :VdblMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay, isOnDisabled), _voidTime{voidTime}
 {
@@ -2718,6 +3243,10 @@ bool TmVdblMPBttn::updVoidStatus(){
 
 //=========================================================================> Class methods delimiter
 
+SnglSrvcVdblMPBttn::SnglSrvcVdblMPBttn()
+{
+}
+
 SnglSrvcVdblMPBttn::SnglSrvcVdblMPBttn(const uint8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
 :VdblMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay, false)
 {
@@ -2785,7 +3314,21 @@ unsigned long int findMCD(unsigned long int a, unsigned long int b) {
  * @param pkgOtpts A 32-bit value holding a DbncdMPBttn status encoded
  * @return A MpbOtpts_t type element containing the information decoded
  */
-MpbOtpts_t otptsSttsUnpkg(uint32_t pkgOtpts){
+/*
++--+--+--+--+--+--+--+--++--+--+--+--+--+--+--+--++--+--+--+--+--+--+--+--++--+--+--+--+--+--+--+--+
+|31|30|29|28|27|26|25|24||23|22|21|20|19|18|17|16||15|14|13|12|11|10|09|08||07|06|05|04|03|02|01|00|
+ ------------------------------------------------                       ------ -- -- -- -- -- -- --
+                                                |                          |    |  |  |  |  |  |  |
+                                                |                          |    |  |  |  |  |  |  isOn
+                                                |                          |    |  |  |  |  |  isEnabled
+                                                |                          |    |  |  |  |  pilotOn
+                                                |                          |    |  |  |   wrnngOn
+                                                |                          |    |  |  isVoided
+                                                |                          |    |  isOnScndry
+                                                otptCurVal (16 bits)
+*/
+
+ MpbOtpts_t otptsSttsUnpkg(uint32_t pkgOtpts){
 	MpbOtpts_t mpbCurSttsDcdd {0};
 
 	if(pkgOtpts & (((uint32_t)1) << IsOnBitPos))

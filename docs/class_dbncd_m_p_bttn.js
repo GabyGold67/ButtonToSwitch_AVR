@@ -2,6 +2,7 @@ var class_dbncd_m_p_bttn =
 [
     [ "DbncdMPBttn", "class_dbncd_m_p_bttn.html#a6b610f28298f925ce4672bf5891e843b", null ],
     [ "DbncdMPBttn", "class_dbncd_m_p_bttn.html#aeb5d5cf27627eac7b51654e6e4c92bf3", null ],
+    [ "DbncdMPBttn", "class_dbncd_m_p_bttn.html#a4edb1d237123c0c4548aebb1402561e3", null ],
     [ "~DbncdMPBttn", "class_dbncd_m_p_bttn.html#a3f0f4c1a3b122541031fecaf9bb93101", null ],
     [ "begin", "class_dbncd_m_p_bttn.html#a5b4061687a017d5db4a62298b7278cb8", null ],
     [ "clrStatus", "class_dbncd_m_p_bttn.html#a3009725646aeb160884b8109d180b530", null ],
@@ -11,6 +12,10 @@ var class_dbncd_m_p_bttn =
     [ "getCurDbncTime", "class_dbncd_m_p_bttn.html#a30e73bf45b359a26065ba4ceab6841ab", null ],
     [ "getFnWhnTrnOff", "class_dbncd_m_p_bttn.html#ae90de3a636c2e9b4ae0939bdb06cc5b0", null ],
     [ "getFnWhnTrnOn", "class_dbncd_m_p_bttn.html#a1ac46dbf91e0a8ef1bb753e48d3f25c7", null ],
+    [ "getFVPPWhnTrnOff", "class_dbncd_m_p_bttn.html#a535d3c56365f6c3de035bfbc35937987", null ],
+    [ "getFVPPWhnTrnOffArgPtr", "class_dbncd_m_p_bttn.html#ab3f18456d8f75dbdeaaca463fec8ee9a", null ],
+    [ "getFVPPWhnTrnOn", "class_dbncd_m_p_bttn.html#a5ef5459cb174f58cb508b8e06dd92cea", null ],
+    [ "getFVPPWhnTrnOnArgPtr", "class_dbncd_m_p_bttn.html#a9d9a6762255010266632d1e6582bce78", null ],
     [ "getIsEnabled", "class_dbncd_m_p_bttn.html#a96e20616b21b135293f8e5b0a2c0ab28", null ],
     [ "getIsOn", "class_dbncd_m_p_bttn.html#ac78bb12cb1d9bdb43b4e4e593812b300", null ],
     [ "getIsOnDisabled", "class_dbncd_m_p_bttn.html#a9cee3ead20e3628c02975a9d0c8a4baa", null ],
@@ -25,9 +30,14 @@ var class_dbncd_m_p_bttn =
     [ "resetDbncTime", "class_dbncd_m_p_bttn.html#a5b8cd9ec64370e6aafb62ecd94a82aef", null ],
     [ "resetFda", "class_dbncd_m_p_bttn.html#a2df98cfb822df05bc232143f883e5c32", null ],
     [ "resume", "class_dbncd_m_p_bttn.html#a9540a12554008a6705056b02fbafed38", null ],
+    [ "setBeginDisabled", "class_dbncd_m_p_bttn.html#a0ebb74dc4cf265035b016f520b8597e2", null ],
     [ "setDbncTime", "class_dbncd_m_p_bttn.html#afa8a94396ee3fe8f9cc41c8ea9d8b8d3", null ],
     [ "setFnWhnTrnOffPtr", "class_dbncd_m_p_bttn.html#abbd65b9ad37a2de7d8108789178e73e5", null ],
     [ "setFnWhnTrnOnPtr", "class_dbncd_m_p_bttn.html#ad1e5decc11a29c7ac2417cde9b43fc4e", null ],
+    [ "setFVPPWhnTrnOff", "class_dbncd_m_p_bttn.html#a1b3fdd885524b23af0c3c84fdf9ba23c", null ],
+    [ "setFVPPWhnTrnOffArgPtr", "class_dbncd_m_p_bttn.html#acce842400fa2b9e312154418b31cc9e0", null ],
+    [ "setFVPPWhnTrnOn", "class_dbncd_m_p_bttn.html#a5dec3ff8e7087a0da67a28e7a575e4a7", null ],
+    [ "setFVPPWhnTrnOnArgPtr", "class_dbncd_m_p_bttn.html#aa96302d0b96c6346455613ccd5c16096", null ],
     [ "setIsOnDisabled", "class_dbncd_m_p_bttn.html#a55644500cc3b52282c439ca4541a2351", null ],
     [ "setOutputsChange", "class_dbncd_m_p_bttn.html#af79e9d677c23bc8e387f7161b3294c30", null ]
 ];
