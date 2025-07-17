@@ -1596,8 +1596,6 @@ protected:
 	uint16_t _otptValMax{0xFFFF};
 	uint16_t _otptValMin{0x0000};
 
-
-
 	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOffSldrMax{nullptr};	// _fVPPWhnTrnOffSldrMax
 	void* _fnVdPtrPrmWhnTrnOffSldrMaxArgPtr{nullptr};	// _fVPPWhnTrnOffSldrMaxArgPtr
 	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOnSldrMax{nullptr};	// _fVPPWhnTrnOnSldrMax
@@ -1611,8 +1609,6 @@ protected:
 	void* _fnVdPtrPrmWhnTrnOnSldrMinArgPtr{nullptr};	// _fVPPWhnTrnOnSldrMinArgPtr
 	void (*_fnWhnTrnOffSldrMin)() {nullptr};
 	void (*_fnWhnTrnOnSldrMin)() {nullptr};
-
-
 
 	virtual uint32_t _otptsSttsPkg(uint32_t prevVal = 0);
 	bool _setSldrDir(const bool &newVal);
@@ -1646,6 +1642,111 @@ public:
 	 * @note See DbncdMPBttn::clrStatus(bool)
 	 */
    void clrStatus(bool clrIsOn = true);
+
+	/**
+	 * @brief Returns the function that is set to execute every time the object's **Output Current Value** (otptCurVal) attribute exits the **Maximum Output Current Value** attribute setting (otptValMax).
+	 *
+	 * The function to be executed is an attribute that might be modified by the **setFnWhnTrnOffSldrMaxPtr()** method, and is a function pointer with the signature void (fncPtr*) ().
+	 *
+	 * @return A function pointer to the function set to execute every time the object's **otptCurVal** changes from the **otptValMax**.
+	 * @retval nullptr if there is no function set to execute when the object's **otptCurVal** exits the **otptValMax**.
+	 *
+	 * @warning The function code execution will become part of the list of procedures the object executes when it changes from the **otptValMax**, including the possibility to modify attribute flags and others. Making the function code too time demanding must be handled with care, using alternative execution schemes, for example (and not limited to) the function might set flags, modify counters and parameters to set the conditions to execute some code in the main loop, and that suspends itself at the end of its code, to let a new function calling event resume it once again.
+	 */
+	fncPtrType getFnWhnTrnOffSldrMax();
+	/**
+	 * @brief Returns the function that is set to execute every time the object's **Output Current Value** (otptCurVal) attribute exits the **Minimum Output Current Value** attribute setting (otptValMax).
+	 *
+	 * The function to be executed is an attribute that might be modified by the **setFnWhnTrnOffSldrMinPtr()** method, and is a function pointer with the signature void (fncPtr*) ().
+	 *
+	 * @return A function pointer to the function set to execute every time the object's **otptCurVal** changes from the **otptValMin**.
+	 * @retval nullptr if there is no function set to execute when the object's **otptCurVal** exits the **otptValMin**.
+	 *
+	 * @warning The function code execution will become part of the list of procedures the object executes when it changes from the **otptValMin**, including the possibility to modify attribute flags and others. Making the function code too time demanding must be handled with care, using alternative execution schemes, for example (and not limited to) the function might set flags, modify counters and parameters to set the conditions to execute some code in the main loop, and that suspends itself at the end of its code, to let a new function calling event resume it once again.
+	 */
+	fncPtrType getFnWhnTrnOffSldrMin();
+	/**
+	 * @brief Returns the function that is set to execute every time the object's **Output Current Value** (otptCurVal) attribute reaches the **Maximum Output Current Value** attribute setting (otptValMax).
+	 *
+	 * The function to be executed is an attribute that might be modified by the **setFnWhnTrnOnSldrMaxPtr()** method, and is a function pointer with the signature void (fncPtr*) ().
+	 *
+	 * @return A function pointer to the function set to execute every time the object's **otptCurVal** reaches the **otptValMax**.
+	 * @retval nullptr if there is no function set to execute when the object's **otptCurVal** reaches the **otptValMax**.
+	 *
+	 * @warning The function code execution will become part of the list of procedures the object executes when it reaches the **otptValMax**, including the possibility to modify attribute flags and others. Making the function code too time demanding must be handled with care, using alternative execution schemes, for example (and not limited to) the function might set flags, modify counters and parameters to set the conditions to execute some code in the main loop, and that suspends itself at the end of its code, to let a new function calling event resume it once again.
+	 */
+	fncPtrType getFnWhnTrnOnSldrMax();
+	/**
+	 * @brief Returns the function that is set to execute every time the object's **Output Current Value** (otptCurVal) attribute reaches the **Minimum Output Current Value** attribute setting (otptValMin).
+	 *
+	 * The function to be executed is an attribute that might be modified by the **setFnWhnTrnOnSldrMinPtr()** method, and is a function pointer with the signature void (fncPtr*) ().
+	 *
+	 * @return A function pointer to the function set to execute every time the object's **otptCurVal** reaches the **otptValMin**.
+	 * @retval nullptr if there is no function set to execute when the object's **otptCurVal** reaches the **otptValMin**.
+	 *
+	 * @warning The function code execution will become part of the list of procedures the object executes when it reaches the **otptValMin**, including the possibility to modify attribute flags and others. Making the function code too time demanding must be handled with care, using alternative execution schemes, for example (and not limited to) the function might set flags, modify counters and parameters to set the conditions to execute some code in the main loop, and that suspends itself at the end of its code, to let a new function calling event resume it once again.
+	 */
+	fncPtrType getFnWhnTrnOnSldrMin();
+	/**
+	 * @brief Returns the function that is set to execute every time the object's **Output Current Value** (otptCurVal) attribute exits the **Maximum Output Current Value** attribute setting (otptValMax).
+	 * 
+	 * The pointer is one to a function with the signature void (fncPtr*) (void*) to allow for passing a void* argument to the function.  
+	 * 
+	 * @return A function pointer to the function set to execute every time the object's **otptCurVal** changes from the **otptValMax**.
+	 * @retval nullptr if there is no function set to execute when the object's **otptCurVal** exits the **otptValMax**.
+	 */
+	fncVdPtrPrmPtrType getFVPPWhnTrnOffSldrMax();
+	/**
+	 * @brief Returns a pointer to the argument to be passed to the function set to execute every time the object's **Output Current Value** (otptCurVal) attribute exits the **Maximum Output Current Value** attribute setting (otptValMax).
+	 * 
+	 * @return void* Pointer to the argument to be passed to the function set to execute every time the object enters the object's **Output Current Value** (otptCurVal) attribute exits the **Maximum Output Current Value** attribute setting (otptValMax).
+	 */
+	void* getFVPPWhnTrnOffSldrMaxArgPtr();
+	/**
+	 * @brief Returns the function that is set to execute every time the object's **Output Current Value** (otptCurVal) attribute reaches the **Maximum Output Current Value** attribute setting (otptValMax).
+	 * 
+	 * The pointer is one to a function with the signature void (fncPtr*) (void*) to allow for passing a void* argument to the function.  
+	 * 
+	 * @return A function pointer to the function set to execute every time the object's **otptCurVal** reaches the **otptValMax**.
+	 * @retval nullptr if there is no function set to execute when the object's **otptCurVal** reaches the **otptValMax**.
+	 */
+	fncVdPtrPrmPtrType getFVPPWhnTrnOnSldrMax();
+	/**
+	 * @brief Returns a pointer to the argument to be passed to the function set to execute every time the object's **Output Current Value** (otptCurVal) attribute reaches the **Maximum Output Current Value** attribute setting (otptValMax).
+	 * 
+	 * @return void* Pointer to the argument to be passed to the function set to execute every time the object enters the object's **Output Current Value** (otptCurVal) attribute reaches the **Maximum Output Current Value** attribute setting (otptValMax).
+	 */
+	void* getFVPPWhnTrnOnSldrMaxArgPtr();
+	/**
+	 * @brief Returns the function that is set to execute every time the object's **Output Current Value** (otptCurVal) attribute exits the **Minimum Output Current Value** attribute setting (otptValMin).
+	 * 
+	 * The pointer is one to a function with the signature void (fncPtr*) (void*) to allow for passing a void* argument to the function.  
+	 * 
+	 * @return A function pointer to the function set to execute every time the object's **otptCurVal** changes from the **otptValMin**.
+	 * @retval nullptr if there is no function set to execute when the object's **otptCurVal** exits the **otptValMin**.
+	 */
+	fncVdPtrPrmPtrType getFVPPWhnTrnOffSldrMin();
+	/**
+	 * @brief Returns a pointer to the argument to be passed to the function set to execute every time the object's **Output Current Value** (otptCurVal) attribute exits the **Minimum Output Current Value** attribute setting (otptValMin).
+	 * 
+	 * @return void* Pointer to the argument to be passed to the function set to execute every time the object enters the object's **Output Current Value** (otptCurVal) attribute exits the **Minimum Output Current Value** attribute setting (otptValMin).
+	 */
+	void* getFVPPWhnTrnOffSldrMinArgPtr();
+	/**
+	 * @brief Returns the function that is set to execute every time the object's **Output Current Value** (otptCurVal) attribute reaches the **Minimum Output Current Value** attribute setting (otptValMin).
+	 * 
+	 * The pointer is one to a function with the signature void (fncPtr*) (void*) to allow for passing a void* argument to the function.  
+	 * 
+	 * @return A function pointer to the function set to execute every time the object's **otptCurVal** reaches the **otptValMin**.
+	 * @retval nullptr if there is no function set to execute when the object's **otptCurVal** reaches the **otptValMin**.
+	 */
+	fncVdPtrPrmPtrType getFVPPWhnTrnOnSldrMin();
+	/**
+	 * @brief Returns a pointer to the argument to be passed to the function set to execute every time the object's **Output Current Value** (otptCurVal) attribute reaches the **Minimum Output Current Value** attribute setting (otptValMin).
+	 * 
+	 * @return void* Pointer to the argument to be passed to the function set to execute every time the object enters the object's **Output Current Value** (otptCurVal) attribute reaches the **Minimum Output Current Value** attribute setting (otptValMin).
+	 */
+	void* getFVPPWhnTrnOnSldrMinArgPtr();
 	/**
 	 * @brief Returns the **Output Current Value (otpCurVal)** attribute
 	 *
@@ -1714,6 +1815,110 @@ public:
 	 * @retval false The current slider direction is **Down**, the output current value will be decremented.
 	 */
 	bool getSldrDirUp();
+
+	//TODO continue documentation update from this point
+	/**
+	 * @brief Sets the function that will be called to execute every time the object's **Pilot** is **reset**.
+	 *
+	 * The function to be executed must be of the form **void (*newFnWhnTrnOff)()**, meaning it must take no arguments and must return no value, it will be executed only once by the object (recursion must be handled with the usual precautions). When instantiated the attribute value is set to **nullptr**.
+	 *
+	 * @param newFnWhnTrnOff Function pointer to the function intended to be called when the object's **Pilot** is **reset**. Passing **nullptr** as parameter deactivates the function execution mechanism.
+	 */
+	void setFnWhnTrnOffSldrMaxPtr(void(*newFnWhnTrnOff)());	// getFnWhnTrnOffSldrMax
+	/**
+	 * @brief Sets the function that will be called to execute every time the object's **Warning** is **reset**.
+	 *
+	 * The function to be executed must be of the form **void (*newFnWhnTrnOff)()**, meaning it must take no arguments and must return no value, it will be executed only once by the object (recursion must be handled with the usual precautions). When instantiated the attribute value is set to **nullptr**.
+	 *
+	 * @param newFnWhnTrnOff Function pointer to the function intended to be called when the object's **Warning** is **reset**. Passing **nullptr** as parameter deactivates the function execution mechanism.
+	 */
+	void setFnWhnTrnOffSldrMinPtr(void(*newFnWhnTrnOff)());	// getFnWhnTrnOffSldrMin
+	/**
+	 * @brief Sets the function that will be called to execute every time the object's **Pilot** is **set**.
+	 *
+	 * The function to be executed must be of the form **void (*newFnWhnTrnOn)()**, meaning it must take no arguments and must return no value, it will be executed only once by the object (recursion must be handled with the usual precautions). When instantiated the attribute value is set to **nullptr**.
+	 *
+	 * @param newFnWhnTrnOn: function pointer to the function intended to be called when the object's **Pilot is set**. Passing **nullptr** as parameter deactivates the function execution mechanism.
+	 */
+	void setFnWhnTrnOnSldrMaxPtr(void(*newFnWhnTrnOn)());
+	/**
+	 * @brief Sets the function that will be called to execute every time the object's **Wrnng** is **set**.
+	 *
+	 * The function to be executed must be of the form **void (*newFnWhnTrnOn)()**, meaning it must take no arguments and must return no value, it will be executed only once by the object (recursion must be handled with the usual precautions). When instantiated the attribute value is set to **nullptr**.
+	 *
+	 * @param newFnWhnTrnOn: function pointer to the function intended to be called when the object's **Wrnng** is **set**. Passing **nullptr** as parameter deactivates the function execution mechanism.
+	 */
+	void setFnWhnTrnOnSldrMinPtr(void(*newFnWhnTrnOn)());
+	/**
+	 * @brief Sets a function to be executed every time the object **enters** the **Pilot Off State**.
+	 *
+	 * The function to be executed must be of the form **void (*newFVPPWhnTrnOff)(void*)**, meaning it must take a void pointer as argument and must return no value, it will be executed only once by the object (recursion must be handled with the usual precautions). When the object is instantiated the attribute value is set to **nullptr**.
+	 *
+	 * @param newFVPPWhnTrnOff Function pointer to the function intended to be called when the object **enters** the **Pilot Off State**. Passing **nullptr** as parameter deactivates the function execution mechanism.
+	 * @param argPtr void pointer to an argument to be passed to the function when it is called.
+	 */
+	void setFVPPWhnTrnOffSldrMax(fncVdPtrPrmPtrType newFVPPWhnTrnOff, void* argPtr = nullptr);
+	/**
+	 * @brief Sets a pointer to an argument to be passed to the function set to execute every time the object **enters** the **Pilot Off State**.
+	 *
+	 * The argument pointer is passed to the function set to execute when the object enters the **Pilot Off State**. The pointer is set to **nullptr** when the object is instantiated.
+	 *
+	 * @param newFVPPWhnTrnOffArgPtr Pointer to an argument to be passed to the function set to execute every time the object enters the **Pilot Off State**.
+	 */
+	void setFVPPWhnTrnOffSldrMaxArgPtr(void* newFVPPWhnTrnOffArgPtr);
+	/**
+	 * @brief Sets a function to be executed every time the object **enters** the **Pilot On State**.
+	 *
+	 * The function to be executed must be of the form **void (*newFVPPWhnTrnOn)(void*)**, meaning it must take a void pointer as argument and must return no value, it will be executed only once by the object (recursion must be handled with the usual precautions). When the object is instantiated the attribute value is set to **nullptr**.
+	 *
+	 * @param newFVPPWhnTrnOn Function pointer to the function intended to be called when the object **enters** the **Pilot On State**. Passing **nullptr** as parameter deactivates the function execution mechanism.
+	 * @param argPtr void pointer to an argument to be passed to the function when it is called.
+	 */
+	void setFVPPWhnTrnOnSldrMax(fncVdPtrPrmPtrType newFVPPWhnTrnOn, void* argPtr = nullptr);
+	/**
+	 * @brief Sets a pointer to an argument to be passed to the function set to execute every time the object **enters** the **Pilot On State**.
+	 *
+	 * The argument pointer is passed to the function set to execute when the object enters the **On State**. The pointer is set to **nullptr** when the object is instantiated.
+	 *
+	 * @param newFVPPWhnTrnOnArgPtr Pointer to an argument to be passed to the function set to execute every time the object enters the **Pilot On State**.
+	 */
+	void setFVPPWhnTrnOnSldrMaxArgPtr(void* newFVPPWhnTrnOnArgPtr);
+	/**
+	 * @brief Sets a function to be executed every time the object **enters** the **Warning Off State**.
+	 *
+	 * The function to be executed must be of the form **void (*newFVPPWhnTrnOff)(void*)**, meaning it must take a void pointer as argument and must return no value, it will be executed only once by the object (recursion must be handled with the usual precautions). When the object is instantiated the attribute value is set to **nullptr**.
+	 *
+	 * @param newFVPPWhnTrnOff Function pointer to the function intended to be called when the object **enters** the **Warning Off State**. Passing **nullptr** as parameter deactivates the function execution mechanism.
+	 * @param argPtr void pointer to an argument to be passed to the function when it is called.
+	 */
+	void setFVPPWhnTrnOffSldrMin(fncVdPtrPrmPtrType newFVPPWhnTrnOff, void* argPtr = nullptr);
+	/**
+	 * @brief Sets a pointer to an argument to be passed to the function set to execute every time the object **enters** the **Warning Off State**.
+	 *
+	 * The argument pointer is passed to the function set to execute when the object enters the **Warning Off State**. The pointer is set to **nullptr** when the object is instantiated.
+	 *
+	 * @param newFVPPWhnTrnOffArgPtr Pointer to an argument to be passed to the function set to execute every time the object enters the **Warning Off State**.
+	 */
+	void setFVPPWhnTrnOffSldrMinArgPtr(void* newFVPPWhnTrnOffArgPtr);
+	/**
+	 * @brief Sets a function to be executed every time the object **enters** the **Warning On State**.
+	 *
+	 * The function to be executed must be of the form **void (*newFVPPWhnTrnOn)(void*)**, meaning it must take a void pointer as argument and must return no value, it will be executed only once by the object (recursion must be handled with the usual precautions). When the object is instantiated the attribute value is set to **nullptr**.
+	 *
+	 * @param newFVPPWhnTrnOn Function pointer to the function intended to be called when the object **enters** the **Warning On State**. Passing **nullptr** as parameter deactivates the function execution mechanism.
+	 * @param argPtr void pointer to an argument to be passed to the function when it is called.
+	 */
+	void setFVPPWhnTrnOnSldrMin(fncVdPtrPrmPtrType newFVPPWhnTrnOn, void* argPtr = nullptr);
+	/**
+	 * @brief Sets a pointer to an argument to be passed to the function set to execute every time the object **enters** the **Warning On State**.
+	 *
+	 * The argument pointer is passed to the function set to execute when the object enters the **Warning On State**. The pointer is set to **nullptr** when the object is instantiated.
+	 *
+	 * @param newFVPPWhnTrnOnArgPtr Pointer to an argument to be passed to the function set to execute every time the object enters the **Warning On State**.
+	 */
+	void setFVPPWhnTrnOnSldrMinArgPtr(void* newFVPPWhnTrnOnArgPtr);
+
+
 	/**
 	 * @brief Sets the output current value register.
 	 *
