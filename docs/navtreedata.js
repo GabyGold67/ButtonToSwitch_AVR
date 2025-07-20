@@ -43,7 +43,7 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "_button_to_switch_8h_source.html",
-"functions_func_u.html"
+"functions_func.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronization';
