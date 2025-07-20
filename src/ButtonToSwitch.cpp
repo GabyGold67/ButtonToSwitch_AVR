@@ -2395,6 +2395,16 @@ void SldrDALtchMPBttn::clrStatus(bool clrIsOn){
 	return;
 }
 
+fncPtrType SldrDALtchMPBttn::getFnWhnTrnOffSldrDirUp(){
+   
+	return _fnWhnTrnOffSldrDirUp;
+}
+
+fncPtrType SldrDALtchMPBttn::getFnWhnTrnOnSldrDirUp()
+{
+   return _fnWhnTrnOnSldrDirUp;
+}
+
 fncPtrType SldrDALtchMPBttn::getFnWhnTrnOffSldrMax(){
 	
    return _fnWhnTrnOffSldrMax;
@@ -2413,6 +2423,26 @@ fncPtrType SldrDALtchMPBttn::getFnWhnTrnOnSldrMax(){
 fncPtrType SldrDALtchMPBttn::getFnWhnTrnOnSldrMin(){
 	
    return _fnWhnTrnOnSldrMin;
+}
+
+fncVdPtrPrmPtrType SldrDALtchMPBttn::getFVPPWhnTrnOffSldrDirUp(){
+
+   return _fnVdPtrPrmWhnTrnOffSldrDirUp;
+}
+
+void *SldrDALtchMPBttn::getFVPPWhnTrnOffSldrDirUpArgPtr(){
+
+   return _fnVdPtrPrmWhnTrnOffSldrDirUpArgPtr;
+}
+
+fncVdPtrPrmPtrType SldrDALtchMPBttn::getFVPPWhnTrnOnSldrDirUp(){
+
+   return _fnVdPtrPrmWhnTrnOnSldrDirUp;
+}
+
+void *SldrDALtchMPBttn::getFVPPWhnTrnOnSldrDirUpArgPtr(){
+
+   return _fnVdPtrPrmWhnTrnOnSldrDirUpArgPtr;
 }
 
 fncVdPtrPrmPtrType SldrDALtchMPBttn::getFVPPWhnTrnOffSldrMax(){
@@ -2497,11 +2527,43 @@ bool SldrDALtchMPBttn::getSldrDirUp(){
 	return _curSldrDirUp;
 }
 
+void SldrDALtchMPBttn::_ntfyChngSldrDir(){
+	if(_curSldrDirUp){
+		if(_fnWhnTrnOnSldrDirUp != nullptr)
+			_fnWhnTrnOnSldrDirUp();
+		if(_fnVdPtrPrmWhnTrnOnSldrDirUp != nullptr){
+			_fnVdPtrPrmWhnTrnOnSldrDirUp(_fnVdPtrPrmWhnTrnOnSldrDirUpArgPtr);
+		}
+	}
+	else{
+		if(_fnWhnTrnOffSldrDirUp != nullptr)
+			_fnWhnTrnOffSldrDirUp();
+		if(_fnVdPtrPrmWhnTrnOffSldrDirUp != nullptr){
+			_fnVdPtrPrmWhnTrnOffSldrDirUp(_fnVdPtrPrmWhnTrnOffSldrDirUpArgPtr);
+		}
+	}
+	return;
+}
+
 uint32_t SldrDALtchMPBttn::_otptsSttsPkg(uint32_t prevVal){
 	prevVal = DblActnLtchMPBttn::_otptsSttsPkg(prevVal);
 	prevVal |= (((uint32_t)_otptCurVal) << OtptCurValBitPos);
 
 	return prevVal;
+}
+
+void SldrDALtchMPBttn::setFnWhnTrnOffSldrDirUp(void (*newFnWhnTrnOff)()){
+	if(_fnWhnTrnOffSldrDirUp != newFnWhnTrnOff)
+		_fnWhnTrnOffSldrDirUp = newFnWhnTrnOff;
+
+	return;
+}
+
+void SldrDALtchMPBttn::setFnWhnTrnOnSldrDirUp(void (*newFnWhnTrnOn)()){
+	if(_fnWhnTrnOnSldrDirUp != newFnWhnTrnOn)
+		_fnWhnTrnOnSldrDirUp = newFnWhnTrnOn;
+
+	return;
 }
 
 void SldrDALtchMPBttn::setFnWhnTrnOffSldrMaxPtr(void (*newFnWhnTrnOff)()){
@@ -2528,6 +2590,38 @@ void SldrDALtchMPBttn::setFnWhnTrnOnSldrMaxPtr(void (*newFnWhnTrnOn)()){
 void SldrDALtchMPBttn::setFnWhnTrnOnSldrMinPtr(void (*newFnWhnTrnOn)()){
 	if(_fnWhnTrnOnSldrMin != newFnWhnTrnOn)
 		_fnWhnTrnOnSldrMin = newFnWhnTrnOn;
+
+	return;
+}
+
+void SldrDALtchMPBttn::setFVPPWhnTrnOffSldrDirUp(fncVdPtrPrmPtrType newFVPPWhnTrnOff, void *argPtr){
+	if (_fnVdPtrPrmWhnTrnOffSldrDirUp != newFVPPWhnTrnOff){
+		_fnVdPtrPrmWhnTrnOffSldrDirUp = newFVPPWhnTrnOff;
+		_fnVdPtrPrmWhnTrnOffSldrDirUpArgPtr = argPtr;
+	}
+
+	return;
+}
+
+void SldrDALtchMPBttn::setFVPPWhnTrnOffSldrDirUpArgPtr(void *newFVPPWhnTrnOffArgPtr){
+	if (_fnVdPtrPrmWhnTrnOffSldrDirUpArgPtr != newFVPPWhnTrnOffArgPtr)
+		_fnVdPtrPrmWhnTrnOffSldrDirUpArgPtr = newFVPPWhnTrnOffArgPtr;
+
+	return;
+}
+
+void SldrDALtchMPBttn::setFVPPWhnTrnOnSldrDirUp(fncVdPtrPrmPtrType newFVPPWhnTrnOn, void *argPtr){
+	if (_fnVdPtrPrmWhnTrnOnSldrDirUp != newFVPPWhnTrnOn){
+		_fnVdPtrPrmWhnTrnOnSldrDirUp = newFVPPWhnTrnOn;
+		_fnVdPtrPrmWhnTrnOnSldrDirUpArgPtr = argPtr;
+	}
+
+	return;
+}
+
+void SldrDALtchMPBttn::setFVPPWhnTrnOnSldrDirUpArgPtr(void *newFVPPWhnTrnOnArgPtr){
+	if (_fnVdPtrPrmWhnTrnOnSldrDirUpArgPtr != newFVPPWhnTrnOnArgPtr)
+		_fnVdPtrPrmWhnTrnOnSldrDirUpArgPtr = newFVPPWhnTrnOnArgPtr;
 
 	return;
 }
@@ -2685,8 +2779,13 @@ bool SldrDALtchMPBttn::_setSldrDir(const bool &newVal){
 			if(_otptCurVal != _otptValMin)
 				_curSldrDirUp = false;
 		}
-		if(_curSldrDirUp != newVal)
+		if(_curSldrDirUp != newVal){	// Change of direction failed
 			result = false;
+		}
+		else{	// Change of direction succeeded
+			_ntfyChngSldrDir();
+
+		}
 	}
 
 	return result;

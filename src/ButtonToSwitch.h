@@ -1610,6 +1610,14 @@ protected:
 	void (*_fnWhnTrnOffSldrMin)() {nullptr};
 	void (*_fnWhnTrnOnSldrMin)() {nullptr};
 
+	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOffSldrDirUp{nullptr};	// _fVPPWhnTrnOffSldrDirUp
+	void* _fnVdPtrPrmWhnTrnOffSldrDirUpArgPtr{nullptr};	// _fVPPWhnTrnOffSldrDirUpArgPtr
+	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOnSldrDirUp{nullptr};	// _fVPPWhnTrnOnSldrDirUp
+	void* _fnVdPtrPrmWhnTrnOnSldrDirUpArgPtr{nullptr};	// _fVPPWhnTrnOnSldrDirUpArgPtr
+	void (*_fnWhnTrnOffSldrDirUp)() {nullptr};
+	void (*_fnWhnTrnOnSldrDirUp)() {nullptr};
+
+	void _ntfyChngSldrDir();
 	virtual uint32_t _otptsSttsPkg(uint32_t prevVal = 0);
 	bool _setSldrDir(const bool &newVal);
 	void stOnEndScndMod_Out();
@@ -1642,6 +1650,11 @@ public:
 	 * @note See DbncdMPBttn::clrStatus(bool)
 	 */
    void clrStatus(bool clrIsOn = true);
+
+	fncPtrType getFnWhnTrnOffSldrDirUp();
+	
+	fncPtrType getFnWhnTrnOnSldrDirUp();
+
 	/**
 	 * @brief Returns the function that is set to be executed every time the object's **Output Current Value** (otptCurVal) attribute changes after being equal to the **Maximum Output Value** attribute setting (otptValMax).  
 	 *
@@ -1686,6 +1699,15 @@ public:
 	 * @warning The function code execution will become part of the list of procedures the object executes when it reaches the **otptValMin**, including the possibility to modify attribute flags and others. Making the function code too time demanding must be handled with care, using alternative execution schemes, for example (and not limited to) the function might set flags, modify counters and parameters to set the conditions to execute some code in the main loop, and that suspends itself at the end of its code, to let a new function calling event resume it once again.
 	 */
 	fncPtrType getFnWhnTrnOnSldrMin();
+
+	fncVdPtrPrmPtrType getFVPPWhnTrnOffSldrDirUp();
+
+	void* getFVPPWhnTrnOffSldrDirUpArgPtr();
+
+	fncVdPtrPrmPtrType getFVPPWhnTrnOnSldrDirUp();
+	
+	void* getFVPPWhnTrnOnSldrDirUpArgPtr();
+
 	/**
 	 * @brief Returns the function that is set to be executed every time the object's **Output Current Value** (otptCurVal) attribute changes after being equal to the **Maximum Output Value** attribute setting (otptValMax).  
 	 *
@@ -1825,6 +1847,11 @@ public:
 	 * @retval false The current slider direction is **Down**, the output current value will be decremented.
 	 */
 	bool getSldrDirUp();
+
+	void setFnWhnTrnOffSldrDirUp(void(*newFnWhnTrnOff)());	// getFnWhnTrnOffSldrDirUp
+
+	void setFnWhnTrnOnSldrDirUp(void(*newFnWhnTrnOn)());	// getFnWhnTrnOnSldrDirUp
+
 	/**
 	 * @brief Sets a function that will be called every time the object's **Output Current Value** (otptCurVal) attribute changes after being equal to the **Maximum Output Value** attribute setting (otptValMax).  
 	 *
@@ -1849,6 +1876,15 @@ public:
 	 * @param newFnWhnTrnOn The function pointer to a function with the signature **void (fncPtr*) ()**.
 	 */
 	void setFnWhnTrnOnSldrMinPtr(void(*newFnWhnTrnOn)());
+
+	void setFVPPWhnTrnOffSldrDirUp(fncVdPtrPrmPtrType newFVPPWhnTrnOff, void* argPtr = nullptr);
+
+	void setFVPPWhnTrnOffSldrDirUpArgPtr(void* newFVPPWhnTrnOffArgPtr);
+
+	void setFVPPWhnTrnOnSldrDirUp(fncVdPtrPrmPtrType newFVPPWhnTrnOn, void* argPtr = nullptr);
+	
+	void setFVPPWhnTrnOnSldrDirUpArgPtr(void* newFVPPWhnTrnOnArgPtr);
+
 	/**
 	 * @brief Sets a function that will be called every time the object's **Output Current Value** (otptCurVal) attribute changes after being equal to the **Maximum Output Value** attribute setting (otptValMax).  
 	 *
