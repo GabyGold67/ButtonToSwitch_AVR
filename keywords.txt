@@ -137,10 +137,16 @@ setScndModActvDly KEYWORD2
 #################
 #SldrDALtchMPBttn
 #################
+getFnWhnTrnOffSldrDirUp KEYWORD2
+getFnWhnTrnOnSldrDirUp  KEYWORD2
 getFnWhnTrnOffSldrMax   KEYWORD2
 getFnWhnTrnOffSldrMin   KEYWORD2
 getFnWhnTrnOnSldrMax KEYWORD2
 getFnWhnTrnOnSldrMin KEYWORD2
+getFVPPWhnTrnOffSldrDirUp  KEYWORD2
+getFVPPWhnTrnOffSldrDirUpArgPtr  KEYWORD2
+getFVPPWhnTrnOnSldrDirUp   KEYWORD2
+getFVPPWhnTrnOnSldrDirUpArgPtr   KEYWORD2
 getFVPPWhnTrnOffSldrMax KEYWORD2
 getFVPPWhnTrnOffSldrMaxArgPtr KEYWORD2
 getFVPPWhnTrnOnSldrMax  KEYWORD2
@@ -157,6 +163,8 @@ getOtptSldrStpSize   KEYWORD2
 getOtptValMax  KEYWORD2
 getOtptValMin  KEYWORD2
 getSldrDirUp   KEYWORD2
+setFnWhnTrnOffSldrDirUp KEYWORD2
+setFnWhnTrnOnSldrDirUp  KEYWORD2
 setFnWhnTrnOffSldrMaxPtr   KEYWORD2
 setFnWhnTrnOffSldrMinPtr   KEYWORD2
 setFnWhnTrnOnSldrMaxPtr KEYWORD2

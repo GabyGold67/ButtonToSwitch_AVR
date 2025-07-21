@@ -78,6 +78,7 @@ Those mechanisms include:
 	- Entering and exiting the **Voided** state with the same characteristics above described for the **On/Off State**.  
 	- Entering and exiting the **SldrMaxValue** state with the same characteristics above described for the **On/Off State**.  
 	- Entering and exiting the **SldrMinValue** state with the same characteristics above described for the **On/Off State**.  
+	- Entering and exiting the **SldrValueDirUp** state with the same characteristics above described for the **On/Off State**.  
 
 Those listed mechanisms are **independent**, so one or more might be simultaneously used according to implementation needs and convenience.    
 
@@ -111,6 +112,7 @@ Those listed mechanisms are **independent**, so one or more might be simultaneou
 |**getLstPollTime()**|None|
 |**getOtptsSttsPkgd()**|None|
 |**getOutputsChange()**|None|
+|**getPollPeriodMs()**|None|
 |**getStrtDelay()**|None|
 |**getUpdTmrAttchd()**|None|
 |**init()** |uint8_t **mpbttnPin**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**)))|
@@ -291,10 +293,10 @@ The **Service time** is set at instantiation, and can be modified through the pr
 |**getFVPPWhnTrnOnWrnngArgPtr()**|None|
 |**getPilotOn()**|None|
 |**getWrnngOn()**|None|
-|**setFnWhnTrnOffPilot()**|void* **newFnWhnTrnOff**|
-|**setFnWhnTrnOffWrnng()**|void* **newFnWhnTrnOff**|
-|**setFnWhnTrnOnPilot()**|void* **newFnWhnTrnOn**|
-|**setFnWhnTrnOnWrnng()**|void* **newFnWhnTrnOn**|
+|**setFnWhnTrnOffPilotPtr()**|void* **newFnWhnTrnOff**|
+|**setFnWhnTrnOffWrnngPtr()**|void* **newFnWhnTrnOff**|
+|**setFnWhnTrnOnPilotPtr()**|void* **newFnWhnTrnOn**|
+|**setFnWhnTrnOnWrnngPtr()**|void* **newFnWhnTrnOn**|
 |**setFVPPWhnTrnOffPilot()**|fncVdPtrPrmPtrType **newFVPPWhnTrnOff**(, void* **argPtr**)|
 |**setFVPPWhnTrnOffPilotArgPtr()**|void* **newFVPPWhnTrnOffArgPtr**|
 |**setFVPPWhnTrnOnPilot()**|fncVdPtrPrmPtrType **newFVPPWhnTrnOn**(, void* **argPtr**)|
@@ -304,7 +306,6 @@ The **Service time** is set at instantiation, and can be modified through the pr
 |**setFVPPWhnTrnOnWrnng()**|fncVdPtrPrmPtrType **newFVPPWhnTrnOn**(, void* **argPtr**)|
 |**setFVPPWhnTrnOnWrnngArgPtr()**|void* **newFVPPWhnTrnOnArgPtr**|
 |**setKeepPilot()**|bool **keepPilot**|
-|**setSrvcTime**|unsigned long int **newSvcTime**|
 |**setWrnngPrctg()**|unsigned int **newWrnngPrctg**|
   
 ### On-line simulations
@@ -380,7 +381,6 @@ This kind of switch is used when an "abnormal situation" demands the push of the
 |---|---|
 |**getFnWhnTrnOffScndry()**|None|
 |**getFnWhnTrnOnScndry()**|None|
-|**getIsOnScndry()**|None|
 |**getFVPPWhnTrnOffScndry()**|None|
 |**getFVPPWhnTrnOffScndryArgPtr()**|None|
 |**getFVPPWhnTrnOnScndry()**|None|
@@ -458,6 +458,24 @@ This is a subclass of the **DALDD-MPB** whose **secondary behavior** is that of 
 |**SldrDALtchMPBttn()**|None|
 |**SldrDALtchMPBttn()**|uint8_t **mpbttnPin**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**(, unsigned long int **strtDelay**(,  uint16_t **initVal**)))))|
 |**~SldrDALtchMPBttn()**|None|
+|**getFnWhnTrnOffSldrDirUp()**|None|
+|**getFnWhnTrnOnSldrDirUp()**|None|
+|**getFnWhnTrnOffSldrMax()**|None|
+|**getFnWhnTrnOffSldrMin()**|None|
+|**getFnWhnTrnOnSldrMax()**|None|
+|**getFnWhnTrnOnSldrMin()**|None|
+|**getFVPPWhnTrnOffSldrDirUp()**|None|
+|**getFVPPWhnTrnOffSldrDirUpArgPtr()**|None|
+|**getFVPPWhnTrnOnSldrDirUp()**|None|
+|**getFVPPWhnTrnOnSldrDirUpArgPtr()**|None|
+|**getFVPPWhnTrnOffSldrMax()**|None|
+|**getFVPPWhnTrnOffSldrMaxArgPtr()**|None|
+|**getFVPPWhnTrnOnSldrMax()**|None|
+|**getFVPPWhnTrnOnSldrMaxArgPtr()**|None|
+|**getFVPPWhnTrnOffSldrMin()**|None|
+|**getFVPPWhnTrnOffSldrMinArgPtr()**|None|
+|**getFVPPWhnTrnOnSldrMin()**|None|
+|**getFVPPWhnTrnOnSldrMinArgPtr()**|None|
 |**getOtptCurVal()**|None|
 |**getOtptCurValIsMax()**|None|
 |**getOtptCurValIsMin()**|None|
@@ -466,6 +484,20 @@ This is a subclass of the **DALDD-MPB** whose **secondary behavior** is that of 
 |**getOtptValMax()**|None|
 |**getOtptValMin()**|None|
 |**getSldrDirUp()**|None|
+|**setFnWhnTrnOffSldrDirUp()**|void* **fnWhnTrnOff**|
+|**setFnWhnTrnOnSldrDirUp()**|void* **fnWhnTrnOn**|
+|**setFnWhnTrnOffSldrMaxPtr()**|void* **fnWhnTrnOff**|
+|**setFnWhnTrnOffSldrMinPtr()**|void* **fnWhnTrnOff**|
+|**setFnWhnTrnOnSldrMaxPtr()**|void* **fnWhnTrnOn**|
+|**setFnWhnTrnOnSldrMinPtr()**|void* **fnWhnTrnOn**|
+|**setFVPPWhnTrnOffSldrMax()**|fncVdPtrPrmPtrType **newFVPPWhnTrnOff**(, void* **argPtr**)|
+|**setFVPPWhnTrnOffSldrMaxArgPtr()**|void* **newFVPPWhnTrnOffArgPtr**|
+|**setFVPPWhnTrnOnSldrMax()**|fncVdPtrPrmPtrType **newFVPPWhnTrnOn**(, void* **argPtr**)|
+|**setFVPPWhnTrnOnSldrMaxArgPtr()**|void* **newFVPPWhnTrnOnArgPtr**|
+|**setFVPPWhnTrnOffSldrMin()**|fncVdPtrPrmPtrType **newFVPPWhnTrnOff**(, void* **argPtr**)|
+|**setFVPPWhnTrnOffSldrMinArgPtr()**|void* **newFVPPWhnTrnOffArgPtr**|
+|**setFVPPWhnTrnOnSldrMin()**|fncVdPtrPrmPtrType **newFVPPWhnTrnOn**(, void* **argPtr**)|
+|**setFVPPWhnTrnOnSldrMinArgPtr()**|void* **newFVPPWhnTrnOnArgPtr**|
 |**setOtptCurVal()**|uint16_t **newVal**|
 |**setOtptSldrSpd()**|uint16_t **newVal**|
 |**setOtptSldrStpSize()**|uint16_t **newVal**|
@@ -586,6 +618,7 @@ Then the switch will return to the Off position until the push button is release
 |---|---|
 |**_SnglSrvcVdblMPBttn_** |None|
 |**_SnglSrvcVdblMPBttn_** |uint8_t **mpbttnPin**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**(, unsigned long int **strtDelay**))))|
+|**_~SnglSrvcVdblMPBttn_** |None|
 
 ## Methods definition and use description  
 ---  
