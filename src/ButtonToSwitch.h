@@ -23,7 +23,7 @@
   * @version v4.6.0
   * 
   * @date First release: 10/09/2024  
-  *       Last update:   13/07/2025 12:10 (GMT+0200) DST  
+  *       Last update:   20/07/2025 19:00 (GMT+0200) DST  
   * 
   * @copyright Copyright (c) 2025  GPL-3.0 license  
   *******************************************************************************
@@ -1596,8 +1596,6 @@ protected:
 	uint16_t _otptValMax{0xFFFF};
 	uint16_t _otptValMin{0x0000};
 
-
-
 	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOffSldrMax{nullptr};	// _fVPPWhnTrnOffSldrMax
 	void* _fnVdPtrPrmWhnTrnOffSldrMaxArgPtr{nullptr};	// _fVPPWhnTrnOffSldrMaxArgPtr
 	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOnSldrMax{nullptr};	// _fVPPWhnTrnOnSldrMax
@@ -1612,8 +1610,14 @@ protected:
 	void (*_fnWhnTrnOffSldrMin)() {nullptr};
 	void (*_fnWhnTrnOnSldrMin)() {nullptr};
 
+	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOffSldrDirUp{nullptr};	// _fVPPWhnTrnOffSldrDirUp
+	void* _fnVdPtrPrmWhnTrnOffSldrDirUpArgPtr{nullptr};	// _fVPPWhnTrnOffSldrDirUpArgPtr
+	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOnSldrDirUp{nullptr};	// _fVPPWhnTrnOnSldrDirUp
+	void* _fnVdPtrPrmWhnTrnOnSldrDirUpArgPtr{nullptr};	// _fVPPWhnTrnOnSldrDirUpArgPtr
+	void (*_fnWhnTrnOffSldrDirUp)() {nullptr};
+	void (*_fnWhnTrnOnSldrDirUp)() {nullptr};
 
-
+	void _ntfyChngSldrDir();
 	virtual uint32_t _otptsSttsPkg(uint32_t prevVal = 0);
 	bool _setSldrDir(const bool &newVal);
 	void stOnEndScndMod_Out();
@@ -1646,6 +1650,171 @@ public:
 	 * @note See DbncdMPBttn::clrStatus(bool)
 	 */
    void clrStatus(bool clrIsOn = true);
+	/**
+	 * @brief Returns the function set to be called when the slider direction is set to be decrementing (down).
+	 * 
+	 * The function to be executed is an attribute that might be modified by the **setFnWhnTrnOffSldrDirUpPtr()** method, and is a function pointer to a function with the signature **void (fncPtr*) ()**.
+	 * 
+	 * @return fncPtrType A pointer to the function set to be called when the slider direction is set to be decrementing (down).
+	 * @retval nullptr if there is no function set to be called when the slider direction is set to be decrementing (down).
+	 */
+	fncPtrType getFnWhnTrnOffSldrDirUp();
+	/**
+	 * @brief Returns the function set to be called when the slider direction is set to be incrementing (up).
+	 * 
+	 * The function to be executed is an attribute that might be modified by the **setFnWhnTrnOnSldrDirUpPtr()** method, and is a function pointer to a function with the signature **void (fncPtr*) ()**.
+	 * 
+	 * @return fncPtrType A pointer to the function set to be called when the slider direction is set to be incrementing (up).
+	 * @retval nullptr if there is no function set to be called when the slider direction is set to be incrementing (up).
+	 */
+	fncPtrType getFnWhnTrnOnSldrDirUp();
+	/**
+	 * @brief Returns the function that is set to be executed every time the object's **Output Current Value** (otptCurVal) attribute changes after being equal to the **Maximum Output Value** attribute setting (otptValMax).  
+	 *
+	 * The function to be executed is an attribute that might be modified by the **setFnWhnTrnOffSldrMaxPtr()** method, and is a function pointer to a function with the signature **void (fncPtr*) ()**.  
+	 *
+	 * @return A function pointer to the function set to execute every time the object's **otptCurVal** changes from the **otptValMax** to a lesser value.  
+	 * @retval nullptr if there is no function set to execute when the object's **otptCurVal** changes from the **otptValMax** to a lesser value.  
+	 *
+	 * @warning The function code execution will become part of the list of procedures the object executes when **otptCurVal** changes after being equal to **otptValMax**, including the possibility to modify attribute flags and others. Making the function code too time demanding must be handled with care, using alternative execution schemes, for example (and not limited to) the function might set flags, modify counters and parameters to set the conditions to execute some code in the main loop, and that suspends itself at the end of its code, to let a new function calling event resume it once again.
+	 */
+	fncPtrType getFnWhnTrnOffSldrMax();
+	/**
+	 * @brief Returns the function that is set to execute every time the object's **Output Current Value** (otptCurVal) attribute changes after being equal to the **Minimum Output Current Value** attribute setting (otptValMin).
+	 *
+	 * The function to be executed is an attribute that might be modified by the **setFnWhnTrnOffSldrMinPtr()** method, and is a function pointer to a function with the signature **void (fncPtr*) ()**.  
+	 *
+	 * @return A function pointer to the function set to execute every time the object's **otptCurVal** changes from the **otptValMin** to a greater value.
+	 * @retval nullptr if there is no function set to execute when the object's **otptCurVal** changes from the **otptValMin** to a lesser value.  
+	 *
+	 * @warning The function code execution will become part of the list of procedures the object executes when **otptCurVal** changes after being equal to **otptValMin**, including the possibility to modify attribute flags and others. Making the function code too time demanding must be handled with care, using alternative execution schemes, for example (and not limited to) the function might set flags, modify counters and parameters to set the conditions to execute some code in the main loop, and that suspends itself at the end of its code, to let a new function calling event resume it once again.
+	 */
+	fncPtrType getFnWhnTrnOffSldrMin();
+	/**
+	 * @brief Returns the function that is set to execute every time the object's **Output Current Value** (otptCurVal) attribute reaches the **Maximum Output Current Value** attribute setting (otptValMax).
+	 *
+	 * The function to be executed is an attribute that might be modified by the **setFnWhnTrnOnSldrMaxPtr()** method, and is a function pointer to a function with the signature void (fncPtr*) ().
+	 *
+	 * @return A function pointer to the function set to execute every time the object's **otptCurVal** reaches the **otptValMax**.
+	 * @retval nullptr if there is no function set to execute when the object's **otptCurVal** reaches the **otptValMax**.
+	 *
+	 * @warning The function code execution will become part of the list of procedures the object executes when **otptCurVal** reaches the **otptValMax** value, including the possibility to modify attribute flags and others. Making the function code too time demanding must be handled with care, using alternative execution schemes, for example (and not limited to) the function might set flags, modify counters and parameters to set the conditions to execute some code in the main loop, and that suspends itself at the end of its code, to let a new function calling event resume it once again.
+	 */
+	fncPtrType getFnWhnTrnOnSldrMax();
+	/**
+	 * @brief Returns the function that is set to execute every time the object's **Output Current Value** (otptCurVal) attribute reaches the **Minimum Output Current Value** attribute setting (otptValMin).
+	 *
+	 * The function to be executed is an attribute that might be modified by the **setFnWhnTrnOnSldrMinPtr()** method, and is a function pointer to a function with the signature void (fncPtr*) ().
+	 *
+	 * @return A function pointer to the function set to execute every time the object's **otptCurVal** reaches the **otptValMin**.
+	 * @retval nullptr if there is no function set to execute when the object's **otptCurVal** reaches the **otptValMin**.
+	 *
+	 * @warning The function code execution will become part of the list of procedures the object executes when it reaches the **otptValMin**, including the possibility to modify attribute flags and others. Making the function code too time demanding must be handled with care, using alternative execution schemes, for example (and not limited to) the function might set flags, modify counters and parameters to set the conditions to execute some code in the main loop, and that suspends itself at the end of its code, to let a new function calling event resume it once again.
+	 */
+	fncPtrType getFnWhnTrnOnSldrMin();
+	/**
+	 * @brief Returns a pointer to the function that is set to be executed every time the slider direction is set to be decrementing (down).
+	 * 
+	 * The function to be executed is an attribute that might be modified by the **setFVPPWhnTrnOffSldrDirUp()** method, and is a function pointer to a function with the signature **void (fncPtr*) (void*)**.
+	 * 
+	 * @return A function pointer to the function set to execute every time the slider direction is set to be decrementing (down).  
+	 * @retval nullptr if there is no function set to execute when the slider direction is set to be decrementing (down).
+	 */
+	fncVdPtrPrmPtrType getFVPPWhnTrnOffSldrDirUp();
+	/**
+	 * @brief Returns a pointer to the argument to be passed to the function set to execute every time the slider direction is set to be decrementing (down).
+	 * 
+	 * @return A void* pointer to the argument to be passed to the function set to execute every time the slider direction is set to be decrementing (down).  
+	 * @retval nullptr if there is no argument for the function set to execute when the slider direction is set to be decrementing (down).
+	 */
+	void* getFVPPWhnTrnOffSldrDirUpArgPtr();
+	/**
+	 * @brief Returns a pointer to the function that is set to be executed every time the slider direction is set to be incrementing (up).
+	 * 
+	 * The function to be executed is an attribute that might be modified by the **setFVPPWhnTrnOnSldrDirUp()** method, and is a function pointer to a function with the signature **void (fncPtr*) (void*)**.
+	 * 
+	 * @return A function pointer to the function set to execute every time the slider direction is set to be incrementing (up).  
+	 * @retval nullptr if there is no function set to execute when the slider direction is set to be incrementing (up).
+	 */
+	fncVdPtrPrmPtrType getFVPPWhnTrnOnSldrDirUp();
+	/**
+	 * @brief Returns a pointer to the argument to be passed to the function set to execute every time the slider direction is set to be incrementing (up).
+	 * 
+	 * @return void* A pointer to the argument to be passed to the function set to execute every time the slider direction is set to be incrementing (up).  
+	 * @retval nullptr if there is no argument for the function set to execute when the slider direction is set to be incrementing (up).
+	 */
+	void* getFVPPWhnTrnOnSldrDirUpArgPtr();
+	/**
+	 * @brief Returns the function that is set to be executed every time the object's **Output Current Value** (otptCurVal) attribute changes after being equal to the **Maximum Output Value** attribute setting (otptValMax).  
+	 *
+	 * The function to be executed is an attribute that might be modified by the **setFVPPWhnTrnOffSldrMax()** method, and is a function pointer to a function with the signature **void (fncPtr*) (void*)**.  
+	 *
+	 * @return A function pointer to the function set to execute every time the object's **otptCurVal** changes from the **otptValMax** to a lesser value.  
+	 * @retval nullptr if there is no function set to execute when the object's **otptCurVal** changes from the **otptValMax** to a lesser value.  
+	 *
+	 * @warning The function code execution will become part of the list of procedures the object executes when **otptCurVal** changes after being equal to **otptValMax**, including the possibility to modify attribute flags and others. Making the function code too time demanding must be handled with care, using alternative execution schemes, for example (and not limited to) the function might set flags, modify counters and parameters to set the conditions to execute some code in the main loop, and that suspends itself at the end of its code, to let a new function calling event resume it once again.
+	 */
+	fncVdPtrPrmPtrType getFVPPWhnTrnOffSldrMax();
+	/**
+	 * @brief Returns a pointer to the argument to be passed to the function set to execute every time the object's **Output Current Value** (otptCurVal) attribute changes after being equal to the **Maximum Output Current Value** attribute setting (otptValMax).
+	 * 
+	 * @return void* Pointer to the argument to be passed to the function set to execute every time the object's **otptCurVal** changes from the **otptValMax** to a lesser value.  
+	 * @retval nullptr if there is no argument for the function set to execute when the object's **otptCurVal** changes from the **otptValMax** to a lesser value.
+	 */
+	void* getFVPPWhnTrnOffSldrMaxArgPtr();
+	/**
+	 * @brief Returns the function that is set to execute every time the object's **Output Current Value** (otptCurVal) attribute reaches the **Maximum Output Current Value** attribute setting (otptValMax).
+	 *
+	 * The function to be executed is an attribute that might be modified by the **setFVPPWhnTrnOnSldrMax()** method, and is a function pointer to a function with the signature void (fncPtr*) (void*).
+	 *
+	 * @return A function pointer to the function set to execute every time the object's **otptCurVal** reaches the **otptValMax**.
+	 * @retval nullptr if there is no function set to execute when the object's **otptCurVal** reaches the **otptValMax**.
+	 *
+	 * @warning The function code execution will become part of the list of procedures the object executes when **otptCurVal** reaches the **otptValMax** value, including the possibility to modify attribute flags and others. Making the function code too time demanding must be handled with care, using alternative execution schemes, for example (and not limited to) the function might set flags, modify counters and parameters to set the conditions to execute some code in the main loop, and that suspends itself at the end of its code, to let a new function calling event resume it once again.
+	 */
+	fncVdPtrPrmPtrType getFVPPWhnTrnOnSldrMax();
+	/**
+	 * @brief Returns a pointer to the argument to be passed to the function set to execute every time the object's **Output Current Value** (otptCurVal) attribute reaches the **Maximum Output Current Value** attribute setting (otptValMax).
+	 * 
+	 * @return void* Pointer to the argument to be passed to the function set to execute every time the object enters the object's **Output Current Value** (otptCurVal) attribute reaches the **Maximum Output Current Value** attribute setting (otptValMax).
+	 * @retval nullptr if there is no argument for the function set to execute when the object's **otptCurVal** reaches the **otptValMax** setting.
+	 */
+	void* getFVPPWhnTrnOnSldrMaxArgPtr();
+	/**
+	 * @brief Returns the function that is set to execute every time the object's **Output Current Value** (otptCurVal) attribute changes after being equal to the **Minimum Output Current Value** attribute setting (otptValMin).
+	 *
+	 * The function to be executed is an attribute that might be modified by the **setFnWhnTrnOffSldrMinPtr()** method, and is a function pointer to a function with the signature **void (fncPtr*) (void*)**.  
+	 *
+	 * @return A function pointer to the function set to execute every time the object's **otptCurVal** changes from the **otptValMin** to a greater value.
+	 * @retval nullptr if there is no function set to execute when the object's **otptCurVal** changes from the **otptValMin** to a lesser value.  
+	 *
+	 * @warning The function code execution will become part of the list of procedures the object executes when **otptCurVal** changes after being equal to **otptValMin**, including the possibility to modify attribute flags and others. Making the function code too time demanding must be handled with care, using alternative execution schemes, for example (and not limited to) the function might set flags, modify counters and parameters to set the conditions to execute some code in the main loop, and that suspends itself at the end of its code, to let a new function calling event resume it once again.
+	 */
+	fncVdPtrPrmPtrType getFVPPWhnTrnOffSldrMin();
+	/**
+	 * @brief Returns a pointer to the argument to be passed to the function set to execute every time the object's **Output Current Value** (otptCurVal) attribute exits the **Minimum Output Current Value** attribute setting (otptValMin).
+	 * 
+	 * @return void* Pointer to the argument to be passed to the function set to execute every time the object's **Output Current Value** (otptCurVal) attribute exits the **Minimum Output Current Value** attribute setting (otptValMin).
+	 * @retval nullptr if there is no argument for the function set to execute when the object's **otptCurVal** exits the **otptValMin** setting.
+	 */
+	void* getFVPPWhnTrnOffSldrMinArgPtr();
+	/**
+	 * @brief Returns the function that is set to execute every time the object's **Output Current Value** (otptCurVal) attribute reaches the **Minimum Output Current Value** attribute setting (otptValMin).
+	 *
+	 * The function to be executed is an attribute that might be modified by the **setFnWhnTrnOnSldrMinPtr()** method, and is a function pointer to a function with the signature void (fncPtr*) (Void*).
+	 *
+	 * @return A function pointer to the function set to execute every time the object's **otptCurVal** reaches the **otptValMin**.
+	 * @retval nullptr if there is no function set to execute when the object's **otptCurVal** reaches the **otptValMin**.
+	 *
+	 * @warning The function code execution will become part of the list of procedures the object executes when **otptCurVal** reaches the **otptValMin**, including the possibility to modify attribute flags and others. Making the function code too time demanding must be handled with care, using alternative execution schemes, for example (and not limited to) the function might set flags, modify counters and parameters to set the conditions to execute some code in the main loop, and that suspends itself at the end of its code, to let a new function calling event resume it once again.
+	 */
+	fncVdPtrPrmPtrType getFVPPWhnTrnOnSldrMin();
+	/**
+	 * @brief Returns a pointer to the argument to be passed to the function set to execute every time the object's **Output Current Value** (otptCurVal) attribute reaches the **Minimum Output Current Value** attribute setting (otptValMin).
+	 * 
+	 * @return void* Pointer to the argument to be passed to the function set to execute every time the object's **Output Current Value** (otptCurVal) attribute reaches the **Minimum Output Current Value** attribute setting (otptValMin).
+	 */
+	void* getFVPPWhnTrnOnSldrMinArgPtr();
 	/**
 	 * @brief Returns the **Output Current Value (otpCurVal)** attribute
 	 *
@@ -1714,6 +1883,134 @@ public:
 	 * @retval false The current slider direction is **Down**, the output current value will be decremented.
 	 */
 	bool getSldrDirUp();
+	/**
+	 * @brief Sets the function that will be called every time the slider direction is set to be decrementing (down).
+	 * 
+	 * The function to be executed is an attribute that might be modified by the **setFnWhnTrnOffSldrDirUp()** method, and is a function pointer to a function with the signature **void (fncPtr*) ()**.
+	 * 
+	 * @param newFnWhnTrnOff The function pointer to a function with the signature **void (fncPtr*) ()**.
+	 */
+	void setFnWhnTrnOffSldrDirUp(void(*newFnWhnTrnOff)());	// getFnWhnTrnOffSldrDirUp
+	/**
+	 * @brief Sets the function that will be called every time the slider direction is set to be incrementing (up).
+	 * 
+	 * @param newFnWhnTrnOn Pointer to a function with the signature **void (fncPtr*) ()**.
+	 */
+	void setFnWhnTrnOnSldrDirUp(void(*newFnWhnTrnOn)());	// getFnWhnTrnOnSldrDirUp
+	/**
+	 * @brief Sets a function that will be called every time the object's **Output Current Value** (otptCurVal) attribute changes after being equal to the **Maximum Output Value** attribute setting (otptValMax).  
+	 *
+	 * @param newFnWhnTrnOff The function pointer to a function with the signature **void (fncPtr*) ()**.
+	 */
+	void setFnWhnTrnOffSldrMaxPtr(void(*newFnWhnTrnOff)());	// getFnWhnTrnOffSldrMax
+	/**
+	 * @brief Sets a function that will be called every time the object's **Output Current Value** (otptCurVal) attribute changes after being equal to the **Minimum Output Value** attribute setting (otptValMin).  
+	 *
+	 * @param newFnWhnTrnOff The function pointer to a function with the signature **void (fncPtr*) ()**.
+	 */
+	void setFnWhnTrnOffSldrMinPtr(void(*newFnWhnTrnOff)());	// getFnWhnTrnOffSldrMin
+	/**
+	 * @brief Sets a function that will be called every time the object's **Output Current Value** (otptCurVal) reaches the **Maximum Output Value** attribute setting (otptValMax).  
+	 *
+	 * @param newFnWhnTrnOn The function pointer to a function with the signature **void (fncPtr*) ()**.
+	 */
+	void setFnWhnTrnOnSldrMaxPtr(void(*newFnWhnTrnOn)());
+	/**
+	 * @brief Sets a function that will be called every time the object's **Output Current Value** (otptCurVal) attribute reaches the **Minimum Output Current Value** attribute setting (otptValMin).
+	 *
+	 * @param newFnWhnTrnOn The function pointer to a function with the signature **void (fncPtr*) ()**.
+	 */
+	void setFnWhnTrnOnSldrMinPtr(void(*newFnWhnTrnOn)());
+	/**
+	 * @brief Sets a function that will be called every time the slider direction is set to be decrementing (down).
+	 * 
+	 * The function is set as a pointer to a function with the signature **void (fncPtr*) (void*)**.
+	 * 
+	 * @param newFVPPWhnTrnOff Pointer to the function to be called.
+	 * @param argPtr (optional) void* pointer to the argument passed to the function, if no value is provided nullptr will be set. The function argument pointer might be changed independently by the use of the **void setFVPPWhnTrnOffSldrDirUpArgPtr (void*)** method.  
+	 */
+	void setFVPPWhnTrnOffSldrDirUp(fncVdPtrPrmPtrType newFVPPWhnTrnOff, void* argPtr = nullptr);
+	/**
+	 * @brief Sets a pointer to an argument to be passed to the function set by the setFVPPWhnTrnOffSldrDirUp() method.
+	 *
+	 * @param newFVPPWhnTrnOffArgPtr Pointer to an argument to be passed to the function set by the setFVPPWhnTrnOffSldrDirUp() method.  
+	 */
+	void setFVPPWhnTrnOffSldrDirUpArgPtr(void* newFVPPWhnTrnOffArgPtr);
+	/**
+	 * @brief Sets a function that will be called every time the slider direction is set to be incrementing (up).
+	 * 
+	 * The function is set as a pointer to a function with the signature **void (fncPtr*) (void*)**.
+	 * 
+	 * @param newFVPPWhnTrnOn Pointer to the function to be called.
+	 * @param argPtr (optional) void* pointer to the argument passed to the function, if no value is provided nullptr will be set. The function argument pointer might be changed independently by the use of the **void setFVPPWhnTrnOnSldrDirUpArgPtr (void*)** method.  
+	 */
+	void setFVPPWhnTrnOnSldrDirUp(fncVdPtrPrmPtrType newFVPPWhnTrnOn, void* argPtr = nullptr);
+	/**
+	 * @brief Sets a pointer to an argument to be passed to the function set by the setFVPPWhnTrnOnSldrDirUp() method.
+	 *
+	 * @param newFVPPWhnTrnOnArgPtr Pointer to an argument to be passed to the function set by the setFVPPWhnTrnOnSldrDirUp() method.  
+	 */
+	void setFVPPWhnTrnOnSldrDirUpArgPtr(void* newFVPPWhnTrnOnArgPtr);
+	/**
+	 * @brief Sets a function that will be called every time the object's **Output Current Value** (otptCurVal) attribute changes after being equal to the **Maximum Output Value** attribute setting (otptValMax).  
+	 *
+	 * The function is set as a pointer to a function with the signature **void (fncPtr*) (void*)**.  
+	 * 
+	 * @param newFVPPWhnTrnOff Pointer to the function to be called.
+	 * @param argPtr (optional) void* pointer to the argument passed to the function, if no value is provided nullptr will be set. The function argument pointer might be changed independently by the use of the **void setFVPPWhnTrnOffSldrMaxArgPtr (void*)** method.  
+	 */
+	void setFVPPWhnTrnOffSldrMax(fncVdPtrPrmPtrType newFVPPWhnTrnOff, void* argPtr = nullptr);
+	/**
+	 * @brief Sets a pointer to an argument to be passed to the function set by the setFVPPWhnTrnOffSldrMax() method.
+	 *
+	 * @param newFVPPWhnTrnOffArgPtr Pointer to an argument to be passed to the function set by the setFVPPWhnTrnOffSldrMax() method.  
+	 */
+	void setFVPPWhnTrnOffSldrMaxArgPtr(void* newFVPPWhnTrnOffArgPtr);
+	/**
+	 * @brief Sets a function that will be called every time the object's **Output Current Value** (otptCurVal) attribute reaches the **Maximum Output Value** attribute setting (otptValMax).  
+	 *
+	 * The function is set as a pointer to a function with the signature **void (fncPtr*) (void*)**.  
+	 * 
+	 * @param newFVPPWhnTrnOff Pointer to the function to be called.
+	 * @param argPtr (optional) void* pointer to the argument passed to the function, if no value is provided nullptr will be set. The function argument pointer might be changed independently by the use of the **void setFVPPWhnTrnOnSldrMaxArgPtr (void*)** method.  
+	 */
+	void setFVPPWhnTrnOnSldrMax(fncVdPtrPrmPtrType newFVPPWhnTrnOn, void* argPtr = nullptr);
+	/**
+	 * @brief Sets a pointer to an argument to be passed to the function set by the setFVPPWhnTrnOnSldrMax() method.
+	 *
+	 * @param newFVPPWhnTrnOnArgPtr Pointer to an argument to be passed to the function set by the setFVPPWhnTrnOnSldrMax() method.  
+	 */
+	void setFVPPWhnTrnOnSldrMaxArgPtr(void* newFVPPWhnTrnOnArgPtr);
+	/**
+	 * @brief Sets a function that will be called every time the object's **Output Current Value** (otptCurVal) attribute changes after being equal to the **Minimum Output Value** attribute setting (otptValMin).  
+	 *
+	 * The function is set as a pointer to a function with the signature **void (fncPtr*) (void*)**.  
+	 * 
+	 * @param newFVPPWhnTrnOff Pointer to the function to be called.
+	 * @param argPtr (optional) void* pointer to the argument passed to the function, if no value is provided nullptr will be set. The function argument pointer might be changed independently by the use of the **void setFVPPWhnTrnOffSldrMinArgPtr (void*)** method.  
+	 */
+	void setFVPPWhnTrnOffSldrMin(fncVdPtrPrmPtrType newFVPPWhnTrnOff, void* argPtr = nullptr);
+	/**
+	 * @brief Sets a pointer to an argument to be passed to the function set by the setFVPPWhnTrnOffSldrMin() method.
+	 *
+	 * @param newFVPPWhnTrnOffArgPtr Pointer to an argument to be passed to the function set by the setFVPPWhnTrnOffSldrMin() method.
+	 */
+	void setFVPPWhnTrnOffSldrMinArgPtr(void* newFVPPWhnTrnOffArgPtr);
+	/**
+	 * @brief Sets a function that will be called every time the object's **Output Current Value** (otptCurVal) attribute reaches the **Minimum Output Value** attribute setting (otptValMin).  
+	 *
+	 * The function is set as a pointer to a function with the signature **void (fncPtr*) (void*)**.  
+	 * 
+	 * @param newFVPPWhnTrnOff Pointer to the function to be called.
+	 * @param argPtr (optional) void* pointer to the argument passed to the function, if no value is provided nullptr will be set. The function argument pointer might be changed independently by the use of the **void setFVPPWhnTrnOnSldrMinArgPtr (void*)** method.  
+	 */
+	void setFVPPWhnTrnOnSldrMin(fncVdPtrPrmPtrType newFVPPWhnTrnOn, void* argPtr = nullptr);
+	/**
+	 * @brief Sets a pointer to an argument to be passed to the function set by the setFVPPWhnTrnOnSldrMin() method.
+	 *
+	 * @param newFVPPWhnTrnOnArgPtr Pointer to an argument to be passed to the function set by the setFVPPWhnTrnOnSldrMin() method.
+	 */
+	void setFVPPWhnTrnOnSldrMinArgPtr(void* newFVPPWhnTrnOnArgPtr);
 	/**
 	 * @brief Sets the output current value register.
 	 *

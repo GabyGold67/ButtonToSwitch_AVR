@@ -23,7 +23,7 @@
   * @version v4.6.0
   * 
   * @date First release: 10/09/2024  
-  *       Last update:   13/07/2025 12:10 (GMT+0200) DST  
+  *       Last update:   20/07/2025 19:00 (GMT+0200) DST  
   * 
   * @copyright Copyright (c) 2025  GPL-3.0 license  
   *******************************************************************************
@@ -2351,17 +2351,6 @@ void DDlydDALtchMPBttn::clrStatus(bool clrIsOn){
 	return;
 }
 
-/*void DDlydDALtchMPBttn::stDisabled_In(){	
-	if(_isOnScndry != _isOnDisabled){
-		if(_isOnDisabled)
-			_turnOnScndry();
-		else
-			_turnOffScndry();
-	}
-
-	return;
-}*/
-
 void DDlydDALtchMPBttn::stOnEndScndMod_Out(){
 	if(_isOnScndry)
 		_turnOffScndry();
@@ -2406,6 +2395,96 @@ void SldrDALtchMPBttn::clrStatus(bool clrIsOn){
 	return;
 }
 
+fncPtrType SldrDALtchMPBttn::getFnWhnTrnOffSldrDirUp(){
+   
+	return _fnWhnTrnOffSldrDirUp;
+}
+
+fncPtrType SldrDALtchMPBttn::getFnWhnTrnOnSldrDirUp()
+{
+   return _fnWhnTrnOnSldrDirUp;
+}
+
+fncPtrType SldrDALtchMPBttn::getFnWhnTrnOffSldrMax(){
+	
+   return _fnWhnTrnOffSldrMax;
+}
+
+fncPtrType SldrDALtchMPBttn::getFnWhnTrnOffSldrMin(){
+
+   return _fnWhnTrnOffSldrMin;
+}
+
+fncPtrType SldrDALtchMPBttn::getFnWhnTrnOnSldrMax(){
+	
+   return _fnWhnTrnOnSldrMax;
+}
+
+fncPtrType SldrDALtchMPBttn::getFnWhnTrnOnSldrMin(){
+	
+   return _fnWhnTrnOnSldrMin;
+}
+
+fncVdPtrPrmPtrType SldrDALtchMPBttn::getFVPPWhnTrnOffSldrDirUp(){
+
+   return _fnVdPtrPrmWhnTrnOffSldrDirUp;
+}
+
+void *SldrDALtchMPBttn::getFVPPWhnTrnOffSldrDirUpArgPtr(){
+
+   return _fnVdPtrPrmWhnTrnOffSldrDirUpArgPtr;
+}
+
+fncVdPtrPrmPtrType SldrDALtchMPBttn::getFVPPWhnTrnOnSldrDirUp(){
+
+   return _fnVdPtrPrmWhnTrnOnSldrDirUp;
+}
+
+void *SldrDALtchMPBttn::getFVPPWhnTrnOnSldrDirUpArgPtr(){
+
+   return _fnVdPtrPrmWhnTrnOnSldrDirUpArgPtr;
+}
+
+fncVdPtrPrmPtrType SldrDALtchMPBttn::getFVPPWhnTrnOffSldrMax(){
+
+   return _fnVdPtrPrmWhnTrnOffSldrMax;
+}
+
+void *SldrDALtchMPBttn::getFVPPWhnTrnOffSldrMaxArgPtr(){
+
+   return _fnVdPtrPrmWhnTrnOffSldrMaxArgPtr;
+}
+
+fncVdPtrPrmPtrType SldrDALtchMPBttn::getFVPPWhnTrnOnSldrMax(){
+	
+   return _fnVdPtrPrmWhnTrnOnSldrMax;
+}
+
+void *SldrDALtchMPBttn::getFVPPWhnTrnOnSldrMaxArgPtr(){
+
+   return _fnVdPtrPrmWhnTrnOnSldrMaxArgPtr;
+}
+
+fncVdPtrPrmPtrType SldrDALtchMPBttn::getFVPPWhnTrnOffSldrMin(){
+
+   return _fnVdPtrPrmWhnTrnOffSldrMin;
+}
+
+void *SldrDALtchMPBttn::getFVPPWhnTrnOffSldrMinArgPtr(){
+
+   return _fnVdPtrPrmWhnTrnOffSldrMinArgPtr;
+}
+
+fncVdPtrPrmPtrType SldrDALtchMPBttn::getFVPPWhnTrnOnSldrMin(){
+
+   return _fnVdPtrPrmWhnTrnOnSldrMin;
+}
+
+void *SldrDALtchMPBttn::getFVPPWhnTrnOnSldrMinArgPtr(){
+
+   return _fnVdPtrPrmWhnTrnOnSldrMinArgPtr;
+}
+
 uint16_t SldrDALtchMPBttn::getOtptCurVal(){
 
 	return _otptCurVal;
@@ -2448,11 +2527,167 @@ bool SldrDALtchMPBttn::getSldrDirUp(){
 	return _curSldrDirUp;
 }
 
+void SldrDALtchMPBttn::_ntfyChngSldrDir(){
+	if(_curSldrDirUp){
+		if(_fnWhnTrnOnSldrDirUp != nullptr)
+			_fnWhnTrnOnSldrDirUp();
+		if(_fnVdPtrPrmWhnTrnOnSldrDirUp != nullptr){
+			_fnVdPtrPrmWhnTrnOnSldrDirUp(_fnVdPtrPrmWhnTrnOnSldrDirUpArgPtr);
+		}
+	}
+	else{
+		if(_fnWhnTrnOffSldrDirUp != nullptr)
+			_fnWhnTrnOffSldrDirUp();
+		if(_fnVdPtrPrmWhnTrnOffSldrDirUp != nullptr){
+			_fnVdPtrPrmWhnTrnOffSldrDirUp(_fnVdPtrPrmWhnTrnOffSldrDirUpArgPtr);
+		}
+	}
+	return;
+}
+
 uint32_t SldrDALtchMPBttn::_otptsSttsPkg(uint32_t prevVal){
 	prevVal = DblActnLtchMPBttn::_otptsSttsPkg(prevVal);
 	prevVal |= (((uint32_t)_otptCurVal) << OtptCurValBitPos);
 
 	return prevVal;
+}
+
+void SldrDALtchMPBttn::setFnWhnTrnOffSldrDirUp(void (*newFnWhnTrnOff)()){
+	if(_fnWhnTrnOffSldrDirUp != newFnWhnTrnOff)
+		_fnWhnTrnOffSldrDirUp = newFnWhnTrnOff;
+
+	return;
+}
+
+void SldrDALtchMPBttn::setFnWhnTrnOnSldrDirUp(void (*newFnWhnTrnOn)()){
+	if(_fnWhnTrnOnSldrDirUp != newFnWhnTrnOn)
+		_fnWhnTrnOnSldrDirUp = newFnWhnTrnOn;
+
+	return;
+}
+
+void SldrDALtchMPBttn::setFnWhnTrnOffSldrMaxPtr(void (*newFnWhnTrnOff)()){
+	if(_fnWhnTrnOffSldrMax != newFnWhnTrnOff)
+		_fnWhnTrnOffSldrMax = newFnWhnTrnOff;
+
+	return;
+}
+
+void SldrDALtchMPBttn::setFnWhnTrnOffSldrMinPtr(void (*newFnWhnTrnOff)()){
+	if(_fnWhnTrnOffSldrMin != newFnWhnTrnOff)
+		_fnWhnTrnOffSldrMin = newFnWhnTrnOff;
+
+	return;
+}
+
+void SldrDALtchMPBttn::setFnWhnTrnOnSldrMaxPtr(void (*newFnWhnTrnOn)()){
+	if(_fnWhnTrnOnSldrMax != newFnWhnTrnOn)
+		_fnWhnTrnOnSldrMax = newFnWhnTrnOn;
+	
+	return;
+}
+
+void SldrDALtchMPBttn::setFnWhnTrnOnSldrMinPtr(void (*newFnWhnTrnOn)()){
+	if(_fnWhnTrnOnSldrMin != newFnWhnTrnOn)
+		_fnWhnTrnOnSldrMin = newFnWhnTrnOn;
+
+	return;
+}
+
+void SldrDALtchMPBttn::setFVPPWhnTrnOffSldrDirUp(fncVdPtrPrmPtrType newFVPPWhnTrnOff, void *argPtr){
+	if (_fnVdPtrPrmWhnTrnOffSldrDirUp != newFVPPWhnTrnOff){
+		_fnVdPtrPrmWhnTrnOffSldrDirUp = newFVPPWhnTrnOff;
+		_fnVdPtrPrmWhnTrnOffSldrDirUpArgPtr = argPtr;
+	}
+
+	return;
+}
+
+void SldrDALtchMPBttn::setFVPPWhnTrnOffSldrDirUpArgPtr(void *newFVPPWhnTrnOffArgPtr){
+	if (_fnVdPtrPrmWhnTrnOffSldrDirUpArgPtr != newFVPPWhnTrnOffArgPtr)
+		_fnVdPtrPrmWhnTrnOffSldrDirUpArgPtr = newFVPPWhnTrnOffArgPtr;
+
+	return;
+}
+
+void SldrDALtchMPBttn::setFVPPWhnTrnOnSldrDirUp(fncVdPtrPrmPtrType newFVPPWhnTrnOn, void *argPtr){
+	if (_fnVdPtrPrmWhnTrnOnSldrDirUp != newFVPPWhnTrnOn){
+		_fnVdPtrPrmWhnTrnOnSldrDirUp = newFVPPWhnTrnOn;
+		_fnVdPtrPrmWhnTrnOnSldrDirUpArgPtr = argPtr;
+	}
+
+	return;
+}
+
+void SldrDALtchMPBttn::setFVPPWhnTrnOnSldrDirUpArgPtr(void *newFVPPWhnTrnOnArgPtr){
+	if (_fnVdPtrPrmWhnTrnOnSldrDirUpArgPtr != newFVPPWhnTrnOnArgPtr)
+		_fnVdPtrPrmWhnTrnOnSldrDirUpArgPtr = newFVPPWhnTrnOnArgPtr;
+
+	return;
+}
+
+void SldrDALtchMPBttn::setFVPPWhnTrnOffSldrMax(fncVdPtrPrmPtrType newFVPPWhnTrnOff, void *argPtr){
+	if (_fnVdPtrPrmWhnTrnOffSldrMax != newFVPPWhnTrnOff){
+		_fnVdPtrPrmWhnTrnOffSldrMax = newFVPPWhnTrnOff;
+		_fnVdPtrPrmWhnTrnOffSldrMaxArgPtr = argPtr;
+	}
+
+	return;
+}
+
+void SldrDALtchMPBttn::setFVPPWhnTrnOffSldrMaxArgPtr(void *newFVPPWhnTrnOffArgPtr){
+	if (_fnVdPtrPrmWhnTrnOffSldrMaxArgPtr != newFVPPWhnTrnOffArgPtr)
+		_fnVdPtrPrmWhnTrnOffSldrMaxArgPtr = newFVPPWhnTrnOffArgPtr;
+
+	return;
+}
+
+void SldrDALtchMPBttn::setFVPPWhnTrnOnSldrMax(fncVdPtrPrmPtrType newFVPPWhnTrnOn, void *argPtr){
+	if (_fnVdPtrPrmWhnTrnOnSldrMax != newFVPPWhnTrnOn){
+		_fnVdPtrPrmWhnTrnOnSldrMax = newFVPPWhnTrnOn;
+		_fnVdPtrPrmWhnTrnOnSldrMaxArgPtr = argPtr;
+	}
+
+	return;
+}
+
+void SldrDALtchMPBttn::setFVPPWhnTrnOnSldrMaxArgPtr(void *newFVPPWhnTrnOnArgPtr){
+	if (_fnVdPtrPrmWhnTrnOnSldrMaxArgPtr != newFVPPWhnTrnOnArgPtr)
+		_fnVdPtrPrmWhnTrnOnSldrMaxArgPtr = newFVPPWhnTrnOnArgPtr;
+		
+	return;
+}
+
+void SldrDALtchMPBttn::setFVPPWhnTrnOffSldrMin(fncVdPtrPrmPtrType newFVPPWhnTrnOff, void *argPtr){
+	if (_fnVdPtrPrmWhnTrnOffSldrMin != newFVPPWhnTrnOff){
+		_fnVdPtrPrmWhnTrnOffSldrMin = newFVPPWhnTrnOff;
+		_fnVdPtrPrmWhnTrnOffSldrMinArgPtr = argPtr;
+	}
+
+	return;
+}
+
+void SldrDALtchMPBttn::setFVPPWhnTrnOffSldrMinArgPtr(void *newFVPPWhnTrnOffArgPtr){
+	if (_fnVdPtrPrmWhnTrnOffSldrMinArgPtr != newFVPPWhnTrnOffArgPtr)
+		_fnVdPtrPrmWhnTrnOffSldrMinArgPtr = newFVPPWhnTrnOffArgPtr;
+
+	return;
+}
+
+void SldrDALtchMPBttn::setFVPPWhnTrnOnSldrMin(fncVdPtrPrmPtrType newFVPPWhnTrnOn, void *argPtr){
+	if (_fnVdPtrPrmWhnTrnOnSldrMin != newFVPPWhnTrnOn){
+		_fnVdPtrPrmWhnTrnOnSldrMin = newFVPPWhnTrnOn;
+		_fnVdPtrPrmWhnTrnOnSldrMinArgPtr = argPtr;
+	}
+
+	return;
+}
+
+void SldrDALtchMPBttn::setFVPPWhnTrnOnSldrMinArgPtr(void *newFVPPWhnTrnOnArgPtr){
+	if (_fnVdPtrPrmWhnTrnOnSldrMinArgPtr != newFVPPWhnTrnOnArgPtr)
+		_fnVdPtrPrmWhnTrnOnSldrMinArgPtr = newFVPPWhnTrnOnArgPtr;
+
+	return;
 }
 
 bool SldrDALtchMPBttn::setOtptCurVal(const uint16_t &newVal){
@@ -2544,8 +2779,13 @@ bool SldrDALtchMPBttn::_setSldrDir(const bool &newVal){
 			if(_otptCurVal != _otptValMin)
 				_curSldrDirUp = false;
 		}
-		if(_curSldrDirUp != newVal)
+		if(_curSldrDirUp != newVal){	// Change of direction failed
 			result = false;
+		}
+		else{	// Change of direction succeeded
+			_ntfyChngSldrDir();
+
+		}
 	}
 
 	return result;
@@ -2574,17 +2814,6 @@ void SldrDALtchMPBttn::setSwpDirOnPrss(const bool &newVal){
 
 	return;
 }
-
-/*void SldrDALtchMPBttn::stDisabled_In(){
-	if(_isOnScndry != _isOnDisabled){
-		if(_isOnDisabled)
-			_turnOnScndry();
-		else
-			_turnOffScndry();
-	}
-
-	return;
-}*/
 
 void SldrDALtchMPBttn::stOnEndScndMod_Out(){
 	if(_isOnScndry)
@@ -2680,7 +2909,7 @@ void SldrDALtchMPBttn::_turnOffSldrMax(){
 		//---------------->> Flags related actions
 		_otptCurValIsMax = false;
 		setOutputsChange(true);
-	}	//TODO Generate getters and setters for previous functions and arguments
+	}
 
 	_otptCurValIsMax = false;
 
@@ -2699,7 +2928,7 @@ void SldrDALtchMPBttn::_turnOnSldrMax(){
 		//---------------->> Flags related actions
 		_otptCurValIsMax = true;
 		setOutputsChange(true);
-	}	//TODO Generate getters and setters for previous functions and arguments
+	}
 
 	_otptCurValIsMax = true;
 
@@ -2718,7 +2947,7 @@ void SldrDALtchMPBttn::_turnOffSldrMin(){
 		//---------------->> Flags related actions
 		_otptCurValIsMin = false;
 		setOutputsChange(true);
-	}	//TODO Generate getters and setters for previous functions and arguments
+	}
 
 	_otptCurValIsMin = false;
 
@@ -2737,7 +2966,7 @@ void SldrDALtchMPBttn::_turnOnSldrMin(){
 		//---------------->> Flags related actions
 		_otptCurValIsMin = true;
 		setOutputsChange(true);
-	}	//TODO Generate getters and setters for previous functions and arguments
+	}
 
 	_otptCurValIsMin = true;
 

@@ -28,7 +28,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="Complex_Switch_Sq_Sm_Color_In.jpg"/></td>
   <td id="projectalign">
-   <div id="projectname">ButtonToSwitch Library for Arduino<span id="projectnumber">&#160;v4.5.0</span>
+   <div id="projectname">ButtonToSwitch Library for Arduino<span id="projectnumber">&#160;v4.6.0</span>
    </div>
    <div id="projectbrief">A library that provides elaborated switch mechanism behavior simulation for digital signals inputs</div>
   </td>
@@ -144,6 +144,42 @@ Public Member Functions</h2></td></tr>
 &#160;</td><td class="memItemRight" valign="bottom"><b>~SldrDALtchMPBttn</b> ()</td></tr>
 <tr class="memdesc:a6d3a32faa67706cd6ec09899c1a7cc37"><td class="mdescLeft">&#160;</td><td class="mdescRight">Virtual class destructor. <br /></td></tr>
 <tr class="memitem:a161080d6983f7f79f3947921fdb361ef" id="r_a161080d6983f7f79f3947921fdb361ef"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a161080d6983f7f79f3947921fdb361ef">clrStatus</a> (bool clrIsOn=true)</td></tr>
+<tr class="memitem:abc82122281614c059d279caead30be8b" id="r_abc82122281614c059d279caead30be8b"><td class="memItemLeft" align="right" valign="top">fncPtrType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abc82122281614c059d279caead30be8b">getFnWhnTrnOffSldrDirUp</a> ()</td></tr>
+<tr class="memdesc:abc82122281614c059d279caead30be8b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the function set to be called when the slider direction is set to be decrementing (down).  <br /></td></tr>
+<tr class="memitem:a07504b53a1e3722ad3f106b0980c39c8" id="r_a07504b53a1e3722ad3f106b0980c39c8"><td class="memItemLeft" align="right" valign="top">fncPtrType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a07504b53a1e3722ad3f106b0980c39c8">getFnWhnTrnOnSldrDirUp</a> ()</td></tr>
+<tr class="memdesc:a07504b53a1e3722ad3f106b0980c39c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the function set to be called when the slider direction is set to be incrementing (up).  <br /></td></tr>
+<tr class="memitem:a1532f0fd44430626a699c051ad27870d" id="r_a1532f0fd44430626a699c051ad27870d"><td class="memItemLeft" align="right" valign="top">fncPtrType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1532f0fd44430626a699c051ad27870d">getFnWhnTrnOffSldrMax</a> ()</td></tr>
+<tr class="memdesc:a1532f0fd44430626a699c051ad27870d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the function that is set to be executed every time the object's <b>Output Current Value</b> (otptCurVal) attribute changes after being equal to the <b>Maximum Output Value</b> attribute setting (otptValMax).  <br /></td></tr>
+<tr class="memitem:ace98cd7dddb1e7791244f74a35999f6a" id="r_ace98cd7dddb1e7791244f74a35999f6a"><td class="memItemLeft" align="right" valign="top">fncPtrType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ace98cd7dddb1e7791244f74a35999f6a">getFnWhnTrnOffSldrMin</a> ()</td></tr>
+<tr class="memdesc:ace98cd7dddb1e7791244f74a35999f6a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the function that is set to execute every time the object's <b>Output Current Value</b> (otptCurVal) attribute changes after being equal to the <b>Minimum Output Current Value</b> attribute setting (otptValMin).  <br /></td></tr>
+<tr class="memitem:a716cfb1735818f1b6e1d4a7263a5e3d2" id="r_a716cfb1735818f1b6e1d4a7263a5e3d2"><td class="memItemLeft" align="right" valign="top">fncPtrType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a716cfb1735818f1b6e1d4a7263a5e3d2">getFnWhnTrnOnSldrMax</a> ()</td></tr>
+<tr class="memdesc:a716cfb1735818f1b6e1d4a7263a5e3d2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the function that is set to execute every time the object's <b>Output Current Value</b> (otptCurVal) attribute reaches the <b>Maximum Output Current Value</b> attribute setting (otptValMax).  <br /></td></tr>
+<tr class="memitem:a6a47eb9bc6e4b72f46449959a3816b11" id="r_a6a47eb9bc6e4b72f46449959a3816b11"><td class="memItemLeft" align="right" valign="top">fncPtrType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6a47eb9bc6e4b72f46449959a3816b11">getFnWhnTrnOnSldrMin</a> ()</td></tr>
+<tr class="memdesc:a6a47eb9bc6e4b72f46449959a3816b11"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the function that is set to execute every time the object's <b>Output Current Value</b> (otptCurVal) attribute reaches the <b>Minimum Output Current Value</b> attribute setting (otptValMin).  <br /></td></tr>
+<tr class="memitem:a2ae61d0ae7daa88e80d8d92c31df5cfb" id="r_a2ae61d0ae7daa88e80d8d92c31df5cfb"><td class="memItemLeft" align="right" valign="top">fncVdPtrPrmPtrType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2ae61d0ae7daa88e80d8d92c31df5cfb">getFVPPWhnTrnOffSldrDirUp</a> ()</td></tr>
+<tr class="memdesc:a2ae61d0ae7daa88e80d8d92c31df5cfb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a pointer to the function that is set to be executed every time the slider direction is set to be decrementing (down).  <br /></td></tr>
+<tr class="memitem:a9a0718bc3d43521b3dafaa29b4c480cd" id="r_a9a0718bc3d43521b3dafaa29b4c480cd"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9a0718bc3d43521b3dafaa29b4c480cd">getFVPPWhnTrnOffSldrDirUpArgPtr</a> ()</td></tr>
+<tr class="memdesc:a9a0718bc3d43521b3dafaa29b4c480cd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a pointer to the argument to be passed to the function set to execute every time the slider direction is set to be decrementing (down).  <br /></td></tr>
+<tr class="memitem:a0ea53ddde23d3d1bc6271adedcfdd8fe" id="r_a0ea53ddde23d3d1bc6271adedcfdd8fe"><td class="memItemLeft" align="right" valign="top">fncVdPtrPrmPtrType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0ea53ddde23d3d1bc6271adedcfdd8fe">getFVPPWhnTrnOnSldrDirUp</a> ()</td></tr>
+<tr class="memdesc:a0ea53ddde23d3d1bc6271adedcfdd8fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a pointer to the function that is set to be executed every time the slider direction is set to be incrementing (up).  <br /></td></tr>
+<tr class="memitem:a62157bdb3fc4f514e53e758dd220335e" id="r_a62157bdb3fc4f514e53e758dd220335e"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a62157bdb3fc4f514e53e758dd220335e">getFVPPWhnTrnOnSldrDirUpArgPtr</a> ()</td></tr>
+<tr class="memdesc:a62157bdb3fc4f514e53e758dd220335e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a pointer to the argument to be passed to the function set to execute every time the slider direction is set to be incrementing (up).  <br /></td></tr>
+<tr class="memitem:ab2e42290eb51ca794103ad4c593164ae" id="r_ab2e42290eb51ca794103ad4c593164ae"><td class="memItemLeft" align="right" valign="top">fncVdPtrPrmPtrType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab2e42290eb51ca794103ad4c593164ae">getFVPPWhnTrnOffSldrMax</a> ()</td></tr>
+<tr class="memdesc:ab2e42290eb51ca794103ad4c593164ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the function that is set to be executed every time the object's <b>Output Current Value</b> (otptCurVal) attribute changes after being equal to the <b>Maximum Output Value</b> attribute setting (otptValMax).  <br /></td></tr>
+<tr class="memitem:a5f01cd9385d2ff98df7f448bfd24d420" id="r_a5f01cd9385d2ff98df7f448bfd24d420"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5f01cd9385d2ff98df7f448bfd24d420">getFVPPWhnTrnOffSldrMaxArgPtr</a> ()</td></tr>
+<tr class="memdesc:a5f01cd9385d2ff98df7f448bfd24d420"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a pointer to the argument to be passed to the function set to execute every time the object's <b>Output Current Value</b> (otptCurVal) attribute changes after being equal to the <b>Maximum Output Current Value</b> attribute setting (otptValMax).  <br /></td></tr>
+<tr class="memitem:a840e4c9c30662fee2528710275649575" id="r_a840e4c9c30662fee2528710275649575"><td class="memItemLeft" align="right" valign="top">fncVdPtrPrmPtrType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a840e4c9c30662fee2528710275649575">getFVPPWhnTrnOnSldrMax</a> ()</td></tr>
+<tr class="memdesc:a840e4c9c30662fee2528710275649575"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the function that is set to execute every time the object's <b>Output Current Value</b> (otptCurVal) attribute reaches the <b>Maximum Output Current Value</b> attribute setting (otptValMax).  <br /></td></tr>
+<tr class="memitem:ad6fb502c88fc4c7610b4bd30af85828a" id="r_ad6fb502c88fc4c7610b4bd30af85828a"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad6fb502c88fc4c7610b4bd30af85828a">getFVPPWhnTrnOnSldrMaxArgPtr</a> ()</td></tr>
+<tr class="memdesc:ad6fb502c88fc4c7610b4bd30af85828a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a pointer to the argument to be passed to the function set to execute every time the object's <b>Output Current Value</b> (otptCurVal) attribute reaches the <b>Maximum Output Current Value</b> attribute setting (otptValMax).  <br /></td></tr>
+<tr class="memitem:aaa7381f60ce67b415910c06e8ef160f9" id="r_aaa7381f60ce67b415910c06e8ef160f9"><td class="memItemLeft" align="right" valign="top">fncVdPtrPrmPtrType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aaa7381f60ce67b415910c06e8ef160f9">getFVPPWhnTrnOffSldrMin</a> ()</td></tr>
+<tr class="memdesc:aaa7381f60ce67b415910c06e8ef160f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the function that is set to execute every time the object's <b>Output Current Value</b> (otptCurVal) attribute changes after being equal to the <b>Minimum Output Current Value</b> attribute setting (otptValMin).  <br /></td></tr>
+<tr class="memitem:a5ea06811569a36f68051fea8dfc6a635" id="r_a5ea06811569a36f68051fea8dfc6a635"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5ea06811569a36f68051fea8dfc6a635">getFVPPWhnTrnOffSldrMinArgPtr</a> ()</td></tr>
+<tr class="memdesc:a5ea06811569a36f68051fea8dfc6a635"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a pointer to the argument to be passed to the function set to execute every time the object's <b>Output Current Value</b> (otptCurVal) attribute exits the <b>Minimum Output Current Value</b> attribute setting (otptValMin).  <br /></td></tr>
+<tr class="memitem:abb69849a94379c64983ffb02c0e64009" id="r_abb69849a94379c64983ffb02c0e64009"><td class="memItemLeft" align="right" valign="top">fncVdPtrPrmPtrType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abb69849a94379c64983ffb02c0e64009">getFVPPWhnTrnOnSldrMin</a> ()</td></tr>
+<tr class="memdesc:abb69849a94379c64983ffb02c0e64009"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the function that is set to execute every time the object's <b>Output Current Value</b> (otptCurVal) attribute reaches the <b>Minimum Output Current Value</b> attribute setting (otptValMin).  <br /></td></tr>
+<tr class="memitem:a0aee4a95014d28a8407642e424bd9d65" id="r_a0aee4a95014d28a8407642e424bd9d65"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0aee4a95014d28a8407642e424bd9d65">getFVPPWhnTrnOnSldrMinArgPtr</a> ()</td></tr>
+<tr class="memdesc:a0aee4a95014d28a8407642e424bd9d65"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a pointer to the argument to be passed to the function set to execute every time the object's <b>Output Current Value</b> (otptCurVal) attribute reaches the <b>Minimum Output Current Value</b> attribute setting (otptValMin).  <br /></td></tr>
 <tr class="memitem:a73123ccd3e24c14530accf77caa594fd" id="r_a73123ccd3e24c14530accf77caa594fd"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a73123ccd3e24c14530accf77caa594fd">getOtptCurVal</a> ()</td></tr>
 <tr class="memdesc:a73123ccd3e24c14530accf77caa594fd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the <b>Output Current Value (otpCurVal)</b> attribute.  <br /></td></tr>
 <tr class="memitem:ad3b88c2b0e82542aec24096b5ca3a360" id="r_ad3b88c2b0e82542aec24096b5ca3a360"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad3b88c2b0e82542aec24096b5ca3a360">getOtptCurValIsMax</a> ()</td></tr>
@@ -160,6 +196,42 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:ae99a8009618e0d77dae62abee4160e35"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the bottom <b>output current value</b> register setting.  <br /></td></tr>
 <tr class="memitem:ac15716e4d796ad116da5145f364b8382" id="r_ac15716e4d796ad116da5145f364b8382"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac15716e4d796ad116da5145f364b8382">getSldrDirUp</a> ()</td></tr>
 <tr class="memdesc:ac15716e4d796ad116da5145f364b8382"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the value of the curSldrDirUp attribute.  <br /></td></tr>
+<tr class="memitem:a219682e43cce74e4ae9444501003f14e" id="r_a219682e43cce74e4ae9444501003f14e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a219682e43cce74e4ae9444501003f14e">setFnWhnTrnOffSldrDirUp</a> (void(*newFnWhnTrnOff)())</td></tr>
+<tr class="memdesc:a219682e43cce74e4ae9444501003f14e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the function that will be called every time the slider direction is set to be decrementing (down).  <br /></td></tr>
+<tr class="memitem:a000a74b0e8e2a22a1de68d5b8567b21a" id="r_a000a74b0e8e2a22a1de68d5b8567b21a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a000a74b0e8e2a22a1de68d5b8567b21a">setFnWhnTrnOnSldrDirUp</a> (void(*newFnWhnTrnOn)())</td></tr>
+<tr class="memdesc:a000a74b0e8e2a22a1de68d5b8567b21a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the function that will be called every time the slider direction is set to be incrementing (up).  <br /></td></tr>
+<tr class="memitem:a866ab0543c783c16d84baef9f4a63c11" id="r_a866ab0543c783c16d84baef9f4a63c11"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a866ab0543c783c16d84baef9f4a63c11">setFnWhnTrnOffSldrMaxPtr</a> (void(*newFnWhnTrnOff)())</td></tr>
+<tr class="memdesc:a866ab0543c783c16d84baef9f4a63c11"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a function that will be called every time the object's <b>Output Current Value</b> (otptCurVal) attribute changes after being equal to the <b>Maximum Output Value</b> attribute setting (otptValMax).  <br /></td></tr>
+<tr class="memitem:af461a549c9b64acbf246dea5ad6ad68b" id="r_af461a549c9b64acbf246dea5ad6ad68b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af461a549c9b64acbf246dea5ad6ad68b">setFnWhnTrnOffSldrMinPtr</a> (void(*newFnWhnTrnOff)())</td></tr>
+<tr class="memdesc:af461a549c9b64acbf246dea5ad6ad68b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a function that will be called every time the object's <b>Output Current Value</b> (otptCurVal) attribute changes after being equal to the <b>Minimum Output Value</b> attribute setting (otptValMin).  <br /></td></tr>
+<tr class="memitem:a8ceeceae674042b997e2960dec327fb5" id="r_a8ceeceae674042b997e2960dec327fb5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8ceeceae674042b997e2960dec327fb5">setFnWhnTrnOnSldrMaxPtr</a> (void(*newFnWhnTrnOn)())</td></tr>
+<tr class="memdesc:a8ceeceae674042b997e2960dec327fb5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a function that will be called every time the object's <b>Output Current Value</b> (otptCurVal) reaches the <b>Maximum Output Value</b> attribute setting (otptValMax).  <br /></td></tr>
+<tr class="memitem:ab4617a3b5f1fcfea78320a06b3b25432" id="r_ab4617a3b5f1fcfea78320a06b3b25432"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab4617a3b5f1fcfea78320a06b3b25432">setFnWhnTrnOnSldrMinPtr</a> (void(*newFnWhnTrnOn)())</td></tr>
+<tr class="memdesc:ab4617a3b5f1fcfea78320a06b3b25432"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a function that will be called every time the object's <b>Output Current Value</b> (otptCurVal) attribute reaches the <b>Minimum Output Current Value</b> attribute setting (otptValMin).  <br /></td></tr>
+<tr class="memitem:a6a65815cbfaaa7173445cc62a97d6066" id="r_a6a65815cbfaaa7173445cc62a97d6066"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6a65815cbfaaa7173445cc62a97d6066">setFVPPWhnTrnOffSldrDirUp</a> (fncVdPtrPrmPtrType newFVPPWhnTrnOff, void *argPtr=nullptr)</td></tr>
+<tr class="memdesc:a6a65815cbfaaa7173445cc62a97d6066"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a function that will be called every time the slider direction is set to be decrementing (down).  <br /></td></tr>
+<tr class="memitem:ab7c622763f03f4ad6367ccbbc9ae7976" id="r_ab7c622763f03f4ad6367ccbbc9ae7976"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab7c622763f03f4ad6367ccbbc9ae7976">setFVPPWhnTrnOffSldrDirUpArgPtr</a> (void *newFVPPWhnTrnOffArgPtr)</td></tr>
+<tr class="memdesc:ab7c622763f03f4ad6367ccbbc9ae7976"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a pointer to an argument to be passed to the function set by the <a class="el" href="#a6a65815cbfaaa7173445cc62a97d6066" title="Sets a function that will be called every time the slider direction is set to be decrementing (down).">setFVPPWhnTrnOffSldrDirUp()</a> method.  <br /></td></tr>
+<tr class="memitem:aa3d96c6139c4171e0aa6cfb9316e482d" id="r_aa3d96c6139c4171e0aa6cfb9316e482d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa3d96c6139c4171e0aa6cfb9316e482d">setFVPPWhnTrnOnSldrDirUp</a> (fncVdPtrPrmPtrType newFVPPWhnTrnOn, void *argPtr=nullptr)</td></tr>
+<tr class="memdesc:aa3d96c6139c4171e0aa6cfb9316e482d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a function that will be called every time the slider direction is set to be incrementing (up).  <br /></td></tr>
+<tr class="memitem:a4a6ff0056fc2e5bc23cf685f22e53093" id="r_a4a6ff0056fc2e5bc23cf685f22e53093"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4a6ff0056fc2e5bc23cf685f22e53093">setFVPPWhnTrnOnSldrDirUpArgPtr</a> (void *newFVPPWhnTrnOnArgPtr)</td></tr>
+<tr class="memdesc:a4a6ff0056fc2e5bc23cf685f22e53093"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a pointer to an argument to be passed to the function set by the <a class="el" href="#aa3d96c6139c4171e0aa6cfb9316e482d" title="Sets a function that will be called every time the slider direction is set to be incrementing (up).">setFVPPWhnTrnOnSldrDirUp()</a> method.  <br /></td></tr>
+<tr class="memitem:ae27852a719d91d184a8c749410ebf1af" id="r_ae27852a719d91d184a8c749410ebf1af"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae27852a719d91d184a8c749410ebf1af">setFVPPWhnTrnOffSldrMax</a> (fncVdPtrPrmPtrType newFVPPWhnTrnOff, void *argPtr=nullptr)</td></tr>
+<tr class="memdesc:ae27852a719d91d184a8c749410ebf1af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a function that will be called every time the object's <b>Output Current Value</b> (otptCurVal) attribute changes after being equal to the <b>Maximum Output Value</b> attribute setting (otptValMax).  <br /></td></tr>
+<tr class="memitem:a122a91115dd22f771ff42de653d7563d" id="r_a122a91115dd22f771ff42de653d7563d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a122a91115dd22f771ff42de653d7563d">setFVPPWhnTrnOffSldrMaxArgPtr</a> (void *newFVPPWhnTrnOffArgPtr)</td></tr>
+<tr class="memdesc:a122a91115dd22f771ff42de653d7563d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a pointer to an argument to be passed to the function set by the <a class="el" href="#ae27852a719d91d184a8c749410ebf1af" title="Sets a function that will be called every time the object&#39;s Output Current Value (otptCurVal) attribu...">setFVPPWhnTrnOffSldrMax()</a> method.  <br /></td></tr>
+<tr class="memitem:a4735ae973951b8a83a4930394f88fe5c" id="r_a4735ae973951b8a83a4930394f88fe5c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4735ae973951b8a83a4930394f88fe5c">setFVPPWhnTrnOnSldrMax</a> (fncVdPtrPrmPtrType newFVPPWhnTrnOn, void *argPtr=nullptr)</td></tr>
+<tr class="memdesc:a4735ae973951b8a83a4930394f88fe5c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a function that will be called every time the object's <b>Output Current Value</b> (otptCurVal) attribute reaches the <b>Maximum Output Value</b> attribute setting (otptValMax).  <br /></td></tr>
+<tr class="memitem:aa4db7ffd3283003092a8eb98ec60c02d" id="r_aa4db7ffd3283003092a8eb98ec60c02d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa4db7ffd3283003092a8eb98ec60c02d">setFVPPWhnTrnOnSldrMaxArgPtr</a> (void *newFVPPWhnTrnOnArgPtr)</td></tr>
+<tr class="memdesc:aa4db7ffd3283003092a8eb98ec60c02d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a pointer to an argument to be passed to the function set by the <a class="el" href="#a4735ae973951b8a83a4930394f88fe5c" title="Sets a function that will be called every time the object&#39;s Output Current Value (otptCurVal) attribu...">setFVPPWhnTrnOnSldrMax()</a> method.  <br /></td></tr>
+<tr class="memitem:a21f0704025e830ed1cc4b31bf4319112" id="r_a21f0704025e830ed1cc4b31bf4319112"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a21f0704025e830ed1cc4b31bf4319112">setFVPPWhnTrnOffSldrMin</a> (fncVdPtrPrmPtrType newFVPPWhnTrnOff, void *argPtr=nullptr)</td></tr>
+<tr class="memdesc:a21f0704025e830ed1cc4b31bf4319112"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a function that will be called every time the object's <b>Output Current Value</b> (otptCurVal) attribute changes after being equal to the <b>Minimum Output Value</b> attribute setting (otptValMin).  <br /></td></tr>
+<tr class="memitem:aac1d18aa5ed6c390d41d2dcc74e2b13b" id="r_aac1d18aa5ed6c390d41d2dcc74e2b13b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aac1d18aa5ed6c390d41d2dcc74e2b13b">setFVPPWhnTrnOffSldrMinArgPtr</a> (void *newFVPPWhnTrnOffArgPtr)</td></tr>
+<tr class="memdesc:aac1d18aa5ed6c390d41d2dcc74e2b13b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a pointer to an argument to be passed to the function set by the <a class="el" href="#a21f0704025e830ed1cc4b31bf4319112" title="Sets a function that will be called every time the object&#39;s Output Current Value (otptCurVal) attribu...">setFVPPWhnTrnOffSldrMin()</a> method.  <br /></td></tr>
+<tr class="memitem:a327e2e9b83e64d39d5e4b159db8ae083" id="r_a327e2e9b83e64d39d5e4b159db8ae083"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a327e2e9b83e64d39d5e4b159db8ae083">setFVPPWhnTrnOnSldrMin</a> (fncVdPtrPrmPtrType newFVPPWhnTrnOn, void *argPtr=nullptr)</td></tr>
+<tr class="memdesc:a327e2e9b83e64d39d5e4b159db8ae083"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a function that will be called every time the object's <b>Output Current Value</b> (otptCurVal) attribute reaches the <b>Minimum Output Value</b> attribute setting (otptValMin).  <br /></td></tr>
+<tr class="memitem:af0cc9a9e38923001a9d359edd7ae76f7" id="r_af0cc9a9e38923001a9d359edd7ae76f7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af0cc9a9e38923001a9d359edd7ae76f7">setFVPPWhnTrnOnSldrMinArgPtr</a> (void *newFVPPWhnTrnOnArgPtr)</td></tr>
+<tr class="memdesc:af0cc9a9e38923001a9d359edd7ae76f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a pointer to an argument to be passed to the function set by the <a class="el" href="#a327e2e9b83e64d39d5e4b159db8ae083" title="Sets a function that will be called every time the object&#39;s Output Current Value (otptCurVal) attribu...">setFVPPWhnTrnOnSldrMin()</a> method.  <br /></td></tr>
 <tr class="memitem:a6fe950578ec57271ad3c402064ab7f8d" id="r_a6fe950578ec57271ad3c402064ab7f8d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6fe950578ec57271ad3c402064ab7f8d">setOtptCurVal</a> (const uint16_t &amp;newVal)</td></tr>
 <tr class="memdesc:a6fe950578ec57271ad3c402064ab7f8d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the output current value register.  <br /></td></tr>
 <tr class="memitem:a3d51e6c2da40b6b010a30cc67920ca0e" id="r_a3d51e6c2da40b6b010a30cc67920ca0e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3d51e6c2da40b6b010a30cc67920ca0e">setOtptSldrSpd</a> (const uint16_t &amp;newVal)</td></tr>
@@ -457,6 +529,503 @@ Here is the call graph for this function:</div>
 
 </div>
 </div>
+<a id="abc82122281614c059d279caead30be8b" name="abc82122281614c059d279caead30be8b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abc82122281614c059d279caead30be8b">&#9670;&#160;</a></span>getFnWhnTrnOffSldrDirUp()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">fncPtrType SldrDALtchMPBttn::getFnWhnTrnOffSldrDirUp </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns the function set to be called when the slider direction is set to be decrementing (down). </p>
+<p>The function to be executed is an attribute that might be modified by the <b>setFnWhnTrnOffSldrDirUpPtr()</b> method, and is a function pointer to a function with the signature <b>void (fncPtr*) ()</b>.</p>
+<dl class="section return"><dt>Returns</dt><dd>fncPtrType A pointer to the function set to be called when the slider direction is set to be decrementing (down). </dd></dl>
+<dl class="retval"><dt>Return values</dt><dd>
+  <table class="retval">
+    <tr><td class="paramname">nullptr</td><td>if there is no function set to be called when the slider direction is set to be decrementing (down). </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a1532f0fd44430626a699c051ad27870d" name="a1532f0fd44430626a699c051ad27870d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1532f0fd44430626a699c051ad27870d">&#9670;&#160;</a></span>getFnWhnTrnOffSldrMax()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">fncPtrType SldrDALtchMPBttn::getFnWhnTrnOffSldrMax </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns the function that is set to be executed every time the object's <b>Output Current Value</b> (otptCurVal) attribute changes after being equal to the <b>Maximum Output Value</b> attribute setting (otptValMax). </p>
+<p>The function to be executed is an attribute that might be modified by the <b><a class="el" href="#a866ab0543c783c16d84baef9f4a63c11" title="Sets a function that will be called every time the object&#39;s Output Current Value (otptCurVal) attribu...">setFnWhnTrnOffSldrMaxPtr()</a></b> method, and is a function pointer to a function with the signature <b>void (fncPtr*) ()</b>. <br  />
+</p>
+<dl class="section return"><dt>Returns</dt><dd>A function pointer to the function set to execute every time the object's <b>otptCurVal</b> changes from the <b>otptValMax</b> to a lesser value. <br  />
+ </dd></dl>
+<dl class="retval"><dt>Return values</dt><dd>
+  <table class="retval">
+    <tr><td class="paramname">nullptr</td><td>if there is no function set to execute when the object's <b>otptCurVal</b> changes from the <b>otptValMax</b> to a lesser value. <br  />
+</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section warning"><dt>Warning</dt><dd>The function code execution will become part of the list of procedures the object executes when <b>otptCurVal</b> changes after being equal to <b>otptValMax</b>, including the possibility to modify attribute flags and others. Making the function code too time demanding must be handled with care, using alternative execution schemes, for example (and not limited to) the function might set flags, modify counters and parameters to set the conditions to execute some code in the main loop, and that suspends itself at the end of its code, to let a new function calling event resume it once again. </dd></dl>
+
+</div>
+</div>
+<a id="ace98cd7dddb1e7791244f74a35999f6a" name="ace98cd7dddb1e7791244f74a35999f6a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ace98cd7dddb1e7791244f74a35999f6a">&#9670;&#160;</a></span>getFnWhnTrnOffSldrMin()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">fncPtrType SldrDALtchMPBttn::getFnWhnTrnOffSldrMin </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns the function that is set to execute every time the object's <b>Output Current Value</b> (otptCurVal) attribute changes after being equal to the <b>Minimum Output Current Value</b> attribute setting (otptValMin). </p>
+<p>The function to be executed is an attribute that might be modified by the <b><a class="el" href="#af461a549c9b64acbf246dea5ad6ad68b" title="Sets a function that will be called every time the object&#39;s Output Current Value (otptCurVal) attribu...">setFnWhnTrnOffSldrMinPtr()</a></b> method, and is a function pointer to a function with the signature <b>void (fncPtr*) ()</b>. <br  />
+</p>
+<dl class="section return"><dt>Returns</dt><dd>A function pointer to the function set to execute every time the object's <b>otptCurVal</b> changes from the <b>otptValMin</b> to a greater value. </dd></dl>
+<dl class="retval"><dt>Return values</dt><dd>
+  <table class="retval">
+    <tr><td class="paramname">nullptr</td><td>if there is no function set to execute when the object's <b>otptCurVal</b> changes from the <b>otptValMin</b> to a lesser value. <br  />
+</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section warning"><dt>Warning</dt><dd>The function code execution will become part of the list of procedures the object executes when <b>otptCurVal</b> changes after being equal to <b>otptValMin</b>, including the possibility to modify attribute flags and others. Making the function code too time demanding must be handled with care, using alternative execution schemes, for example (and not limited to) the function might set flags, modify counters and parameters to set the conditions to execute some code in the main loop, and that suspends itself at the end of its code, to let a new function calling event resume it once again. </dd></dl>
+
+</div>
+</div>
+<a id="a07504b53a1e3722ad3f106b0980c39c8" name="a07504b53a1e3722ad3f106b0980c39c8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a07504b53a1e3722ad3f106b0980c39c8">&#9670;&#160;</a></span>getFnWhnTrnOnSldrDirUp()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">fncPtrType SldrDALtchMPBttn::getFnWhnTrnOnSldrDirUp </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns the function set to be called when the slider direction is set to be incrementing (up). </p>
+<p>The function to be executed is an attribute that might be modified by the <b>setFnWhnTrnOnSldrDirUpPtr()</b> method, and is a function pointer to a function with the signature <b>void (fncPtr*) ()</b>.</p>
+<dl class="section return"><dt>Returns</dt><dd>fncPtrType A pointer to the function set to be called when the slider direction is set to be incrementing (up). </dd></dl>
+<dl class="retval"><dt>Return values</dt><dd>
+  <table class="retval">
+    <tr><td class="paramname">nullptr</td><td>if there is no function set to be called when the slider direction is set to be incrementing (up). </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a716cfb1735818f1b6e1d4a7263a5e3d2" name="a716cfb1735818f1b6e1d4a7263a5e3d2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a716cfb1735818f1b6e1d4a7263a5e3d2">&#9670;&#160;</a></span>getFnWhnTrnOnSldrMax()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">fncPtrType SldrDALtchMPBttn::getFnWhnTrnOnSldrMax </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns the function that is set to execute every time the object's <b>Output Current Value</b> (otptCurVal) attribute reaches the <b>Maximum Output Current Value</b> attribute setting (otptValMax). </p>
+<p>The function to be executed is an attribute that might be modified by the <b><a class="el" href="#a8ceeceae674042b997e2960dec327fb5" title="Sets a function that will be called every time the object&#39;s Output Current Value (otptCurVal) reaches...">setFnWhnTrnOnSldrMaxPtr()</a></b> method, and is a function pointer to a function with the signature void (fncPtr*) ().</p>
+<dl class="section return"><dt>Returns</dt><dd>A function pointer to the function set to execute every time the object's <b>otptCurVal</b> reaches the <b>otptValMax</b>. </dd></dl>
+<dl class="retval"><dt>Return values</dt><dd>
+  <table class="retval">
+    <tr><td class="paramname">nullptr</td><td>if there is no function set to execute when the object's <b>otptCurVal</b> reaches the <b>otptValMax</b>.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section warning"><dt>Warning</dt><dd>The function code execution will become part of the list of procedures the object executes when <b>otptCurVal</b> reaches the <b>otptValMax</b> value, including the possibility to modify attribute flags and others. Making the function code too time demanding must be handled with care, using alternative execution schemes, for example (and not limited to) the function might set flags, modify counters and parameters to set the conditions to execute some code in the main loop, and that suspends itself at the end of its code, to let a new function calling event resume it once again. </dd></dl>
+
+</div>
+</div>
+<a id="a6a47eb9bc6e4b72f46449959a3816b11" name="a6a47eb9bc6e4b72f46449959a3816b11"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6a47eb9bc6e4b72f46449959a3816b11">&#9670;&#160;</a></span>getFnWhnTrnOnSldrMin()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">fncPtrType SldrDALtchMPBttn::getFnWhnTrnOnSldrMin </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns the function that is set to execute every time the object's <b>Output Current Value</b> (otptCurVal) attribute reaches the <b>Minimum Output Current Value</b> attribute setting (otptValMin). </p>
+<p>The function to be executed is an attribute that might be modified by the <b><a class="el" href="#ab4617a3b5f1fcfea78320a06b3b25432" title="Sets a function that will be called every time the object&#39;s Output Current Value (otptCurVal) attribu...">setFnWhnTrnOnSldrMinPtr()</a></b> method, and is a function pointer to a function with the signature void (fncPtr*) ().</p>
+<dl class="section return"><dt>Returns</dt><dd>A function pointer to the function set to execute every time the object's <b>otptCurVal</b> reaches the <b>otptValMin</b>. </dd></dl>
+<dl class="retval"><dt>Return values</dt><dd>
+  <table class="retval">
+    <tr><td class="paramname">nullptr</td><td>if there is no function set to execute when the object's <b>otptCurVal</b> reaches the <b>otptValMin</b>.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section warning"><dt>Warning</dt><dd>The function code execution will become part of the list of procedures the object executes when it reaches the <b>otptValMin</b>, including the possibility to modify attribute flags and others. Making the function code too time demanding must be handled with care, using alternative execution schemes, for example (and not limited to) the function might set flags, modify counters and parameters to set the conditions to execute some code in the main loop, and that suspends itself at the end of its code, to let a new function calling event resume it once again. </dd></dl>
+
+</div>
+</div>
+<a id="a2ae61d0ae7daa88e80d8d92c31df5cfb" name="a2ae61d0ae7daa88e80d8d92c31df5cfb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2ae61d0ae7daa88e80d8d92c31df5cfb">&#9670;&#160;</a></span>getFVPPWhnTrnOffSldrDirUp()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">fncVdPtrPrmPtrType SldrDALtchMPBttn::getFVPPWhnTrnOffSldrDirUp </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns a pointer to the function that is set to be executed every time the slider direction is set to be decrementing (down). </p>
+<p>The function to be executed is an attribute that might be modified by the <b><a class="el" href="#a6a65815cbfaaa7173445cc62a97d6066" title="Sets a function that will be called every time the slider direction is set to be decrementing (down).">setFVPPWhnTrnOffSldrDirUp()</a></b> method, and is a function pointer to a function with the signature <b>void (fncPtr*) (void*)</b>.</p>
+<dl class="section return"><dt>Returns</dt><dd>A function pointer to the function set to execute every time the slider direction is set to be decrementing (down). <br  />
+ </dd></dl>
+<dl class="retval"><dt>Return values</dt><dd>
+  <table class="retval">
+    <tr><td class="paramname">nullptr</td><td>if there is no function set to execute when the slider direction is set to be decrementing (down). </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a9a0718bc3d43521b3dafaa29b4c480cd" name="a9a0718bc3d43521b3dafaa29b4c480cd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9a0718bc3d43521b3dafaa29b4c480cd">&#9670;&#160;</a></span>getFVPPWhnTrnOffSldrDirUpArgPtr()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void * SldrDALtchMPBttn::getFVPPWhnTrnOffSldrDirUpArgPtr </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns a pointer to the argument to be passed to the function set to execute every time the slider direction is set to be decrementing (down). </p>
+<dl class="section return"><dt>Returns</dt><dd>A void* pointer to the argument to be passed to the function set to execute every time the slider direction is set to be decrementing (down). <br  />
+ </dd></dl>
+<dl class="retval"><dt>Return values</dt><dd>
+  <table class="retval">
+    <tr><td class="paramname">nullptr</td><td>if there is no argument for the function set to execute when the slider direction is set to be decrementing (down). </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ab2e42290eb51ca794103ad4c593164ae" name="ab2e42290eb51ca794103ad4c593164ae"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab2e42290eb51ca794103ad4c593164ae">&#9670;&#160;</a></span>getFVPPWhnTrnOffSldrMax()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">fncVdPtrPrmPtrType SldrDALtchMPBttn::getFVPPWhnTrnOffSldrMax </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns the function that is set to be executed every time the object's <b>Output Current Value</b> (otptCurVal) attribute changes after being equal to the <b>Maximum Output Value</b> attribute setting (otptValMax). </p>
+<p>The function to be executed is an attribute that might be modified by the <b><a class="el" href="#ae27852a719d91d184a8c749410ebf1af" title="Sets a function that will be called every time the object&#39;s Output Current Value (otptCurVal) attribu...">setFVPPWhnTrnOffSldrMax()</a></b> method, and is a function pointer to a function with the signature <b>void (fncPtr*) (void*)</b>. <br  />
+</p>
+<dl class="section return"><dt>Returns</dt><dd>A function pointer to the function set to execute every time the object's <b>otptCurVal</b> changes from the <b>otptValMax</b> to a lesser value. <br  />
+ </dd></dl>
+<dl class="retval"><dt>Return values</dt><dd>
+  <table class="retval">
+    <tr><td class="paramname">nullptr</td><td>if there is no function set to execute when the object's <b>otptCurVal</b> changes from the <b>otptValMax</b> to a lesser value. <br  />
+</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section warning"><dt>Warning</dt><dd>The function code execution will become part of the list of procedures the object executes when <b>otptCurVal</b> changes after being equal to <b>otptValMax</b>, including the possibility to modify attribute flags and others. Making the function code too time demanding must be handled with care, using alternative execution schemes, for example (and not limited to) the function might set flags, modify counters and parameters to set the conditions to execute some code in the main loop, and that suspends itself at the end of its code, to let a new function calling event resume it once again. </dd></dl>
+
+</div>
+</div>
+<a id="a5f01cd9385d2ff98df7f448bfd24d420" name="a5f01cd9385d2ff98df7f448bfd24d420"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5f01cd9385d2ff98df7f448bfd24d420">&#9670;&#160;</a></span>getFVPPWhnTrnOffSldrMaxArgPtr()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void * SldrDALtchMPBttn::getFVPPWhnTrnOffSldrMaxArgPtr </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns a pointer to the argument to be passed to the function set to execute every time the object's <b>Output Current Value</b> (otptCurVal) attribute changes after being equal to the <b>Maximum Output Current Value</b> attribute setting (otptValMax). </p>
+<dl class="section return"><dt>Returns</dt><dd>void* Pointer to the argument to be passed to the function set to execute every time the object's <b>otptCurVal</b> changes from the <b>otptValMax</b> to a lesser value. <br  />
+ </dd></dl>
+<dl class="retval"><dt>Return values</dt><dd>
+  <table class="retval">
+    <tr><td class="paramname">nullptr</td><td>if there is no argument for the function set to execute when the object's <b>otptCurVal</b> changes from the <b>otptValMax</b> to a lesser value. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="aaa7381f60ce67b415910c06e8ef160f9" name="aaa7381f60ce67b415910c06e8ef160f9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaa7381f60ce67b415910c06e8ef160f9">&#9670;&#160;</a></span>getFVPPWhnTrnOffSldrMin()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">fncVdPtrPrmPtrType SldrDALtchMPBttn::getFVPPWhnTrnOffSldrMin </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns the function that is set to execute every time the object's <b>Output Current Value</b> (otptCurVal) attribute changes after being equal to the <b>Minimum Output Current Value</b> attribute setting (otptValMin). </p>
+<p>The function to be executed is an attribute that might be modified by the <b><a class="el" href="#af461a549c9b64acbf246dea5ad6ad68b" title="Sets a function that will be called every time the object&#39;s Output Current Value (otptCurVal) attribu...">setFnWhnTrnOffSldrMinPtr()</a></b> method, and is a function pointer to a function with the signature <b>void (fncPtr*) (void*)</b>. <br  />
+</p>
+<dl class="section return"><dt>Returns</dt><dd>A function pointer to the function set to execute every time the object's <b>otptCurVal</b> changes from the <b>otptValMin</b> to a greater value. </dd></dl>
+<dl class="retval"><dt>Return values</dt><dd>
+  <table class="retval">
+    <tr><td class="paramname">nullptr</td><td>if there is no function set to execute when the object's <b>otptCurVal</b> changes from the <b>otptValMin</b> to a lesser value. <br  />
+</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section warning"><dt>Warning</dt><dd>The function code execution will become part of the list of procedures the object executes when <b>otptCurVal</b> changes after being equal to <b>otptValMin</b>, including the possibility to modify attribute flags and others. Making the function code too time demanding must be handled with care, using alternative execution schemes, for example (and not limited to) the function might set flags, modify counters and parameters to set the conditions to execute some code in the main loop, and that suspends itself at the end of its code, to let a new function calling event resume it once again. </dd></dl>
+
+</div>
+</div>
+<a id="a5ea06811569a36f68051fea8dfc6a635" name="a5ea06811569a36f68051fea8dfc6a635"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5ea06811569a36f68051fea8dfc6a635">&#9670;&#160;</a></span>getFVPPWhnTrnOffSldrMinArgPtr()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void * SldrDALtchMPBttn::getFVPPWhnTrnOffSldrMinArgPtr </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns a pointer to the argument to be passed to the function set to execute every time the object's <b>Output Current Value</b> (otptCurVal) attribute exits the <b>Minimum Output Current Value</b> attribute setting (otptValMin). </p>
+<dl class="section return"><dt>Returns</dt><dd>void* Pointer to the argument to be passed to the function set to execute every time the object's <b>Output Current Value</b> (otptCurVal) attribute exits the <b>Minimum Output Current Value</b> attribute setting (otptValMin). </dd></dl>
+<dl class="retval"><dt>Return values</dt><dd>
+  <table class="retval">
+    <tr><td class="paramname">nullptr</td><td>if there is no argument for the function set to execute when the object's <b>otptCurVal</b> exits the <b>otptValMin</b> setting. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a0ea53ddde23d3d1bc6271adedcfdd8fe" name="a0ea53ddde23d3d1bc6271adedcfdd8fe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0ea53ddde23d3d1bc6271adedcfdd8fe">&#9670;&#160;</a></span>getFVPPWhnTrnOnSldrDirUp()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">fncVdPtrPrmPtrType SldrDALtchMPBttn::getFVPPWhnTrnOnSldrDirUp </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns a pointer to the function that is set to be executed every time the slider direction is set to be incrementing (up). </p>
+<p>The function to be executed is an attribute that might be modified by the <b><a class="el" href="#aa3d96c6139c4171e0aa6cfb9316e482d" title="Sets a function that will be called every time the slider direction is set to be incrementing (up).">setFVPPWhnTrnOnSldrDirUp()</a></b> method, and is a function pointer to a function with the signature <b>void (fncPtr*) (void*)</b>.</p>
+<dl class="section return"><dt>Returns</dt><dd>A function pointer to the function set to execute every time the slider direction is set to be incrementing (up). <br  />
+ </dd></dl>
+<dl class="retval"><dt>Return values</dt><dd>
+  <table class="retval">
+    <tr><td class="paramname">nullptr</td><td>if there is no function set to execute when the slider direction is set to be incrementing (up). </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a62157bdb3fc4f514e53e758dd220335e" name="a62157bdb3fc4f514e53e758dd220335e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a62157bdb3fc4f514e53e758dd220335e">&#9670;&#160;</a></span>getFVPPWhnTrnOnSldrDirUpArgPtr()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void * SldrDALtchMPBttn::getFVPPWhnTrnOnSldrDirUpArgPtr </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns a pointer to the argument to be passed to the function set to execute every time the slider direction is set to be incrementing (up). </p>
+<dl class="section return"><dt>Returns</dt><dd>void* A pointer to the argument to be passed to the function set to execute every time the slider direction is set to be incrementing (up). <br  />
+ </dd></dl>
+<dl class="retval"><dt>Return values</dt><dd>
+  <table class="retval">
+    <tr><td class="paramname">nullptr</td><td>if there is no argument for the function set to execute when the slider direction is set to be incrementing (up). </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a840e4c9c30662fee2528710275649575" name="a840e4c9c30662fee2528710275649575"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a840e4c9c30662fee2528710275649575">&#9670;&#160;</a></span>getFVPPWhnTrnOnSldrMax()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">fncVdPtrPrmPtrType SldrDALtchMPBttn::getFVPPWhnTrnOnSldrMax </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns the function that is set to execute every time the object's <b>Output Current Value</b> (otptCurVal) attribute reaches the <b>Maximum Output Current Value</b> attribute setting (otptValMax). </p>
+<p>The function to be executed is an attribute that might be modified by the <b><a class="el" href="#a4735ae973951b8a83a4930394f88fe5c" title="Sets a function that will be called every time the object&#39;s Output Current Value (otptCurVal) attribu...">setFVPPWhnTrnOnSldrMax()</a></b> method, and is a function pointer to a function with the signature void (fncPtr*) (void*).</p>
+<dl class="section return"><dt>Returns</dt><dd>A function pointer to the function set to execute every time the object's <b>otptCurVal</b> reaches the <b>otptValMax</b>. </dd></dl>
+<dl class="retval"><dt>Return values</dt><dd>
+  <table class="retval">
+    <tr><td class="paramname">nullptr</td><td>if there is no function set to execute when the object's <b>otptCurVal</b> reaches the <b>otptValMax</b>.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section warning"><dt>Warning</dt><dd>The function code execution will become part of the list of procedures the object executes when <b>otptCurVal</b> reaches the <b>otptValMax</b> value, including the possibility to modify attribute flags and others. Making the function code too time demanding must be handled with care, using alternative execution schemes, for example (and not limited to) the function might set flags, modify counters and parameters to set the conditions to execute some code in the main loop, and that suspends itself at the end of its code, to let a new function calling event resume it once again. </dd></dl>
+
+</div>
+</div>
+<a id="ad6fb502c88fc4c7610b4bd30af85828a" name="ad6fb502c88fc4c7610b4bd30af85828a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad6fb502c88fc4c7610b4bd30af85828a">&#9670;&#160;</a></span>getFVPPWhnTrnOnSldrMaxArgPtr()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void * SldrDALtchMPBttn::getFVPPWhnTrnOnSldrMaxArgPtr </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns a pointer to the argument to be passed to the function set to execute every time the object's <b>Output Current Value</b> (otptCurVal) attribute reaches the <b>Maximum Output Current Value</b> attribute setting (otptValMax). </p>
+<dl class="section return"><dt>Returns</dt><dd>void* Pointer to the argument to be passed to the function set to execute every time the object enters the object's <b>Output Current Value</b> (otptCurVal) attribute reaches the <b>Maximum Output Current Value</b> attribute setting (otptValMax). </dd></dl>
+<dl class="retval"><dt>Return values</dt><dd>
+  <table class="retval">
+    <tr><td class="paramname">nullptr</td><td>if there is no argument for the function set to execute when the object's <b>otptCurVal</b> reaches the <b>otptValMax</b> setting. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="abb69849a94379c64983ffb02c0e64009" name="abb69849a94379c64983ffb02c0e64009"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abb69849a94379c64983ffb02c0e64009">&#9670;&#160;</a></span>getFVPPWhnTrnOnSldrMin()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">fncVdPtrPrmPtrType SldrDALtchMPBttn::getFVPPWhnTrnOnSldrMin </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns the function that is set to execute every time the object's <b>Output Current Value</b> (otptCurVal) attribute reaches the <b>Minimum Output Current Value</b> attribute setting (otptValMin). </p>
+<p>The function to be executed is an attribute that might be modified by the <b><a class="el" href="#ab4617a3b5f1fcfea78320a06b3b25432" title="Sets a function that will be called every time the object&#39;s Output Current Value (otptCurVal) attribu...">setFnWhnTrnOnSldrMinPtr()</a></b> method, and is a function pointer to a function with the signature void (fncPtr*) (Void*).</p>
+<dl class="section return"><dt>Returns</dt><dd>A function pointer to the function set to execute every time the object's <b>otptCurVal</b> reaches the <b>otptValMin</b>. </dd></dl>
+<dl class="retval"><dt>Return values</dt><dd>
+  <table class="retval">
+    <tr><td class="paramname">nullptr</td><td>if there is no function set to execute when the object's <b>otptCurVal</b> reaches the <b>otptValMin</b>.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section warning"><dt>Warning</dt><dd>The function code execution will become part of the list of procedures the object executes when <b>otptCurVal</b> reaches the <b>otptValMin</b>, including the possibility to modify attribute flags and others. Making the function code too time demanding must be handled with care, using alternative execution schemes, for example (and not limited to) the function might set flags, modify counters and parameters to set the conditions to execute some code in the main loop, and that suspends itself at the end of its code, to let a new function calling event resume it once again. </dd></dl>
+
+</div>
+</div>
+<a id="a0aee4a95014d28a8407642e424bd9d65" name="a0aee4a95014d28a8407642e424bd9d65"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0aee4a95014d28a8407642e424bd9d65">&#9670;&#160;</a></span>getFVPPWhnTrnOnSldrMinArgPtr()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void * SldrDALtchMPBttn::getFVPPWhnTrnOnSldrMinArgPtr </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns a pointer to the argument to be passed to the function set to execute every time the object's <b>Output Current Value</b> (otptCurVal) attribute reaches the <b>Minimum Output Current Value</b> attribute setting (otptValMin). </p>
+<dl class="section return"><dt>Returns</dt><dd>void* Pointer to the argument to be passed to the function set to execute every time the object's <b>Output Current Value</b> (otptCurVal) attribute reaches the <b>Minimum Output Current Value</b> attribute setting (otptValMin). </dd></dl>
+
+</div>
+</div>
 <a id="a73123ccd3e24c14530accf77caa594fd" name="a73123ccd3e24c14530accf77caa594fd"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a73123ccd3e24c14530accf77caa594fd">&#9670;&#160;</a></span>getOtptCurVal()</h2>
 
@@ -639,6 +1208,497 @@ Here is the call graph for this function:</div>
   <table class="retval">
     <tr><td class="paramname">true</td><td>The current slider direction is <b>Up</b>, the output current value will be incremented. </td></tr>
     <tr><td class="paramname">false</td><td>The current slider direction is <b>Down</b>, the output current value will be decremented. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a219682e43cce74e4ae9444501003f14e" name="a219682e43cce74e4ae9444501003f14e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a219682e43cce74e4ae9444501003f14e">&#9670;&#160;</a></span>setFnWhnTrnOffSldrDirUp()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void SldrDALtchMPBttn::setFnWhnTrnOffSldrDirUp </td>
+          <td>(</td>
+          <td class="paramtype">void(*</td>          <td class="paramname"><span class="paramname"><em>newFnWhnTrnOff&#160;</em></span>)()</td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Sets the function that will be called every time the slider direction is set to be decrementing (down). </p>
+<p>The function to be executed is an attribute that might be modified by the <b><a class="el" href="#a219682e43cce74e4ae9444501003f14e" title="Sets the function that will be called every time the slider direction is set to be decrementing (down...">setFnWhnTrnOffSldrDirUp()</a></b> method, and is a function pointer to a function with the signature <b>void (fncPtr*) ()</b>.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">newFnWhnTrnOff</td><td>The function pointer to a function with the signature <b>void (fncPtr*) ()</b>. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a866ab0543c783c16d84baef9f4a63c11" name="a866ab0543c783c16d84baef9f4a63c11"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a866ab0543c783c16d84baef9f4a63c11">&#9670;&#160;</a></span>setFnWhnTrnOffSldrMaxPtr()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void SldrDALtchMPBttn::setFnWhnTrnOffSldrMaxPtr </td>
+          <td>(</td>
+          <td class="paramtype">void(*</td>          <td class="paramname"><span class="paramname"><em>newFnWhnTrnOff&#160;</em></span>)()</td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Sets a function that will be called every time the object's <b>Output Current Value</b> (otptCurVal) attribute changes after being equal to the <b>Maximum Output Value</b> attribute setting (otptValMax). </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">newFnWhnTrnOff</td><td>The function pointer to a function with the signature <b>void (fncPtr*) ()</b>. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="af461a549c9b64acbf246dea5ad6ad68b" name="af461a549c9b64acbf246dea5ad6ad68b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af461a549c9b64acbf246dea5ad6ad68b">&#9670;&#160;</a></span>setFnWhnTrnOffSldrMinPtr()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void SldrDALtchMPBttn::setFnWhnTrnOffSldrMinPtr </td>
+          <td>(</td>
+          <td class="paramtype">void(*</td>          <td class="paramname"><span class="paramname"><em>newFnWhnTrnOff&#160;</em></span>)()</td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Sets a function that will be called every time the object's <b>Output Current Value</b> (otptCurVal) attribute changes after being equal to the <b>Minimum Output Value</b> attribute setting (otptValMin). </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">newFnWhnTrnOff</td><td>The function pointer to a function with the signature <b>void (fncPtr*) ()</b>. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a000a74b0e8e2a22a1de68d5b8567b21a" name="a000a74b0e8e2a22a1de68d5b8567b21a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a000a74b0e8e2a22a1de68d5b8567b21a">&#9670;&#160;</a></span>setFnWhnTrnOnSldrDirUp()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void SldrDALtchMPBttn::setFnWhnTrnOnSldrDirUp </td>
+          <td>(</td>
+          <td class="paramtype">void(*</td>          <td class="paramname"><span class="paramname"><em>newFnWhnTrnOn&#160;</em></span>)()</td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Sets the function that will be called every time the slider direction is set to be incrementing (up). </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">newFnWhnTrnOn</td><td>Pointer to a function with the signature <b>void (fncPtr*) ()</b>. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a8ceeceae674042b997e2960dec327fb5" name="a8ceeceae674042b997e2960dec327fb5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8ceeceae674042b997e2960dec327fb5">&#9670;&#160;</a></span>setFnWhnTrnOnSldrMaxPtr()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void SldrDALtchMPBttn::setFnWhnTrnOnSldrMaxPtr </td>
+          <td>(</td>
+          <td class="paramtype">void(*</td>          <td class="paramname"><span class="paramname"><em>newFnWhnTrnOn&#160;</em></span>)()</td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Sets a function that will be called every time the object's <b>Output Current Value</b> (otptCurVal) reaches the <b>Maximum Output Value</b> attribute setting (otptValMax). </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">newFnWhnTrnOn</td><td>The function pointer to a function with the signature <b>void (fncPtr*) ()</b>. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ab4617a3b5f1fcfea78320a06b3b25432" name="ab4617a3b5f1fcfea78320a06b3b25432"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab4617a3b5f1fcfea78320a06b3b25432">&#9670;&#160;</a></span>setFnWhnTrnOnSldrMinPtr()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void SldrDALtchMPBttn::setFnWhnTrnOnSldrMinPtr </td>
+          <td>(</td>
+          <td class="paramtype">void(*</td>          <td class="paramname"><span class="paramname"><em>newFnWhnTrnOn&#160;</em></span>)()</td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Sets a function that will be called every time the object's <b>Output Current Value</b> (otptCurVal) attribute reaches the <b>Minimum Output Current Value</b> attribute setting (otptValMin). </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">newFnWhnTrnOn</td><td>The function pointer to a function with the signature <b>void (fncPtr*) ()</b>. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a6a65815cbfaaa7173445cc62a97d6066" name="a6a65815cbfaaa7173445cc62a97d6066"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6a65815cbfaaa7173445cc62a97d6066">&#9670;&#160;</a></span>setFVPPWhnTrnOffSldrDirUp()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void SldrDALtchMPBttn::setFVPPWhnTrnOffSldrDirUp </td>
+          <td>(</td>
+          <td class="paramtype">fncVdPtrPrmPtrType</td>          <td class="paramname"><span class="paramname"><em>newFVPPWhnTrnOff</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>argPtr</em></span><span class="paramdefsep"> = </span><span class="paramdefval">nullptr</span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Sets a function that will be called every time the slider direction is set to be decrementing (down). </p>
+<p>The function is set as a pointer to a function with the signature <b>void (fncPtr*) (void*)</b>.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">newFVPPWhnTrnOff</td><td>Pointer to the function to be called. </td></tr>
+    <tr><td class="paramname">argPtr</td><td>(optional) void* pointer to the argument passed to the function, if no value is provided nullptr will be set. The function argument pointer might be changed independently by the use of the <b>void setFVPPWhnTrnOffSldrDirUpArgPtr (void*)</b> method. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ab7c622763f03f4ad6367ccbbc9ae7976" name="ab7c622763f03f4ad6367ccbbc9ae7976"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab7c622763f03f4ad6367ccbbc9ae7976">&#9670;&#160;</a></span>setFVPPWhnTrnOffSldrDirUpArgPtr()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void SldrDALtchMPBttn::setFVPPWhnTrnOffSldrDirUpArgPtr </td>
+          <td>(</td>
+          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>newFVPPWhnTrnOffArgPtr</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Sets a pointer to an argument to be passed to the function set by the <a class="el" href="#a6a65815cbfaaa7173445cc62a97d6066" title="Sets a function that will be called every time the slider direction is set to be decrementing (down).">setFVPPWhnTrnOffSldrDirUp()</a> method. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">newFVPPWhnTrnOffArgPtr</td><td>Pointer to an argument to be passed to the function set by the <a class="el" href="#a6a65815cbfaaa7173445cc62a97d6066" title="Sets a function that will be called every time the slider direction is set to be decrementing (down).">setFVPPWhnTrnOffSldrDirUp()</a> method. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ae27852a719d91d184a8c749410ebf1af" name="ae27852a719d91d184a8c749410ebf1af"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae27852a719d91d184a8c749410ebf1af">&#9670;&#160;</a></span>setFVPPWhnTrnOffSldrMax()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void SldrDALtchMPBttn::setFVPPWhnTrnOffSldrMax </td>
+          <td>(</td>
+          <td class="paramtype">fncVdPtrPrmPtrType</td>          <td class="paramname"><span class="paramname"><em>newFVPPWhnTrnOff</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>argPtr</em></span><span class="paramdefsep"> = </span><span class="paramdefval">nullptr</span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Sets a function that will be called every time the object's <b>Output Current Value</b> (otptCurVal) attribute changes after being equal to the <b>Maximum Output Value</b> attribute setting (otptValMax). </p>
+<p>The function is set as a pointer to a function with the signature <b>void (fncPtr*) (void*)</b>. <br  />
+</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">newFVPPWhnTrnOff</td><td>Pointer to the function to be called. </td></tr>
+    <tr><td class="paramname">argPtr</td><td>(optional) void* pointer to the argument passed to the function, if no value is provided nullptr will be set. The function argument pointer might be changed independently by the use of the <b>void setFVPPWhnTrnOffSldrMaxArgPtr (void*)</b> method. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a122a91115dd22f771ff42de653d7563d" name="a122a91115dd22f771ff42de653d7563d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a122a91115dd22f771ff42de653d7563d">&#9670;&#160;</a></span>setFVPPWhnTrnOffSldrMaxArgPtr()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void SldrDALtchMPBttn::setFVPPWhnTrnOffSldrMaxArgPtr </td>
+          <td>(</td>
+          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>newFVPPWhnTrnOffArgPtr</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Sets a pointer to an argument to be passed to the function set by the <a class="el" href="#ae27852a719d91d184a8c749410ebf1af" title="Sets a function that will be called every time the object&#39;s Output Current Value (otptCurVal) attribu...">setFVPPWhnTrnOffSldrMax()</a> method. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">newFVPPWhnTrnOffArgPtr</td><td>Pointer to an argument to be passed to the function set by the <a class="el" href="#ae27852a719d91d184a8c749410ebf1af" title="Sets a function that will be called every time the object&#39;s Output Current Value (otptCurVal) attribu...">setFVPPWhnTrnOffSldrMax()</a> method. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a21f0704025e830ed1cc4b31bf4319112" name="a21f0704025e830ed1cc4b31bf4319112"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a21f0704025e830ed1cc4b31bf4319112">&#9670;&#160;</a></span>setFVPPWhnTrnOffSldrMin()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void SldrDALtchMPBttn::setFVPPWhnTrnOffSldrMin </td>
+          <td>(</td>
+          <td class="paramtype">fncVdPtrPrmPtrType</td>          <td class="paramname"><span class="paramname"><em>newFVPPWhnTrnOff</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>argPtr</em></span><span class="paramdefsep"> = </span><span class="paramdefval">nullptr</span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Sets a function that will be called every time the object's <b>Output Current Value</b> (otptCurVal) attribute changes after being equal to the <b>Minimum Output Value</b> attribute setting (otptValMin). </p>
+<p>The function is set as a pointer to a function with the signature <b>void (fncPtr*) (void*)</b>. <br  />
+</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">newFVPPWhnTrnOff</td><td>Pointer to the function to be called. </td></tr>
+    <tr><td class="paramname">argPtr</td><td>(optional) void* pointer to the argument passed to the function, if no value is provided nullptr will be set. The function argument pointer might be changed independently by the use of the <b>void setFVPPWhnTrnOffSldrMinArgPtr (void*)</b> method. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="aac1d18aa5ed6c390d41d2dcc74e2b13b" name="aac1d18aa5ed6c390d41d2dcc74e2b13b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aac1d18aa5ed6c390d41d2dcc74e2b13b">&#9670;&#160;</a></span>setFVPPWhnTrnOffSldrMinArgPtr()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void SldrDALtchMPBttn::setFVPPWhnTrnOffSldrMinArgPtr </td>
+          <td>(</td>
+          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>newFVPPWhnTrnOffArgPtr</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Sets a pointer to an argument to be passed to the function set by the <a class="el" href="#a21f0704025e830ed1cc4b31bf4319112" title="Sets a function that will be called every time the object&#39;s Output Current Value (otptCurVal) attribu...">setFVPPWhnTrnOffSldrMin()</a> method. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">newFVPPWhnTrnOffArgPtr</td><td>Pointer to an argument to be passed to the function set by the <a class="el" href="#a21f0704025e830ed1cc4b31bf4319112" title="Sets a function that will be called every time the object&#39;s Output Current Value (otptCurVal) attribu...">setFVPPWhnTrnOffSldrMin()</a> method. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="aa3d96c6139c4171e0aa6cfb9316e482d" name="aa3d96c6139c4171e0aa6cfb9316e482d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa3d96c6139c4171e0aa6cfb9316e482d">&#9670;&#160;</a></span>setFVPPWhnTrnOnSldrDirUp()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void SldrDALtchMPBttn::setFVPPWhnTrnOnSldrDirUp </td>
+          <td>(</td>
+          <td class="paramtype">fncVdPtrPrmPtrType</td>          <td class="paramname"><span class="paramname"><em>newFVPPWhnTrnOn</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>argPtr</em></span><span class="paramdefsep"> = </span><span class="paramdefval">nullptr</span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Sets a function that will be called every time the slider direction is set to be incrementing (up). </p>
+<p>The function is set as a pointer to a function with the signature <b>void (fncPtr*) (void*)</b>.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">newFVPPWhnTrnOn</td><td>Pointer to the function to be called. </td></tr>
+    <tr><td class="paramname">argPtr</td><td>(optional) void* pointer to the argument passed to the function, if no value is provided nullptr will be set. The function argument pointer might be changed independently by the use of the <b>void setFVPPWhnTrnOnSldrDirUpArgPtr (void*)</b> method. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a4a6ff0056fc2e5bc23cf685f22e53093" name="a4a6ff0056fc2e5bc23cf685f22e53093"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4a6ff0056fc2e5bc23cf685f22e53093">&#9670;&#160;</a></span>setFVPPWhnTrnOnSldrDirUpArgPtr()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void SldrDALtchMPBttn::setFVPPWhnTrnOnSldrDirUpArgPtr </td>
+          <td>(</td>
+          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>newFVPPWhnTrnOnArgPtr</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Sets a pointer to an argument to be passed to the function set by the <a class="el" href="#aa3d96c6139c4171e0aa6cfb9316e482d" title="Sets a function that will be called every time the slider direction is set to be incrementing (up).">setFVPPWhnTrnOnSldrDirUp()</a> method. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">newFVPPWhnTrnOnArgPtr</td><td>Pointer to an argument to be passed to the function set by the <a class="el" href="#aa3d96c6139c4171e0aa6cfb9316e482d" title="Sets a function that will be called every time the slider direction is set to be incrementing (up).">setFVPPWhnTrnOnSldrDirUp()</a> method. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a4735ae973951b8a83a4930394f88fe5c" name="a4735ae973951b8a83a4930394f88fe5c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4735ae973951b8a83a4930394f88fe5c">&#9670;&#160;</a></span>setFVPPWhnTrnOnSldrMax()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void SldrDALtchMPBttn::setFVPPWhnTrnOnSldrMax </td>
+          <td>(</td>
+          <td class="paramtype">fncVdPtrPrmPtrType</td>          <td class="paramname"><span class="paramname"><em>newFVPPWhnTrnOn</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>argPtr</em></span><span class="paramdefsep"> = </span><span class="paramdefval">nullptr</span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Sets a function that will be called every time the object's <b>Output Current Value</b> (otptCurVal) attribute reaches the <b>Maximum Output Value</b> attribute setting (otptValMax). </p>
+<p>The function is set as a pointer to a function with the signature <b>void (fncPtr*) (void*)</b>. <br  />
+</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">newFVPPWhnTrnOff</td><td>Pointer to the function to be called. </td></tr>
+    <tr><td class="paramname">argPtr</td><td>(optional) void* pointer to the argument passed to the function, if no value is provided nullptr will be set. The function argument pointer might be changed independently by the use of the <b>void setFVPPWhnTrnOnSldrMaxArgPtr (void*)</b> method. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="aa4db7ffd3283003092a8eb98ec60c02d" name="aa4db7ffd3283003092a8eb98ec60c02d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa4db7ffd3283003092a8eb98ec60c02d">&#9670;&#160;</a></span>setFVPPWhnTrnOnSldrMaxArgPtr()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void SldrDALtchMPBttn::setFVPPWhnTrnOnSldrMaxArgPtr </td>
+          <td>(</td>
+          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>newFVPPWhnTrnOnArgPtr</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Sets a pointer to an argument to be passed to the function set by the <a class="el" href="#a4735ae973951b8a83a4930394f88fe5c" title="Sets a function that will be called every time the object&#39;s Output Current Value (otptCurVal) attribu...">setFVPPWhnTrnOnSldrMax()</a> method. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">newFVPPWhnTrnOnArgPtr</td><td>Pointer to an argument to be passed to the function set by the <a class="el" href="#a4735ae973951b8a83a4930394f88fe5c" title="Sets a function that will be called every time the object&#39;s Output Current Value (otptCurVal) attribu...">setFVPPWhnTrnOnSldrMax()</a> method. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a327e2e9b83e64d39d5e4b159db8ae083" name="a327e2e9b83e64d39d5e4b159db8ae083"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a327e2e9b83e64d39d5e4b159db8ae083">&#9670;&#160;</a></span>setFVPPWhnTrnOnSldrMin()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void SldrDALtchMPBttn::setFVPPWhnTrnOnSldrMin </td>
+          <td>(</td>
+          <td class="paramtype">fncVdPtrPrmPtrType</td>          <td class="paramname"><span class="paramname"><em>newFVPPWhnTrnOn</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>argPtr</em></span><span class="paramdefsep"> = </span><span class="paramdefval">nullptr</span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Sets a function that will be called every time the object's <b>Output Current Value</b> (otptCurVal) attribute reaches the <b>Minimum Output Value</b> attribute setting (otptValMin). </p>
+<p>The function is set as a pointer to a function with the signature <b>void (fncPtr*) (void*)</b>. <br  />
+</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">newFVPPWhnTrnOff</td><td>Pointer to the function to be called. </td></tr>
+    <tr><td class="paramname">argPtr</td><td>(optional) void* pointer to the argument passed to the function, if no value is provided nullptr will be set. The function argument pointer might be changed independently by the use of the <b>void setFVPPWhnTrnOnSldrMinArgPtr (void*)</b> method. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="af0cc9a9e38923001a9d359edd7ae76f7" name="af0cc9a9e38923001a9d359edd7ae76f7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af0cc9a9e38923001a9d359edd7ae76f7">&#9670;&#160;</a></span>setFVPPWhnTrnOnSldrMinArgPtr()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void SldrDALtchMPBttn::setFVPPWhnTrnOnSldrMinArgPtr </td>
+          <td>(</td>
+          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>newFVPPWhnTrnOnArgPtr</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Sets a pointer to an argument to be passed to the function set by the <a class="el" href="#a327e2e9b83e64d39d5e4b159db8ae083" title="Sets a function that will be called every time the object&#39;s Output Current Value (otptCurVal) attribu...">setFVPPWhnTrnOnSldrMin()</a> method. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">newFVPPWhnTrnOnArgPtr</td><td>Pointer to an argument to be passed to the function set by the <a class="el" href="#a327e2e9b83e64d39d5e4b159db8ae083" title="Sets a function that will be called every time the object&#39;s Output Current Value (otptCurVal) attribu...">setFVPPWhnTrnOnSldrMin()</a> method. </td></tr>
   </table>
   </dd>
 </dl>

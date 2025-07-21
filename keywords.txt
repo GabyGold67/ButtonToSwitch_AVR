@@ -137,6 +137,24 @@ setScndModActvDly KEYWORD2
 #################
 #SldrDALtchMPBttn
 #################
+getFnWhnTrnOffSldrDirUp KEYWORD2
+getFnWhnTrnOnSldrDirUp  KEYWORD2
+getFnWhnTrnOffSldrMax   KEYWORD2
+getFnWhnTrnOffSldrMin   KEYWORD2
+getFnWhnTrnOnSldrMax KEYWORD2
+getFnWhnTrnOnSldrMin KEYWORD2
+getFVPPWhnTrnOffSldrDirUp  KEYWORD2
+getFVPPWhnTrnOffSldrDirUpArgPtr  KEYWORD2
+getFVPPWhnTrnOnSldrDirUp   KEYWORD2
+getFVPPWhnTrnOnSldrDirUpArgPtr   KEYWORD2
+getFVPPWhnTrnOffSldrMax KEYWORD2
+getFVPPWhnTrnOffSldrMaxArgPtr KEYWORD2
+getFVPPWhnTrnOnSldrMax  KEYWORD2
+getFVPPWhnTrnOnSldrMaxArgPtr  KEYWORD2
+getFVPPWhnTrnOffSldrMin KEYWORD2
+getFVPPWhnTrnOffSldrMinArgPtr KEYWORD2
+getFVPPWhnTrnOnSldrMin  KEYWORD2
+getFVPPWhnTrnOnSldrMinArgPtr  KEYWORD2
 getOtptCurVal  KEYWORD2
 getOtptCurValIsMax   KEYWORD2
 getOtptCurValIsMin   KEYWORD2
@@ -145,6 +163,20 @@ getOtptSldrStpSize   KEYWORD2
 getOtptValMax  KEYWORD2
 getOtptValMin  KEYWORD2
 getSldrDirUp   KEYWORD2
+setFnWhnTrnOffSldrDirUp KEYWORD2
+setFnWhnTrnOnSldrDirUp  KEYWORD2
+setFnWhnTrnOffSldrMaxPtr   KEYWORD2
+setFnWhnTrnOffSldrMinPtr   KEYWORD2
+setFnWhnTrnOnSldrMaxPtr KEYWORD2
+setFnWhnTrnOnSldrMinPtr KEYWORD2
+setFVPPWhnTrnOffSldrMax KEYWORD2
+setFVPPWhnTrnOffSldrMaxArgPtr KEYWORD2
+setFVPPWhnTrnOnSldrMax  KEYWORD2
+setFVPPWhnTrnOnSldrMaxArgPtr  KEYWORD2
+setFVPPWhnTrnOffSldrMin KEYWORD2
+setFVPPWhnTrnOffSldrMinArgPtr KEYWORD2
+setFVPPWhnTrnOnSldrMin  KEYWORD2
+setFVPPWhnTrnOnSldrMinArgPtr  KEYWORD2
 setOtptCurVal  KEYWORD2
 setOtptSldrSpd KEYWORD2
 setOtptSldrStpSize   KEYWORD2
